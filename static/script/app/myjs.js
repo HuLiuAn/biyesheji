@@ -9,17 +9,13 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     })
         .state('main', {
             url: '/',
-            templateUrl: 'views/main.html'
-            //controller:'menuCtrl'
+            templateUrl: 'views/main.html',
+            controller:'menuCtrl'
         })
         .state('main.orderApply', {
             url: 'orderApply',
             templateUrl: 'views/orderApply.html'
             //controller:'menuCtrl'
-        })
-        .state('main.Page2', {
-            url: 'Page2',
-            templateUrl: 'views/Page2.html'
         }).state('main.user-info', {
             url: 'user/info',
             templateUrl: 'views/user/info.html',
@@ -35,8 +31,6 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                         type: '未知'
                     }
                 });
-
-
                 $scope.changeKey = function () {
                     console.log('changeKey');
                     $http.post('user/changekey',{
@@ -89,8 +83,22 @@ app.controller('menuCtrl', function ($scope) {
         //href: '/orderApply'
     }];
 
+    $scope.hehe="sdfs"
+    $scope.orderMemu1 = [{
+        name: '新增订单',
+        href: 'orderApply'
+    }, {
+        name: '入库订单'
+        //href: '/orderApply'
+    }, {
+        name: '购货订单'
+        //href: '/orderApply'
+    }, {
+        name: '退货订单'
+        //href: '/orderApply'
+    }];
     //提交新增订单
-    $scope.data = $scope;
+    //$scope.data = $scope;
     $scope.addOrder = function () {
         console.log($scope.productType);
         console.log($scope.productName);
@@ -98,7 +106,7 @@ app.controller('menuCtrl', function ($scope) {
         console.log($scope.productQuantity);
         //console.log($scope.productSupplier);
     };
-    //console.log($scope.orderMemu);
+    console.log($scope.orderMemu1);
 
 });
 

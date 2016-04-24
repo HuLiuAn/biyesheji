@@ -4,50 +4,17 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             <li class="header">菜单</li>
-            <li class="active treeview">
-                <a href="#">
-                    <i class="fa fa-dashboard"></i> <span>供应商管理</span> <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <!--<ul class="treeview-menu">-->
-                <!--<li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>-->
-                <!--<li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>-->
-                <!--</ul>-->
-            </li>
-            <li class="treeview">
-                <a href="#/Page2">
-                    <i class="fa fa-files-o"></i><span>订单管理</span><i class="fa fa-angle-left pull-right"></i>
+            <li class="treeview" ng-repeat="item in menu">
+                <a href="item.href">
+                    <i class="fa fa-files-o"></i><span ng-bind="item.name"></span><i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                    <li ng-repeat="x in orderMemu">
+                    <li ng-repeat="x in item.subMenu">
                         <a href="#/{{x.href}}"> <i class="fa fa-circle-o"></i>{{x.name}}</a>
+                </ul>
+            </li>
+
         </ul>
-            </li>
-            <li>
-                <a href="pages/widgets.html">
-                    <i class="fa fa-th"></i> <span>报表管理</span><i class="fa fa-angle-left pull-right"></i>
-                </a>
-            </li>
-            <li>
-                <a href="documentation/index.html"><i class="fa fa-book"></i> <span>入库管理</span>
-                    <i class="fa fa-angle-left pull-right"></i></a>
-            </li>
-            <li>
-                <a href="documentation/index.html"><i class="fa fa-book"></i> <span>出库管理</span>
-                    <i class="fa fa-angle-left pull-right"></i></a>
-            </li>
-            <li>
-                <a href="documentation/index.html"><i class="fa fa-book"></i> <span>货品管理</span>
-                    <i class="fa fa-angle-left pull-right"></i></a>
-            </li>
-            <li>
-                <a href="documentation/index.html"><i class="fa fa-book"></i> <span>领取管理</span>
-                    <i class="fa fa-angle-left pull-right"></i></a>
-            </li>
-            <li>
-                <a href="documentation/index.html"><i class="fa fa-book"></i> <span>账户管理</span>
-                    <i class="fa fa-angle-left pull-right"></i></a>
-            </li>
-            </ul>
     </section>
     <!-- /.sidebar -->
 </aside>
