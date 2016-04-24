@@ -1,4 +1,4 @@
-<div style="margin: 0 20px;">
+<div style="margin: 0 20px;padding-top:10px;">
     <div class="input-group">
         <input type="text" name="search" class="form-control" placeholder="Search">
 
@@ -9,5 +9,26 @@
     </div>
     <div class="box-header with-border">
         <h3 class="box-title">Blank Box</h3>
+    </div>
+    <div class="box-body">
+        <div class="row margin-bottom">
+            <div class="col-sm-3 col-md-3 col-lg-3" ng-repeat="item in list">
+                <div class="box-body box-profile" style="padding: 2px;border:1px solid rgba(128, 128, 128, 0.26);">
+                    <img class="img-responsive "  src="style/img/photo3.jpg" alt="User profile picture">
+                    <ul class="list-group list-group-unbordered" style="margin: 0">
+                        <li class="list-group-item">
+                            <b>名称</b> <a class="pull-right" ng-bind="item.name" style="margin: 1px;"></a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>库存</b> <a class="pull-right" ng-bind="item.remain" style="margin: 1px;"></a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>仓库</b> <a class="pull-right"  ng-bind="item.repo" style="margin: 1px;"></a>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block"><b>详情</b></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -15,40 +15,98 @@ app.controller('loginCtrl', function ($scope, $http) {
     obj.success(function (data) {
         console.log(data);
     }).error(function (data) {
-        console.log("Ê§°ÜÁË")
+        console.log("å¤±è´¥äº†")
 
     });
 });
 app.controller('menuCtrl', function ($scope) {
     $scope.orderMemu = [{
-        name: 'ĞÂÔö¶©µ¥',
+        name: 'æ–°å¢è®¢å•',
         href: 'orderApply'
     }, {
-        name: 'Èë¿â¶©µ¥'
+        name: 'å…¥åº“è®¢å•'
         //href: '/orderApply'
     }, {
-        name: '¹º»õ¶©µ¥'
+        name: 'è´­è´§è®¢å•'
         //href: '/orderApply'
     }, {
-        name: 'ÍË»õ¶©µ¥'
+        name: 'é€€è´§è®¢å•'
         //href: '/orderApply'
     }];
 
-    $scope.hehe="sdfs"
+    $scope.hehe = "sdfs"
     $scope.orderMemu1 = [{
-        name: 'ĞÂÔö¶©µ¥',
+        name: 'æ–°å¢è®¢å•',
         href: 'orderApply'
     }, {
-        name: 'Èë¿â¶©µ¥'
+        name: 'å…¥åº“è®¢å•'
         //href: '/orderApply'
     }, {
-        name: '¹º»õ¶©µ¥'
+        name: 'è´­è´§è®¢å•'
         //href: '/orderApply'
     }, {
-        name: 'ÍË»õ¶©µ¥'
+        name: 'é€€è´§è®¢å•'
         //href: '/orderApply'
     }];
-    //Ìá½»ĞÂÔö¶©µ¥
+    //æäº¤æ–°å¢è®¢å•
+    //$scope.data = $scope;
+    $scope.addOrder = function () {
+        console.log($scope.productType);
+        console.log($scope.productName);
+        console.log($scope.productPrice);
+        console.log($scope.productQuantity);
+        //console.log($scope.productSupplier);
+    };
+    console.log($scope.orderMemu1);
+
+});
+app.controller('menuCtrl', function ($scope) {
+
+    $scope.list = [{
+        icon: "",
+        name: 'è‹¹æœ',
+        href: 'orderApply',
+        remain: 20,
+        repo: "Aä»“åº“"
+    }, {
+        icon: "",
+        name: 'è‹¹æœ',
+        href: 'orderApply',
+        remain: 20,
+        repo: "Aä»“åº“"
+    },
+        {
+            icon: "",
+            name: 'è‹¹æœ',
+            href: 'orderApply',
+            remain: 20,
+            repo: "Aä»“åº“"
+        }, {
+            icon: "",
+            name: 'è‹¹æœ',
+            href: 'orderApply',
+            remain: 20,
+            repo: "Aä»“åº“"
+        }, {
+            icon: "",
+            name: 'è‹¹æœ',
+            href: 'orderApply',
+            remain: 20,
+            repo: "Aä»“åº“"
+        }, {
+            icon: "",
+            name: 'è‹¹æœ',
+            href: 'orderApply',
+            remain: 20,
+            repo: "Aä»“åº“"
+        }, {
+            icon: "",
+            name: 'è‹¹æœ',
+            href: 'orderApply',
+            remain: 20,
+            repo: "Aä»“åº“"
+        }];
+    //æäº¤æ–°å¢è®¢å•
     //$scope.data = $scope;
     $scope.addOrder = function () {
         console.log($scope.productType);
