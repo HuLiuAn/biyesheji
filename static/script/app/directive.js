@@ -207,3 +207,31 @@ app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_Lis
         }
     };
 });
+app.directive('bsUpload', function () {
+    //永远都会返回一个对象
+
+    return {
+        //定义，这个指令是什么，元素？类？注释？属性？,用restrict
+        restrict: "E",
+        //模版，template,templateUrl
+        template: '<p><input type="file" name="upload" id="upload" /><button ng-click="upload()">上传</button></p>',
+        //templateUrl: "views/template/sider.html",
+        scope: {},//定义scope,把作用域隔离开
+        //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
+        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
+           var up= el.children('#upload');
+            //console.log(up)
+            up.uploadify({
+                height: 30,
+                'auto': false,
+                swf: 'plugins/upload/uploadify.swf',
+                uploader: '/uploadify/uploadify.php',
+                width: 120
+            });
+            $scope.upload = function () {
+                console.log('upload')
+              up.uploadify('upload')
+            };
+        }
+    }
+});
