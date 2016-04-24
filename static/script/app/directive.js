@@ -96,21 +96,18 @@ app.directive('bsSider', function () {
                     }]
                 },
                 good: {
-                    name: '货品管理',
-                    href: 'work/mine/vm/1',
+                    name: '领取商品',
+                    href: 'good/list',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu:[{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '商品列表',
+                        href: 'good/list'
                     }, {
-                        name: '入库订单'
+                        name: '领取清单'
                         //href: '/orderApply'
                     }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
+                        name: '领取记录'
                         //href: '/orderApply'
                     }]
                 },

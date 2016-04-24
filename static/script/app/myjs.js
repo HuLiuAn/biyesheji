@@ -49,6 +49,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }) .state('main.home', {
             url: 'home',
             templateUrl: 'views/home.html'
+        }) .state('main.good-list', {
+            url: 'good/list',
+            templateUrl: 'views/good/list.html'
         });
     $urlRouterProvider.otherwise('/')
 }]);
