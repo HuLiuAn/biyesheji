@@ -61,51 +61,7 @@ app.controller('menuCtrl', function ($scope) {
 
 });
 app.controller('goodListCtrl', function ($scope) {
-
-    $scope.list = [{
-        icon: "",
-        name: '苹果',
-        href: 'orderApply',
-        remain: 20,
-        repo: "A仓库"
-    }, {
-        icon: "",
-        name: '苹果',
-        href: 'orderApply',
-        remain: 20,
-        repo: "A仓库"
-    },
-        {
-            icon: "",
-            name: '苹果',
-            href: 'orderApply',
-            remain: 20,
-            repo: "A仓库"
-        }, {
-            icon: "",
-            name: '苹果',
-            href: 'orderApply',
-            remain: 20,
-            repo: "A仓库"
-        }, {
-            icon: "",
-            name: '苹果',
-            href: 'orderApply',
-            remain: 20,
-            repo: "A仓库"
-        }, {
-            icon: "",
-            name: '苹果',
-            href: 'orderApply',
-            remain: 20,
-            repo: "A仓库"
-        }, {
-            icon: "",
-            name: '苹果',
-            href: 'orderApply',
-            remain: 20,
-            repo: "A仓库"
-        }];
+    
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
