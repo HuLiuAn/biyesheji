@@ -229,6 +229,22 @@ app.controller('goodDetailCtrl', function ($scope) {
             value:"发的发放打三分大赛分"
         }
     };
+
+    $scope.add = function () {
+      if($scope.data.amount){
+          $scope.data.amount++;
+      }else{
+          $scope.data.amount=1;
+      }
+    };
+    $scope.minus = function () {
+        if($scope.data.amount){
+            $scope.data.amount--;
+        }else{
+            $scope.data.amount=0;
+        }
+    };
+    //图片滚动
     $scope.myInterval = 1000;
     $scope.noWrapSlides = false;
     $scope.active = 0;
