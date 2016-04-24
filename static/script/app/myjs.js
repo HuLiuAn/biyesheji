@@ -9,20 +9,20 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     })
         .state('main', {
             url: '/',
-            templateUrl: '/views/main.html'
+            templateUrl: 'views/main.html'
             //controller:'menuCtrl'
         })
         .state('main.orderApply', {
             url: 'orderApply',
-            templateUrl: '/views/orderApply.html'
+            templateUrl: 'views/orderApply.html'
             //controller:'menuCtrl'
         })
         .state('main.Page2', {
             url: 'Page2',
-            templateUrl: '/views/Page2.html'
+            templateUrl: 'views/Page2.html'
         }).state('main.user-info', {
             url: 'user/info',
-            templateUrl: '/views/user/info.html',
+            templateUrl: 'views/user/info.html',
             controller: function ($scope, $http) {
                 //获取用户信息
                 $http.get('user/info').success(function (data) {
@@ -53,7 +53,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 }
             }
         });
-    //$urlRouterProvider.otherwise('/')
+    $urlRouterProvider.otherwise('/')
 }]);
 
 app.controller('loginCtrl', function ($scope, $http) {
