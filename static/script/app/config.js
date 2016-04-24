@@ -113,6 +113,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'good/detail/:id',
             templateUrl: 'views/good/detail.html',
             controller: 'goodDetailCtrl'
+        }).state('main.good-his-detail', {
+            url: 'good/history/detail/:id',
+            templateUrl: 'views/good/history-detail.html',
+            controller: 'goodHisDetailCtrl'
         });
     $urlRouterProvider.otherwise('/')
 }]);

@@ -301,3 +301,6 @@ app.controller('goodDetailCtrl', function ($scope) {
         return array;
     }
 });
+app.controller('goodHisDetailCtrl', function ($scope) {
+
+});
