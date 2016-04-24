@@ -60,8 +60,43 @@ app.controller('menuCtrl', function ($scope) {
     //console.log($scope.orderMemu1);
 
 });
+app.controller('homeCtrl', function ($scope) {
+    $scope.info = [{
+        name: '订单',
+        href: 'orderApply',
+        icon:"ion-bag",
+        background:"bg-aqua"
+    },{
+        name: '供应商',
+        href: 'orderApply',
+        icon:"ion-person",
+        background:"bg-maroon"
+    },{
+        name: '商品',
+        href: 'orderApply',
+        icon:"ion-tshirt",
+        background:"bg-yellow"
+    },{
+        name: '报表',
+        href: 'orderApply',
+        icon:"ion-pie-graph",
+        background:"bg-blue"
+    },{
+        name: '仓库',
+        href: 'orderApply',
+        icon:"ion-stats-bars",
+        background:"bg-green"
+    },{
+        name: '采购',
+        href: 'orderApply',
+        icon:"ion-android-cart",
+        background:"bg-teal"
+    }];
+
+
+});
 app.controller('goodListCtrl', function ($scope) {
-    
+
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 

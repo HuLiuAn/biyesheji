@@ -1,66 +1,18 @@
 <section class="content">
     <!-- Small boxes (Stat box) -->
     <div class="row">
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-xs-6" ng-repeat="item in info">
             <!-- small box -->
-            <div class="small-box bg-aqua">
+            <div class="small-box {{item.background}}">
                 <div class="inner">
-                    <h3>150</h3>
-
-                    <p>New Orders</p>
+                    <h3 ng-bind="item.name">订单</h3>
                 </div>
                 <div class="icon">
-                    <i class="ion ion-bag"></i>
+                    <i class="ion {{item.icon}}"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">更多<i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-                <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                    <p>Bounce Rate</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <h3>44</h3>
-
-                    <p>User Registrations</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-red">
-                <div class="inner">
-                    <h3>65</h3>
-
-                    <p>Unique Visitors</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-pie-graph"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
     </div>
     <!-- /.row -->
     <!-- Main row -->
@@ -75,35 +27,141 @@
                     <h3 class="box-title">Sales Graph</h3>
 
                     <div class="box-tools pull-right">
-                        <button type="button" class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i>
+                        <button type="button" class="btn bg-teal btn-sm" data-widget="collapse"><i
+                                class="fa fa-minus"></i>
                         </button>
-                        <button type="button" class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i>
+                        <button type="button" class="btn bg-teal btn-sm" data-widget="remove"><i
+                                class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
                 <div class="box-body border-radius-none">
-                    <div class="chart" id="line-chart" style="height: 250px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><svg height="250" version="1.1" width="808" xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; position: relative; left: -0.75px; top: -0.59375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.0</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></defs><text x="48.5" y="213" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><path fill="none" stroke="#efefef" d="M61,213H783" stroke-width="0.4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="48.5" y="166" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">5,000</tspan></text><path fill="none" stroke="#efefef" d="M61,166H783" stroke-width="0.4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="48.5" y="119" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">10,000</tspan></text><path fill="none" stroke="#efefef" d="M61,119H783" stroke-width="0.4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="48.5" y="72" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">15,000</tspan></text><path fill="none" stroke="#efefef" d="M61,72H783" stroke-width="0.4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="48.5" y="25" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">20,000</tspan></text><path fill="none" stroke="#efefef" d="M61,25H783" stroke-width="0.4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><text x="650.5309842041313" y="225.5" text-anchor="middle" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal" transform="matrix(1,0,0,1,0,6)"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">2013</tspan></text><text x="329.4471445929526" y="225.5" text-anchor="middle" font="10px &quot;Arial&quot;" stroke="none" fill="#ffffff" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';" font-size="10px" font-family="Open Sans" font-weight="normal" transform="matrix(1,0,0,1,0,6)"><tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">2012</tspan></text><path fill="none" stroke="#efefef" d="M61,187.93959999999998C81.17739975698663,187.6764,121.5321992709599,189.52585,141.70959902794652,186.8868C161.88699878493316,184.24775,202.24179829890645,167.99562513661203,222.41919805589308,166.8272C242.3772782503038,165.67147513661203,282.2934386391252,179.82035,302.2515188335359,177.59019999999998C322.2095990279466,175.36004999999997,362.12575941676795,151.209806284153,382.08383961117863,148.986C402.26123936816526,146.737756284153,442.6160388821385,157.36375,462.79343863912516,159.702C482.97083839611184,162.04025000000001,523.3256379100851,178.80089945355192,543.5030376670718,167.692C563.4611178614825,156.70384945355192,603.3772782503038,78.24561187845303,623.3353584447145,71.31379999999999C643.0741190765493,64.45816187845303,682.5516403402187,104.82477417582417,702.2904009720535,112.5422C722.4678007290402,120.43112417582417,762.8226002430133,128.43994999999998,783,133.73919999999998" stroke-width="2" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path><circle cx="61" cy="187.93959999999998" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="141.70959902794652" cy="186.8868" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="222.41919805589308" cy="166.8272" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="302.2515188335359" cy="177.59019999999998" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="382.08383961117863" cy="148.986" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="462.79343863912516" cy="159.702" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="543.5030376670718" cy="167.692" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="623.3353584447145" cy="71.31379999999999" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="702.2904009720535" cy="112.5422" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle><circle cx="783" cy="133.73919999999998" r="4" fill="#efefef" stroke="#efefef" stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle></svg><div class="morris-hover morris-default-style" style="left: 14.5px; top: 113px; display: none;"><div class="morris-hover-row-label">2011 Q1</div><div class="morris-hover-point" style="color: #efefef">
-                        Item 1:
-                        2,666
-                    </div></div></div>
+                    <div class="chart" id="line-chart"
+                         style="height: 250px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                        <svg height="250" version="1.1" width="808" xmlns="http://www.w3.org/2000/svg"
+                             style="overflow: hidden; position: relative; left: -0.75px; top: -0.59375px;">
+                            <desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.0
+                            </desc>
+                            <defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></defs>
+                            <text x="48.5" y="213" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none"
+                                  fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef" d="M61,213H783" stroke-width="0.4"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <text x="48.5" y="166" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none"
+                                  fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">5,000</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef" d="M61,166H783" stroke-width="0.4"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <text x="48.5" y="119" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none"
+                                  fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">10,000</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef" d="M61,119H783" stroke-width="0.4"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <text x="48.5" y="72" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none"
+                                  fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">15,000</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef" d="M61,72H783" stroke-width="0.4"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <text x="48.5" y="25" text-anchor="end" font="10px &quot;Arial&quot;" stroke="none"
+                                  fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: end; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">20,000</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef" d="M61,25H783" stroke-width="0.4"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <text x="650.5309842041313" y="225.5" text-anchor="middle" font="10px &quot;Arial&quot;"
+                                  stroke="none" fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal"
+                                  transform="matrix(1,0,0,1,0,6)">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">2013</tspan>
+                            </text>
+                            <text x="329.4471445929526" y="225.5" text-anchor="middle" font="10px &quot;Arial&quot;"
+                                  stroke="none" fill="#ffffff"
+                                  style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 10px; line-height: normal; font-family: 'Open Sans';"
+                                  font-size="10px" font-family="Open Sans" font-weight="normal"
+                                  transform="matrix(1,0,0,1,0,6)">
+                                <tspan dy="4" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">2012</tspan>
+                            </text>
+                            <path fill="none" stroke="#efefef"
+                                  d="M61,187.93959999999998C81.17739975698663,187.6764,121.5321992709599,189.52585,141.70959902794652,186.8868C161.88699878493316,184.24775,202.24179829890645,167.99562513661203,222.41919805589308,166.8272C242.3772782503038,165.67147513661203,282.2934386391252,179.82035,302.2515188335359,177.59019999999998C322.2095990279466,175.36004999999997,362.12575941676795,151.209806284153,382.08383961117863,148.986C402.26123936816526,146.737756284153,442.6160388821385,157.36375,462.79343863912516,159.702C482.97083839611184,162.04025000000001,523.3256379100851,178.80089945355192,543.5030376670718,167.692C563.4611178614825,156.70384945355192,603.3772782503038,78.24561187845303,623.3353584447145,71.31379999999999C643.0741190765493,64.45816187845303,682.5516403402187,104.82477417582417,702.2904009720535,112.5422C722.4678007290402,120.43112417582417,762.8226002430133,128.43994999999998,783,133.73919999999998"
+                                  stroke-width="2" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            <circle cx="61" cy="187.93959999999998" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="141.70959902794652" cy="186.8868" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="222.41919805589308" cy="166.8272" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="302.2515188335359" cy="177.59019999999998" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="382.08383961117863" cy="148.986" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="462.79343863912516" cy="159.702" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="543.5030376670718" cy="167.692" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="623.3353584447145" cy="71.31379999999999" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="702.2904009720535" cy="112.5422" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                            <circle cx="783" cy="133.73919999999998" r="4" fill="#efefef" stroke="#efefef"
+                                    stroke-width="1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></circle>
+                        </svg>
+                        <div class="morris-hover morris-default-style" style="left: 14.5px; top: 113px; display: none;">
+                            <div class="morris-hover-row-label">2011 Q1</div>
+                            <div class="morris-hover-point" style="color: #efefef">
+                                Item 1:
+                                2,666
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer no-border">
                     <div class="row">
                         <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                            <div style="display:inline;width:60px;height:60px;"><canvas width="60" height="60"></canvas><input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60" data-fgcolor="#39CCCC" readonly="readonly" style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;"></div>
+                            <div style="display:inline;width:60px;height:60px;">
+                                <canvas width="60" height="60"></canvas>
+                                <input type="text" class="knob" data-readonly="true" value="20" data-width="60"
+                                       data-height="60" data-fgcolor="#39CCCC" readonly="readonly"
+                                       style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;">
+                            </div>
 
                             <div class="knob-label">Mail-Orders</div>
                         </div>
                         <!-- ./col -->
                         <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                            <div style="display:inline;width:60px;height:60px;"><canvas width="60" height="60"></canvas><input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60" data-fgcolor="#39CCCC" readonly="readonly" style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;"></div>
+                            <div style="display:inline;width:60px;height:60px;">
+                                <canvas width="60" height="60"></canvas>
+                                <input type="text" class="knob" data-readonly="true" value="50" data-width="60"
+                                       data-height="60" data-fgcolor="#39CCCC" readonly="readonly"
+                                       style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;">
+                            </div>
 
                             <div class="knob-label">Online</div>
                         </div>
                         <!-- ./col -->
                         <div class="col-xs-4 text-center">
-                            <div style="display:inline;width:60px;height:60px;"><canvas width="60" height="60"></canvas><input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60" data-fgcolor="#39CCCC" readonly="readonly" style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;"></div>
+                            <div style="display:inline;width:60px;height:60px;">
+                                <canvas width="60" height="60"></canvas>
+                                <input type="text" class="knob" data-readonly="true" value="30" data-width="60"
+                                       data-height="60" data-fgcolor="#39CCCC" readonly="readonly"
+                                       style="width: 34px; height: 20px; position: absolute; vertical-align: middle; margin-top: 20px; margin-left: -47px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Arial; text-align: center; color: rgb(57, 204, 204); padding: 0px; -webkit-appearance: none; background: none;">
+                            </div>
 
                             <div class="knob-label">In-Store</div>
                         </div>
@@ -224,12 +282,11 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer clearfix no-border">
-                    <button type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item</button>
+                    <button type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item
+                    </button>
                 </div>
             </div>
             <!-- /.box -->
         </section>
     </div>
-    <!-- /.row (main row) -->
-
-    <div style="padding: 10px 0px; text-align: center;"><div class="text-muted">Excuse the ads! We need some help to keep our site up.</div><script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><div class="visible-xs visible-sm"><!-- AdminLTE --><ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-4495360934352473" data-ad-slot="5866534244" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;"></iframe></ins></ins></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div><div class="hidden-xs hidden-sm"><!-- Home large leaderboard --><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-4495360934352473" data-ad-slot="1170479443" data-adsbygoogle-status="done"><ins id="aswift_1_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_1_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe width="728" height="90" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;"></iframe></ins></ins></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></section>
+</section>
