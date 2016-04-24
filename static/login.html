@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>企业订单库存管理系统</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="style/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style/css/font-awesome.css">
+    <style>
+
+        .login-logo {
+            font-size: 35px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .login-page label {
+            color: #fff;
+        }
+
+        .login-page {
+            background:url('style/img/login-page.jpg');
+            /*background-repeat:no-repeat;*/
+        }
+
+        .login-box {
+            width: 360px;
+            margin: 7% auto;
+        }
+
+        @media (max-width: 768px) {
+            .login-box {
+                width: 90%;
+                margin-top: 20px;
+            }
+        }
+
+        .login-box-body {
+            background: rgba(18, 25, 29, 0.44);
+            padding: 20px;
+            color: #666;
+            margin-bottom: 10px;
+
+        }
+
+        .login-box-body .form-control-feedback {
+            color: #777;
+        }
+
+        .login-box-msg {
+            margin: 0;
+            text-align: center;
+            padding: 0 20px 20px 20px;
+            color: #fff;
+        }
+
+        .input-group-addon {
+            background: rgba(38, 75, 125, 0.84);
+            border: rgb(38, 75, 125) 1px solid;
+        }
+
+        .input-group-addon:first-child {
+            border-bottom-left-radius: 15px;
+            border-top-left-radius: 15px;
+            color: #fff;
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: -1px 0 0px 1000px rgba(38, 75, 125, 0.84) inset;
+            border: rgb(38, 75, 125) 1px solid;
+            border-left: 10px;
+        }
+
+        .gradient {
+            height: 3px;
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(left, #00b5ff, rgba(18, 25, 29, 0.44));
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(left, #00b5ff, rgba(18, 25, 29, 0.44));
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(left, #00b5ff, rgba(18, 25, 29, 0.44));
+            /*IE<9>*/
+            filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#00b5ff, endColorstr=rgba(18, 25, 29, 0.44));
+            /*IE8+*/
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#00b5ff, endColorstr=endColorstr=rgba(18, 25, 29, 0.44))";
+        }
+
+        #submit:focus {
+            border-radius: 15px;
+            /*border-width: 0;.*/
+        }
+    </style>
+</head>
+<body class="login-page">
+<div>
+    <div class="login-box">
+        <div class="login-logo">
+            <span style="color: #fff;">企业订单管理系统</span>
+        </div>
+        <!-- /.login-logo -->
+        <div class="gradient">
+        </div>
+        <div class="login-box-body">
+            <p class="login-box-msg">Sign in to start your session</p>
+
+            <div>
+
+                <label for="user">username</label>
+
+                <div class="input-group ">
+                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                    <input type="text" name="username" style="color: #fff;  background-color: rgba(38, 75, 125, 0.84)!important;border:solid 2px rgb(38, 75, 125);" id="user" class="form-control" pattern="^\w+$" required="" placeholder="工号">
+                </div>
+                <label for="password">password</label>
+
+                <div class="input-group ">
+                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                    <input type="password" style="color: #fff;   background-color: rgba(38, 75, 125, 0.84)!important;border:solid 2px rgb(38, 75, 125);  border-top-right-radius: 15px;            border-bottom-right-radius: 15px;" name="password" id="password" required="" class="form-control" placeholder="密码">
+                </div>
+                <div>
+                    <a href="#" class="pull-right" style="    padding: 5px;">忘记密码</a><br>
+                </div>
+                <div>
+                    <button style="background-color: #00b5ff;border-radius: 15px;" id="submit" class="btn btn-primary btn-block btn-flat">登陆
+                    </button>
+                    <span style="color: red; display: none;" id="errormessage">帐号/密码错误</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="script/js/jQuery-2.1.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var error = $('#errormessage');
+        var sumbit = $("#submit");
+        sumbit.on('click', function () {
+            if (!$('#user').val() || !$('#password').val()) {
+                error.text('请输入帐号/密码').show();
+                return;
+            }
+            error.hide();
+            $.ajax({
+                url: "/auth/login/",
+                method: "POST",
+                data: {
+                    username: $('#user').val(),
+                    password: $('#password').val()
+                }
+            }).done(function (data) {
+                window.location = 'index.html';
+            }).fail(function (data) {
+                error.text('帐号/密码错误').show();
+            })
+        });
+        if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {
+            $(window).load(function () {
+                $('input:-webkit-autofill').each(function () {
+                    var text = $(this).val();
+                    var name = $(this).attr('name');
+                    $(this).after(this.outerHTML).remove();
+                    $('input[name=' + name + ']').val(text);
+                });
+            });
+        }
+    });
+</script>
+</body>
+</html>

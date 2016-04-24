@@ -1,0 +1,36 @@
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title">Different Width</h3>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <span class="input-group-addon">货品类型</span>
+            <span class="input-group-addon">货品名称</span>
+            <span class="input-group-addon">货品价格</span>
+            <span class="input-group-addon">货品数量</span>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <input type="text" class="form-control" placeholder=".col-xs-3" ng-model="data.productType">
+            </div>
+            <div class="col-xs-3">
+                <input type="text" class="form-control" placeholder=".col-xs-4" ng-model="data.productName">
+            </div>
+            <div class="col-xs-3">
+                <input type="text" class="form-control" placeholder=".col-xs-5" ng-model="data.productPrice">
+            </div>
+            <div class="col-xs-3">
+                <input type="text" class="form-control" placeholder=".col-xs-5" ng-model="data.productQuantity">
+            </div>
+
+            <!--<div class="col-xs-2">-->
+                <!--<input type="text" class="form-control" placeholder=".col-xs-5">-->
+            <!--</div>-->
+            <!--<div class="col-xs-2">-->
+                <!--<input type="text" class="form-control" placeholder=".col-xs-5">-->
+            <!--</div>-->
+        </div>
+        <button  class="btn btn-primary" ng-click="addOrder()" ng-disabled="!productType||!productName||!productPrice||!productQuantity">提交</button>
+    </div>
+    <!-- /.box-body -->
+</div>
