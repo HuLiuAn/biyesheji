@@ -97,7 +97,7 @@ app.directive('bsSider', function () {
                 },
                 good: {
                     name: '领取商品',
-                    href: 'good/list',
+                    href: 'good/list/1',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu:[{
@@ -156,4 +156,41 @@ app.directive('bsSider', function () {
             };
         }
     }
+});
+app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_List) {
+
+    return {
+        restrict: 'E',
+        scope: {},
+        replace: true,
+        template: '<div> <div ng-if="!hasData&&failload" style="text-align: center;vertical-align: middle"> <span style=" line-height: 80px;"> ------------ 网络错误 ----------- </span> </div> <div ng-if="hasData==false&&!failload" style="text-align: center;vertical-align: middle"> <span style=" line-height: 80px;"> ------------当前无数据----------- </span> </div> <uib-pagination ng-show="hasData" total-items="bigTotalItems" ng-model="currentPage" max-size="4" previous-text="<<" next-text=">>" class="pagination-sm pull-right" rotate="false" ng-change="pageChanged()"></uib-pagination> </div>',
+        link: function ($scope, attr, el) {
+            $scope.currentState = $state.$current.self.name;
+            $scope.failload = false;
+
+            //获取查询参数
+            $Bs_List.get().then(function (data) {
+                //console.log(data);
+                $scope.bigTotalItems = data.count;
+                $scope.$emit('PageLoaded', data.list);
+                $scope.currentPage = $stateParams.page;
+                $scope.hasData = data.list.length;
+            }, function (data) {
+                $scope.hasData = false;
+                $scope.failload = true;
+            });
+            $scope.$on('PageWillChange', function (e, data) {
+                var searchdata = data;
+                searchdata.page = 1;
+                $state.go($scope.currentState, searchdata);
+            });
+            $scope.pageChanged = function () {
+                $state.go($scope.currentState, {page: $scope.currentPage});
+            };
+            $scope.reload = function () {
+                $state.reload();
+            };
+
+        }
+    };
 });

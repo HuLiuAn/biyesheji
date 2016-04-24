@@ -57,10 +57,10 @@ app.controller('menuCtrl', function ($scope) {
         console.log($scope.productQuantity);
         //console.log($scope.productSupplier);
     };
-    console.log($scope.orderMemu1);
+    //console.log($scope.orderMemu1);
 
 });
-app.controller('menuCtrl', function ($scope) {
+app.controller('goodListCtrl', function ($scope) {
 
     $scope.list = [{
         icon: "",
@@ -106,15 +106,16 @@ app.controller('menuCtrl', function ($scope) {
             remain: 20,
             repo: "A仓库"
         }];
-    //提交新增订单
-    //$scope.data = $scope;
-    $scope.addOrder = function () {
-        console.log($scope.productType);
-        console.log($scope.productName);
-        console.log($scope.productPrice);
-        console.log($scope.productQuantity);
-        //console.log($scope.productSupplier);
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
     };
-    console.log($scope.orderMemu1);
+
 
 });

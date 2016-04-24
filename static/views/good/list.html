@@ -1,9 +1,8 @@
-<div style="margin: 0 20px;padding-top:10px;">
+<div style="margin: 0 20px;padding-top:10px;padding-bottom: 40px;">
     <div class="input-group">
-        <input type="text" name="search" class="form-control" placeholder="Search">
-
+        <input type="text" name="search" class="form-control" ng-model="data.search" placeholder="Search">
         <div class="input-group-btn">
-            <button type="submit" name="submit" class="btn btn-warning btn-flat"><i class="fa fa-search"></i>
+            <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"><i class="fa fa-search"></i>
             </button>
         </div>
     </div>
@@ -30,5 +29,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="box-footer">
+        <bs-pagination></bs-pagination>
     </div>
 </div>

@@ -1,7 +1,43 @@
 /**
  * Created by huminghui on 2016/4/24.
  */
-var app = angular.module('myApp', ['ui.router']);
+//Ω”ø⁄≈‰÷√
+angular.module('bs.api', []).factory('$Bs_API', function () {
+
+    var listUrl = {
+        good: {
+            list: 'serv/goodlist'
+        }
+
+    };
+
+    var _$Bs_API = {
+        getUrl: function (index) {
+            //index= 'work.vm.pending'
+            var s = index.split('.');
+            var result = listUrl;
+            for (var i = 0; i < s.length; i++) {
+                result = result[s[i]];//÷≤„Ω‚Œˆ
+            }
+            return result;
+        },
+        concat: function (baseUrl, param) {
+            var url = baseUrl;
+            for (var i in param) {
+                if (!/\?/.test(url)) {
+                    url = url + '?' + i + "=" + param[i];
+                } else {
+                    url = url + '&' + i + "=" + param[i];
+                }
+            }
+            return url;
+        }
+    };
+
+
+    return _$Bs_API;
+});
+var app = angular.module('myApp', ['bs.api','ui.router', 'ui.bootstrap']);
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //≈‰÷√Õ¯÷∑
 
@@ -44,7 +80,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     }).error(function (data) {
 
                     });
-                }
+                };
                 $scope.changeInfo = function () {
                     console.log('changeInfo');
                 }
@@ -53,8 +89,13 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'home',
             templateUrl: 'views/home.html'
         }) .state('main.good-list', {
-            url: 'good/list',
-            templateUrl: 'views/good/list.html'
+            url: 'good/list/:page?search',
+            templateUrl: 'views/good/list.html',
+            controller:'goodListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
         });
     $urlRouterProvider.otherwise('/')
 }]);
