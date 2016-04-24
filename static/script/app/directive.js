@@ -1,5 +1,5 @@
 /**
- * Created by E440 on 2016/3/13.
+ * Created by huminghui  on 2016/3/13.
  */
 app.directive('bsSider', function () {
     //永远都会返回一个对象
@@ -15,6 +15,10 @@ app.directive('bsSider', function () {
         link: function ($scope,el,attr) {  //el是jquery的$,$('#heh')
 
             $scope.menu = {
+                home:{
+                    name: '主页',
+                    href: 'home'
+                },
                 order: {
                     name: '订单管理',
                     href: 'work/mine/vm/1',
@@ -131,58 +135,14 @@ app.directive('bsSider', function () {
                 },
                 account: {
                     name: '账户管理',
-                    href: 'work/mine/vm/1',
+                    href: 'user/info',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu:[{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '基本信息',
+                        href: 'user/info'
                     }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
-                    }]
-                },
-                chart: {
-                    name: '订单管理',
-                    href: 'work/mine/vm/1',
-                    icon: 'fa fa-table',
-                    base: "order",
-                    subMenu:[{
-                        name: '新增订单',
-                        href: 'orderApply'
-                    }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
-                    }]
-                },
-                chart: {
-                    name: '订单管理',
-                    href: 'work/mine/vm/1',
-                    icon: 'fa fa-table',
-                    base: "order",
-                    subMenu:[{
-                        name: '新增订单',
-                        href: 'orderApply'
-                    }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
+                        name: '修改密码'
                         //href: '/orderApply'
                     }]
                 }

@@ -46,6 +46,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     console.log('changeInfo');
                 }
             }
+        }) .state('main.home', {
+            url: 'home',
+            templateUrl: 'views/home.html'
         });
     $urlRouterProvider.otherwise('/')
 }]);

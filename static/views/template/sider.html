@@ -5,7 +5,7 @@
         <ul class="sidebar-menu">
             <li class="header">菜单</li>
             <li class="treeview" ng-repeat="item in menu">
-                <a href="item.href">
+                <a href="#/{{item.href}}">
                     <i class="fa fa-files-o"></i><span ng-bind="item.name"></span><i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
