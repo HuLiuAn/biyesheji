@@ -89,7 +89,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'home',
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
-        }).state('main.good-list', {
+        }).
+        //商品领取
+        state('main.good-list', {
             url: 'good/list/:page?search',
             templateUrl: 'views/good/list.html',
             controller: 'goodListCtrl',
@@ -117,6 +119,24 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'good/history/detail/:id',
             templateUrl: 'views/good/history-detail.html',
             controller: 'goodHisDetailCtrl'
+        }).
+        //商品管理
+        state('main.good-manage-list', {
+            url: 'good-manage/list/:page?search',
+            templateUrl: 'views/goodmanage/list.html',
+            controller: 'goodManageListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.good-manage-detail', {
+            url: 'good-manage/detail/:id',
+            templateUrl: 'views/goodmanage/detail.html',
+            controller: 'goodManageDetailCtrl'
+        }).state('main.good-manage-new', {
+            url: 'good-manage/new',
+            templateUrl: 'views/goodmanage/new.html',
+            controller: 'goodManageNewCtrl'
         });
     $urlRouterProvider.otherwise('/')
 }]);

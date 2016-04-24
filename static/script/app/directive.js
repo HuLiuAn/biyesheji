@@ -12,19 +12,61 @@ app.directive('bsSider', function () {
         templateUrl: "views/template/sider.html",
         scope: {},//定义scope,把作用域隔离开
         //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
-        link: function ($scope,el,attr) {  //el是jquery的$,$('#heh')
+        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
 
             $scope.menu = {
-                home:{
+                home: {
                     name: '主页',
                     href: 'home'
+                },
+                account: {
+                    name: '账户管理',
+                    href: 'user/info',
+                    icon: 'fa fa-table',
+                    base: "order",
+                    subMenu: [{
+                        name: '基本信息',
+                        href: 'user/info'
+                    }, {
+                        name: '修改密码'
+                        //href: '/orderApply'
+                    }]
+                },
+                good: {
+                    name: '领取商品',
+                    href: 'good/list/1',
+                    icon: 'fa fa-table',
+                    base: "order",
+                    subMenu: [{
+                        name: '商品列表',
+                        href: 'good/list/1'
+                    }, {
+                        name: '领取清单',
+                        href: 'good/cart'
+                    }, {
+                        name: '领取记录',
+                        href: 'good/history/1'
+                    }]
+                },
+                goodmanager: {
+                    name: '商品管理',
+                    href: 'good-manage/list/1',
+                    icon: 'fa fa-table',
+                    base: "order",
+                    subMenu: [{
+                        name: '商品列表',
+                        href: 'good-manage/list/1'
+                    }, {
+                        name: '新增商品',
+                        href: 'good-manage/new'
+                    }]
                 },
                 order: {
                     name: '订单管理',
                     href: 'work/mine/vm/1',
                     icon: 'fa fa-table',
                     base: "order",
-                    subMenu:[{
+                    subMenu: [{
                         name: '新增订单',
                         href: 'orderApply'
                     }, {
@@ -43,7 +85,7 @@ app.directive('bsSider', function () {
                     href: 'work/mine/vm/1',
                     icon: 'fa fa-table',
                     base: "order",
-                    subMenu:[{
+                    subMenu: [{
                         name: '新增订单',
                         href: 'orderApply'
                     }, {
@@ -62,7 +104,7 @@ app.directive('bsSider', function () {
                     href: 'work/mine/vm/1',
                     icon: 'fa fa-table',
                     base: "order",
-                    subMenu:[{
+                    subMenu: [{
                         name: '新增订单',
                         href: 'orderApply'
                     }, {
@@ -81,7 +123,7 @@ app.directive('bsSider', function () {
                     href: 'work/mine/vm/1',
                     icon: 'fa fa-table',
                     base: "order",
-                    subMenu:[{
+                    subMenu: [{
                         name: '新增订单',
                         href: 'orderApply'
                     }, {
@@ -93,22 +135,6 @@ app.directive('bsSider', function () {
                     }, {
                         name: '退货订单'
                         //href: '/orderApply'
-                    }]
-                },
-                good: {
-                    name: '领取商品',
-                    href: 'good/list/1',
-                    icon: 'fa fa-table',
-                    base: "order",
-                    subMenu:[{
-                        name: '商品列表',
-                        href: 'good/list/1'
-                    }, {
-                        name: '领取清单',
-                        href: 'good/cart'
-                    }, {
-                        name: '领取记录',
-                        href: 'good/history/1'
                     }]
                 },
                 receive: {
@@ -116,7 +142,7 @@ app.directive('bsSider', function () {
                     href: 'work/mine/vm/1',
                     icon: 'fa fa-table',
                     base: "order",
-                    subMenu:[{
+                    subMenu: [{
                         name: '新增订单',
                         href: 'orderApply'
                     }, {
@@ -127,19 +153,6 @@ app.directive('bsSider', function () {
                         //href: '/orderApply'
                     }, {
                         name: '退货订单'
-                        //href: '/orderApply'
-                    }]
-                },
-                account: {
-                    name: '账户管理',
-                    href: 'user/info',
-                    icon: 'fa fa-table',
-                    base: "order",
-                    subMenu:[{
-                        name: '基本信息',
-                        href: 'user/info'
-                    }, {
-                        name: '修改密码'
                         //href: '/orderApply'
                     }]
                 }

@@ -1,0 +1,67 @@
+<div style="padding: 10px;border:1px solid rgba(128, 128, 128, 0.26);">
+    <div class="box-body box-profile" style="padding: 10px;border:1px solid rgba(128, 128, 128, 0.26);">
+        <div class="row">
+            <div class="col-lg-7 col-sm-7 col-md-7">
+                <uib-carousel active="active" interval="myInterval" no-wrap="noWrapSlides">
+                    <uib-slide ng-repeat="slide in slides track by slide.id" index="slide.id">
+                        <img ng-src="{{slide.image}}" style="margin:auto;">
+
+                        <div class="carousel-caption">
+                            <h4>Slide {{slide.id}}</h4>
+
+                            <p>{{slide.text}}</p>
+                        </div>
+                    </uib-slide>
+                </uib-carousel>
+            </div>
+            <div style="padding: 10px;">
+                <h3>
+                    万隆米景全系列64位苹果硬盘修复仪WL64位苹果硬盘测试架扩容改序
+                </h3>
+
+                <div>
+                    描述:
+                    <p>
+                        完美写5S/6G/6PLUS ipad 等底层数据 1：支持机型5S/6G/6PLUS/mini2/ mini3/
+                        air1/air2进行SN、国家、颜色等修改，2：支持硬盘容量进行扩展或修复,16G升64G,128G内存。3修复WIFI、蓝牙不能使用的问题。(全国顺丰包邮）
+                    </p>
+                </div>
+                <div style="margin-top:5px;">
+                    规格：
+                    <button class="btn btn-warning">
+                        大
+                    </button>
+                    <button class="btn btn-warning">
+                        中
+                    </button>
+                    <button class="btn btn-warning">
+                        小
+                    </button>
+                </div>
+
+                <div style="margin-top:5px;">数量：
+                    <a ng-click="minus()" style="height: 26px;width: 10px; margin: 0;"
+                       class="btn btn-smamll btn-default">-</a>
+                    <input type="text"
+                           style="width: 60px;"
+                           data-max="4980"
+                           value="{{data.amount}}"
+                           autocomplete="off">
+                    <a ng-click="add()" style="height: 26px;width: 10px; margin: 0;"
+                       class="btn btn-smamll btn-default">+</a>
+                </div>
+                <div style="position: relative;">
+                    <a href="#/good/detail/1" class="btn btn-primary"
+                       style="position: absolute;top:-20px;;right: 20px;"><b>领取该商品</b></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table style="width: 100%;margin-top: 20px;">
+        <tr ng-repeat="item in pro" style="border: 1px solid gainsboro">
+            <td ng-bind="item.title" style="width:25%;border-right: 1px solid gainsboro;text-align: right"></td>
+            <td ng-bind="item.value" style="text-align:center;width: 84%"></td>
+        </tr>
+    </table>
+    <img class="img-responsive " width="150px;" src="style/img/linecode.jpg" alt="User profile picture">
+</div>

@@ -1,0 +1,45 @@
+<div style="margin: 0 20px;padding-top:10px;padding-bottom: 40px;">
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">商品列表</h3>
+
+        <div class="box-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+                <input type="text" ng-model="data.search" placeholder="search" class="form-control pull-right" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+                <div class="input-group-btn">
+                    <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+            <tbody><tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>缩略图</th>
+                <th>条形码</th>
+                <th>类别</th>
+                <th>选中</th>
+                <th>查看</th>
+            </tr>
+            <tr ng-repeat="item in list">
+                <td ng-bind="item.id" ></td>
+                <td ng-bind="item.name" ></td>
+                <td><img src="style/img/avatar.png"style="height: 20px;"></td>
+                <td ng-bind="item.linecode" ></td>
+                <td ng-bind="item.cat" >.</td>
+                <td><input type="checkbox" /> </td>
+                <td><a href="javascript:void(0)"><i class="fa fa-edit"></i></a></td>
+            </tr>
+            </tbody></table>
+    </div>
+    <!-- /.box-body -->
+    <!-- /.box-body -->
+    <div class="box-footer clearfix no-border">
+        <bs-pagination></bs-pagination>
+    </div>
+</div></div>
