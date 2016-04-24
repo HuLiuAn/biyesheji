@@ -37,7 +37,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
 
     return _$Bs_API;
 });
-var app = angular.module('myApp', ['bs.api','ui.router', 'ui.bootstrap']);
+var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //≈‰÷√Õ¯÷∑
 
@@ -49,7 +49,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         .state('main', {
             url: '/',
             templateUrl: 'views/main.html',
-            controller:'menuCtrl'
+            controller: 'menuCtrl'
         })
         .state('main.orderApply', {
             url: 'orderApply',
@@ -72,9 +72,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 });
                 $scope.changeKey = function () {
                     console.log('changeKey');
-                    $http.post('user/changekey',{
-                        old:'XX',
-                        new:"ddd"
+                    $http.post('user/changekey', {
+                        old: 'XX',
+                        new: "ddd"
                     }).success(function (data) {
 
                     }).error(function (data) {
@@ -85,18 +85,34 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     console.log('changeInfo');
                 }
             }
-        }) .state('main.home', {
+        }).state('main.home', {
             url: 'home',
             templateUrl: 'views/home.html',
-            controller:'homeCtrl'
-        }) .state('main.good-list', {
+            controller: 'homeCtrl'
+        }).state('main.good-list', {
             url: 'good/list/:page?search',
             templateUrl: 'views/good/list.html',
-            controller:'goodListCtrl',
+            controller: 'goodListCtrl',
             Handler: {
                 number: 1,
                 list: 'good.list'
             }
+        }).state('main.good-cart', {
+            url: 'good/cart',
+            templateUrl: 'views/good/cart.html',
+            controller: 'goodCartCtrl'
+        }).state('main.good-his', {
+            url: 'good/history/:page',
+            templateUrl: 'views/good/history.html',
+            controller: 'goodHistoryCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.good-detail', {
+            url: 'good/detail/:id',
+            templateUrl: 'views/good/detail.html',
+            controller: 'goodDetailCtrl'
         });
     $urlRouterProvider.otherwise('/')
 }]);

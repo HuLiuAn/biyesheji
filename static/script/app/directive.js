@@ -102,13 +102,13 @@ app.directive('bsSider', function () {
                     base: "order",
                     subMenu:[{
                         name: '商品列表',
-                        href: 'good/list'
+                        href: 'good/list/1'
                     }, {
-                        name: '领取清单'
-                        //href: '/orderApply'
+                        name: '领取清单',
+                        href: 'good/cart'
                     }, {
-                        name: '领取记录'
-                        //href: '/orderApply'
+                        name: '领取记录',
+                        href: 'good/history/1'
                     }]
                 },
                 receive: {

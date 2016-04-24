@@ -1,0 +1,43 @@
+<div class="box box-primary" style="margin-bottom: 0;padding: 20px;">
+    <div class="box-header with-border">
+        <h3 class="box-title">领取清单</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <ul class="products-list product-list-in-box" ng-repeat="(key,ite) in cartlist">
+            <li class="item">
+                <div class="product-img">
+                    <img ng-src="{{ite.icon}}" alt="Product Image">
+                </div>
+                <div class="product-info">
+                    <a href="javascript:void(0)" class="product-title">
+                        {{ite.name}}
+                        <span class="pull-right">
+                            <button type="button" ng-click="del(key)" class="btn btn-box-tool" ><i
+                                    class="fa fa-times"></i>
+                            </button>
+                        </span>
+                         <span class="pull-right">
+                            <a ng-click="minus(key)" style="height: 26px;width: 10px; margin: 0;" class="btn btn-smamll btn-default">-</a>
+                            <input type="text"
+                                   style="width: 60px;"
+                                   data-max="4980"
+                                   value="{{ite.amount}}"
+                                   autocomplete="off">
+                            <a ng-click="add(key)" style="height: 26px;width: 10px; margin: 0;"  class="btn btn-smamll btn-default">+</a>
+                        </span>
+                    </a>
+                        <span class="product-description">
+                         {{ite.description}}
+                        </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer text-center">
+        <a type="button" class="btn btn-default" href="#/good/list/1">返回</a>
+        <button type="button" class="btn btn-success" ng-click="submit()">提交</button>
+    </div>
+    <!-- /.box-footer -->
+</div>
