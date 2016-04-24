@@ -1,7 +1,7 @@
 <div style="margin: 0 20px;padding-top:10px;padding-bottom: 40px;">
     <div class="input-group">
         <!--<input type="text" name="search" class="form-control" ng-model="data.search" placeholder="Search">-->
-        <input type="text" ng-model="data.search" placeholder="Locations loaded via $http" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+        <input type="text" ng-model="data.search" placeholder="search" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
         <div class="input-group-btn">
             <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"><i class="fa fa-search"></i>
             </button>
