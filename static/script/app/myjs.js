@@ -53,7 +53,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 }
             }
         });
-    $urlRouterProvider.otherwise('/')
+    //$urlRouterProvider.otherwise('/')
 }]);
 
 app.controller('loginCtrl', function ($scope, $http) {
