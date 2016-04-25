@@ -200,7 +200,7 @@ app.controller('goodDetailCtrl', function ($scope) {
     $scope.data = {
         pictures: [],
         description: "这是商品描述",
-        linecode: "条形码",
+        barcode: "132421432153312432421",
         specify: [],
         properties: {}
     };

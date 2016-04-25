@@ -235,3 +235,20 @@ app.directive('bsUpload', function () {
         }
     }
 });
+app.directive('bsBarcode', function () {
+    return {
+        restrict: "E",
+        template: '<div id="bcTarget"></div>  ',
+        scope: {
+            code:"@"
+        },
+        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
+            var div= el.children('div');
+            console.log($scope.code)
+            if($scope.code){
+                div.barcode($scope.code, "ean13");
+            }
+
+        }
+    }
+});
