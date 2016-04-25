@@ -1,5 +1,5 @@
 /**
- * Created by huminghui  on 2016/3/13.
+ * Created by huminghui on 2016/3/13.
  */
 app.directive('bsSider', function () {
     //永远都会返回一个对象
@@ -12,7 +12,7 @@ app.directive('bsSider', function () {
         templateUrl: "views/template/sider.html",
         scope: {},//定义scope,把作用域隔离开
         //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
-        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
+        link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
 
             $scope.menu = {
                 home: {
@@ -207,7 +207,7 @@ app.directive('bsUpload', function () {
         //templateUrl: "views/template/sider.html",
         scope: {},//定义scope,把作用域隔离开
         //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
-        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
+        link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
             var up = el.children('#upload');
             //console.log(up)
             up.uploadify({
@@ -227,17 +227,42 @@ app.directive('bsUpload', function () {
 app.directive('bsBarcode', function () {
     return {
         restrict: "E",
-        template: '<div id="bcTarget"></div>  ',
+        template: '<div id="bcTarget"></div> ',
         scope: {
             code: "@"
         },
-        link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
+        link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
             var div = el.children('div');
             //console.log($scope.code)
             if ($scope.code) {
                 div.barcode($scope.code, "ean13");
             }
 
+        }
+    }
+});
+app.directive('bsSearch', function ($state) {
+    return {
+        restrict: "E",
+        replace: true,
+        template: '<div class="box-tools" style="width:400px;"> <div class="input-group input-group-sm" > <span class="input-group-addon" ng-if="hasSearch"> 当前搜索：<a href="" ng-bind="hasSearch" ng-click="noSearch()">safdsafa</a> </span> <input type="text" ng-model="data.search" placeholder="search" class="form-control " uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control"> <div class="input-group-btn"> <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"> <i class="fa fa-search"></i> </button> </div> </div> </div> ',
+        link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
+            $scope.data = {};
+            $scope.search = function () {
+                console.log('click search');
+                $scope.$broadcast('PageWillChange', $scope.data);
+            };
+            $scope.hasSearch = $state.params.search;
+            $scope.noSearch = function () {
+                $scope.data = {
+                    search: ""
+                };
+                $scope.search();
+            };
+
+            $scope.getLocation = function (val) {
+                return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+            };
         }
     }
 });

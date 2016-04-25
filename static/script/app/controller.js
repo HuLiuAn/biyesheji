@@ -64,17 +64,11 @@ app.controller('goodListCtrl', function ($scope) {
 
     });
     //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search');
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodCartCtrl', function ($scope) {
+
+
 
     $scope.cartlist = {
         0: {
@@ -273,16 +267,6 @@ app.controller('goodManageListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodManageDetailCtrl', function ($scope) {
 
@@ -311,16 +295,7 @@ app.controller('goodProviderListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodProviderDetailCtrl', function ($scope) {
 
@@ -349,16 +324,7 @@ app.controller('goodOrderListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodOrderDetailCtrl', function ($scope) {
 
@@ -388,16 +354,7 @@ app.controller('goodHubListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodHubDetailCtrl', function ($scope) {
 
@@ -426,16 +383,7 @@ app.controller('goodInoutListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodInoutDetailCtrl', function ($scope) {
 
@@ -465,16 +413,7 @@ app.controller('goodCheckOrderListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodCheckOrderDetailCtrl', function ($scope) {
 
@@ -500,16 +439,6 @@ app.controller('goodCheckGoodListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodCheckGoodDetailCtrl', function ($scope) {
 
