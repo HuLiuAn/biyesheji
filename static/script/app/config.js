@@ -283,3 +283,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         });
     $urlRouterProvider.otherwise('/')
 }]);
+
+//投影幕
+app.run(function ($rootScope, $location) {
+    $rootScope.$on('$stateChangeStart',
+        function (event, toState, toParams, fromState, fromParams, options) {
+            Pace.restart();
+        });
+});
