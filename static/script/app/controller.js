@@ -342,3 +342,228 @@ app.controller('goodManageDetailCtrl', function ($scope) {
 app.controller('goodManageNewCtrl', function ($scope) {
 
 });
+
+app.controller('goodProviderListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodProviderDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodProviderNewCtrl', function ($scope) {
+
+});
+
+app.controller('goodOrderListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodOrderDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodOrderNewCtrl', function ($scope) {
+
+});
+
+
+app.controller('goodHubListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodHubDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodHubNewCtrl', function ($scope) {
+
+});
+
+app.controller('goodInoutListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodInoutDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodInoutNewCtrl', function ($scope) {
+
+});
+
+
+app.controller('goodCheckOrderListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodCheckOrderDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+
+app.controller('goodCheckGoodListCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+app.controller('goodCheckGoodDetailCtrl', function ($scope) {
+
+    $scope.$on('PageLoaded', function (e, data) {
+        $scope.list = data;
+
+    });
+    //获取当前页面
+    $scope.data = {};
+    $scope.search = function () {
+        console.log('click search')
+        $scope.$broadcast('PageWillChange', $scope.data);
+    };
+
+    $scope.getLocation = function (val) {
+        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    };
+});
+

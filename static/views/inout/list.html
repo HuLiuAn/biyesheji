@@ -1,12 +1,12 @@
 <div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
 <div class="box">
     <div class="box-header">
-        <h3 class="box-title">商品列表</h3>
+        <h3 class="box-title">订单查询</h3>
 
         <div class="box-tools">
             <div class="input-group input-group-sm pull-right" style="width: 50px;margin-left: 5px;">
                 <div class="input-group-btn">
-                    <a type="submit" name="submit" href="#/good-manage/new" class="btn btn-success btn-flat">
+                    <a type="submit" name="submit" href="#/order/new" class="btn btn-success btn-flat">
                         <i class="fa fa-plus"></i>新增
                     </a>
                 </div>
@@ -26,21 +26,21 @@
         <table class="table table-hover">
             <tbody><tr>
                 <th>选中</th>
-                <th>ID</th>
-                <th>名称</th>
-                <th>缩略图</th>
-                <th>条形码</th>
-                <th>类别</th>
-                <th>查看</th>
+                <th>时间</th>
+                <th>单号</th>
+                <th>仓库审核通过人</th>
+                <th>采购负责人</th>
+                <th>状态</th>
+                <th>操作</th>
             </tr>
             <tr ng-repeat="item in list">
                 <td><input type="checkbox" /> </td>
-                <td ng-bind="item.id" ></td>
-                <td ng-bind="item.name" ></td>
-                <td><img src="style/img/avatar.png"style="height: 20px;"></td>
-                <td ng-bind="item.linecode" ></td>
-                <td ng-bind="item.cat" >.</td>
-                <td><a href="#/good-manage/detail/1"><i class="fa fa-edit"></i></a></td>
+                <td ng-bind="item.time" ></td>
+                <td ng-bind="item.oid" ></td>
+                <td ng-bind="item.pass" ></td>
+                <td ng-bind="item.owner" ></td>
+                <td ng-bind="item.status" ></td>
+                <td><a href="#/order/detail/1"><i class="fa fa-edit"></i></a></td>
             </tr>
             </tbody></table>
     </div>

@@ -61,23 +61,30 @@ app.directive('bsSider', function () {
                         href: 'good-manage/new'
                     }]
                 },
-                order: {
-                    name: '订单管理',
-                    href: 'work/mine/vm/1',
+                provider: {
+                    name: '供应商',
+                    href: 'provider/list/1',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu: [{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '供应商列表',
+                        href: 'provider/list/1'
                     }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
+                        name: '新增供应商',
+                        href: 'provider/new'
+                    }]
+                },
+                order: {
+                    name: '订单管理',
+                    href: 'order/list/1',
+                    icon: 'fa fa-table',
+                    base: "order",
+                    subMenu: [{
+                        name: '采购',
+                        href: 'order/new'
                     }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
+                        name: '订单查询',
+                        href: 'order/list/1'
                     }]
                 },
                 chart: {
@@ -99,61 +106,43 @@ app.directive('bsSider', function () {
                         //href: '/orderApply'
                     }]
                 },
-                instore: {
-                    name: '入库管理',
-                    href: 'work/mine/vm/1',
+                hub: {
+                    name: '仓库管理',
+                    href: 'hub/list/1',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu: [{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '新增仓库',
+                        href: 'hub/new'
                     }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
+                        name: '仓库列表',
+                        href: 'hub/list/1'
                     }]
                 },
-                outstore: {
-                    name: '出库管理',
-                    href: 'work/mine/vm/1',
+                inout: {
+                    name: '调拨管理',
+                    href: 'inout/list/1',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu: [{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '仓库调拨',
+                        href: 'inout/new'
                     }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
+                        name: '查看调拨单',
+                        href: 'inout/list/1'
                     }]
                 },
-                receive: {
-                    name: '领取管理',
-                    href: 'work/mine/vm/1',
+                check: {
+                    name: '审核',
+                    href: 'check/order/1',
                     icon: 'fa fa-table',
                     base: "order",
                     subMenu: [{
-                        name: '新增订单',
-                        href: 'orderApply'
+                        name: '采购订单',
+                        href: 'check/order/1'
                     }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
+                        name: '领取单',
+                        href: 'check/good/1'
                     }]
                 }
             };
@@ -244,7 +233,7 @@ app.directive('bsBarcode', function () {
         },
         link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
             var div= el.children('div');
-            console.log($scope.code)
+            //console.log($scope.code)
             if($scope.code){
                 div.barcode($scope.code, "ean13");
             }

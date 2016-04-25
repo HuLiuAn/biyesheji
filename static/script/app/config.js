@@ -1,7 +1,7 @@
 /**
  * Created by huminghui on 2016/4/24.
  */
-//½Ó¿ÚÅäÖÃ
+//æ¥å£é…ç½®
 angular.module('bs.api', []).factory('$Bs_API', function () {
 
     var listUrl = {
@@ -17,7 +17,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
             var s = index.split('.');
             var result = listUrl;
             for (var i = 0; i < s.length; i++) {
-                result = result[s[i]];//Öğ²ã½âÎö
+                result = result[s[i]];//é€å±‚è§£æ
             }
             return result;
         },
@@ -39,7 +39,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
 });
 var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    //ÅäÖÃÍøÖ·
+    //é…ç½®ç½‘å€
 
     $stateProvider.state('login', {
         url: '/login',
@@ -59,15 +59,15 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'user/info',
             templateUrl: 'views/user/info.html',
             controller: function ($scope, $http) {
-                //»ñÈ¡ÓÃ»§ĞÅÏ¢
+                //è·å–ç”¨æˆ·ä¿¡æ¯
                 $http.get('user/info').success(function (data) {
                     //var use
                     $scope.user = data;
                 }).error(function (data) {
                     $scope.user = {
-                        name: '»ñÈ¡Ê§°Ü',
-                        phone: '»ñÈ¡Ê§°Ü',
-                        type: 'Î´Öª'
+                        name: 'è·å–å¤±è´¥',
+                        phone: 'è·å–å¤±è´¥',
+                        type: 'æœªçŸ¥'
                     }
                 });
                 $scope.changeKey = function () {
@@ -90,7 +90,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
         }).
-        //ÉÌÆ·ÁìÈ¡
+        //å•†å“é¢†å–
         state('main.good-list', {
             url: 'good/list/:page?search',
             templateUrl: 'views/good/list.html',
@@ -120,7 +120,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: 'views/good/history-detail.html',
             controller: 'goodHisDetailCtrl'
         }).
-        //ÉÌÆ·¹ÜÀí
+        //å•†å“ç®¡ç†
         state('main.good-manage-list', {
             url: 'good-manage/list/:page?search',
             templateUrl: 'views/goodmanage/list.html',
@@ -137,6 +137,101 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'good-manage/new',
             templateUrl: 'views/goodmanage/new.html',
             controller: 'goodManageNewCtrl'
-        });
+        }).
+        //ä¾›åº”å•†ç®¡ç†
+        state('main.provider-list', {
+            url: 'provider/list/:page?search',
+            templateUrl: 'views/provider/list.html',
+            controller: 'goodProviderListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.provider-detail', {
+            url: 'provider/detail/:id',
+            templateUrl: 'views/provider/detail.html',
+            controller: 'goodProviderDetailCtrl'
+        }).state('main.provider-new', {
+            url: 'provider/new',
+            templateUrl: 'views/provider/new.html',
+            controller: 'goodProviderNewCtrl'
+        }).
+        //è®¢å•ç®¡ç†
+        state('main.order-list', {
+            url: 'order/list/:page?search',
+            templateUrl: 'views/order/list.html',
+            controller: 'goodOrderListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.order-detail', {
+            url: 'order/detail/:id',
+            templateUrl: 'views/order/detail.html',
+            controller: 'goodOrderDetailCtrl'
+        }).state('main.order-new', {
+            url: 'order/new',
+            templateUrl: 'views/order/new.html',
+            controller: 'goodOrderNewCtrl'
+        }). //ä»“åº“ç®¡ç†
+        state('main.hub-list', {
+            url: 'hub/list/:page?search',
+            templateUrl: 'views/hub/list.html',
+            controller: 'goodHubListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.hub-detail', {
+            url: 'hub/detail/:id',
+            templateUrl: 'views/hub/detail.html',
+            controller: 'goodHubDetailCtrl'
+        }).state('main.hub-new', {
+            url: 'hub/new',
+            templateUrl: 'views/hub/new.html',
+            controller: 'goodHubNewCtrl'
+        }). //æŒ‘æ‹¨ç®¡ç†
+        state('main.inout-list', {
+            url: 'inout/list/:page?search',
+            templateUrl: 'views/inout/list.html',
+            controller: 'goodInoutListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.inout-detail', {
+            url: 'inout/detail/:id',
+            templateUrl: 'views/inout/detail.html',
+            controller: 'goodInoutDetailCtrl'
+        }).state('main.inout-new', {
+            url: 'inout/new',
+            templateUrl: 'views/inout/new.html',
+            controller: 'goodInoutNewCtrl'
+        }). //å®¡æ ¸ç®¡ç†
+        state('main.check-order', {
+            url: 'check/order/:page?search',
+            templateUrl: 'views/check/order.html',
+            controller: 'goodCheckOrderListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }).state('main.check-good', {
+            url: 'check/good/:page?search',
+            templateUrl: 'views/check/good.html',
+            controller: 'goodCheckGoodListCtrl',
+            Handler: {
+                number: 1,
+                list: 'good.list'
+            }
+        }). state('main.check-order-detail', {
+        url: 'check/order-detail/:id',
+        templateUrl: 'views/check/order-detail.html',
+        controller: 'goodCheckOrderDetailCtrl'
+    }).state('main.check-good-detail', {
+        url: 'check/good-detail/:id',
+        templateUrl: 'views/check/good-detail.html',
+        controller: 'goodCheckGoodDetailCtrl'
+    });
     $urlRouterProvider.otherwise('/')
 }]);
