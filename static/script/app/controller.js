@@ -25,17 +25,17 @@ app.controller('menuCtrl', function ($scope) {
 app.controller('homeCtrl', function ($scope) {
     $scope.info = [{
         name: '订单',
-        href: 'orderApply',
+        href: 'order/list/1',
         icon: "ion-bag",
         background: "bg-aqua"
     }, {
         name: '供应商',
-        href: 'orderApply',
+        href: 'provider/list/1',
         icon: "ion-person",
         background: "bg-maroon"
     }, {
         name: '商品',
-        href: 'orderApply',
+        href: 'good/list/1',
         icon: "ion-tshirt",
         background: "bg-yellow"
     }, {
@@ -45,12 +45,12 @@ app.controller('homeCtrl', function ($scope) {
         background: "bg-blue"
     }, {
         name: '仓库',
-        href: 'orderApply',
+        href: 'hub/list/1',
         icon: "ion-stats-bars",
         background: "bg-green"
     }, {
         name: '采购',
-        href: 'orderApply',
+        href: 'order/new',
         icon: "ion-android-cart",
         background: "bg-teal"
     }];
