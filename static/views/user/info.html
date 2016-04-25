@@ -1,68 +1,42 @@
-<div class="box box-primary">
+<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
-        <h3 class="box-title">About Me</h3>
-        <button class="btn btn-warning btn-small pull-right" data-toggle="modal" data-target="#myModal">修改密码</button>
-        <!--<button class="btn btn-default btn-small pull-right">修改信息</button>-->
+        <h3 class="box-title">个人信息</h3>
+        <a class="btn btn-warning btn-small pull-right" href="#/user/change">修改密码</a>
+        <button class="btn btn-default btn-small pull-right" ng-click="editToggle()">修改信息</button>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
         <strong><i class="fa fa-book margin-r-5"></i> 姓名</strong>
 
         <p class="text-muted">
-           {{user.name}}
+          <span  ng-if="!edit">{{user.name}}</span>  <input ng-if="edit" type="text" ng-model="info.name" />
         </p>
 
         <hr>
 
         <strong><i class="fa fa-mobile-phone margin-r-5"></i> 手机号</strong>
 
-        <p class="text-muted">{{user.phone}}</p>
+        <p class="text-muted">
+            <span  ng-if="!edit">{{user.phone}}</span><input ng-if="edit" type="text" ng-model="info.phone" />
+        </p>
 
         <hr>
 
         <strong><i class="fa  fa-user    margin-r-5"></i> 角色</strong>
 
-        <p class="text-muted">{{user.type}}</p>
+        <p class="text-muted">
+            <span  ng-if="!edit">{{user.type}}</span>
+            <select ng-if="edit" ng-model="info.type" >
+                <option value="1">管理员</option>
+                <option value="2">采购员</option>
+                <option value="3">员工</option>
+            </select>
+        </p>
 
 
         <hr>
+        <a type="button"  ng-if="edit" class="btn btn-default" href="" ng-click="editToggle()">取消</a>
+        <button  ng-if="edit" type="button" class="btn btn-primary" ng-click="save()">保存</button>
     </div>
     <!-- /.box-body -->
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">修改密码</h4>
-            </div>
-            <div class="modal-body">
-                <label for="oldpassword">旧密码</label>
-
-                <div class="input-group ">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input type="password"  name="password" id="oldpassword" required="" class="form-control" placeholder="密码">
-                </div>
-                <label for="password1">新密码</label>
-
-                <div class="input-group ">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input type="password"name="password" id="password1" required="" class="form-control" placeholder="密码">
-                </div>
-                <label for="password2">新密码</label>
-
-                <div class="input-group ">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input type="password"name="password" id="password2" required="" class="form-control" placeholder="密码">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" ng-click="changeKey()">保存</button>
-            </div>
-        </div>
-    </div>
 </div>

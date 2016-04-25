@@ -28,8 +28,8 @@ app.directive('bsSider', function () {
                         name: '基本信息',
                         href: 'user/info'
                     }, {
-                        name: '修改密码'
-                        //href: '/orderApply'
+                        name: '修改密码',
+                        href: 'user/change'
                     }]
                 },
                 good: {
@@ -208,7 +208,7 @@ app.directive('bsUpload', function () {
         scope: {},//定义scope,把作用域隔离开
         //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
         link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
-           var up= el.children('#upload');
+            var up = el.children('#upload');
             //console.log(up)
             up.uploadify({
                 height: 30,
@@ -219,7 +219,7 @@ app.directive('bsUpload', function () {
             });
             $scope.upload = function () {
                 console.log('upload')
-              up.uploadify('upload')
+                up.uploadify('upload')
             };
         }
     }
@@ -229,12 +229,12 @@ app.directive('bsBarcode', function () {
         restrict: "E",
         template: '<div id="bcTarget"></div>  ',
         scope: {
-            code:"@"
+            code: "@"
         },
         link: function ($scope, el, attr) {  //el是jquery的$,$('#heh')
-            var div= el.children('div');
+            var div = el.children('div');
             //console.log($scope.code)
-            if($scope.code){
+            if ($scope.code) {
                 div.barcode($scope.code, "ean13");
             }
 

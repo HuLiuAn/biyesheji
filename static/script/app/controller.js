@@ -20,44 +20,6 @@ app.controller('loginCtrl', function ($scope, $http) {
     });
 });
 app.controller('menuCtrl', function ($scope) {
-    $scope.orderMemu = [{
-        name: '新增订单',
-        href: 'orderApply'
-    }, {
-        name: '入库订单'
-        //href: '/orderApply'
-    }, {
-        name: '购货订单'
-        //href: '/orderApply'
-    }, {
-        name: '退货订单'
-        //href: '/orderApply'
-    }];
-
-    $scope.hehe = "sdfs"
-    $scope.orderMemu1 = [{
-        name: '新增订单',
-        href: 'orderApply'
-    }, {
-        name: '入库订单'
-        //href: '/orderApply'
-    }, {
-        name: '购货订单'
-        //href: '/orderApply'
-    }, {
-        name: '退货订单'
-        //href: '/orderApply'
-    }];
-    //提交新增订单
-    //$scope.data = $scope;
-    $scope.addOrder = function () {
-        console.log($scope.productType);
-        console.log($scope.productName);
-        console.log($scope.productPrice);
-        console.log($scope.productQuantity);
-        //console.log($scope.productSupplier);
-    };
-    //console.log($scope.orderMemu1);
 
 });
 app.controller('homeCtrl', function ($scope) {
@@ -104,7 +66,7 @@ app.controller('goodListCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        console.log('click search');
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 

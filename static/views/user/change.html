@@ -1,0 +1,33 @@
+<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+    <div class="box-header with-border">
+        <h3 class="box-title">修改密码</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <label for="oldpassword">旧密码</label>
+
+        <div class="input-group ">
+            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+            <input type="password"  name="password" id="oldpassword" ng-model="key.old" required="" class="form-control" placeholder="密码">
+        </div>
+        <label for="password1">新密码</label>
+
+        <div class="input-group ">
+            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+            <input type="password"name="password" id="password1" ng-model="key.new1" required="" class="form-control" placeholder="密码">
+        </div>
+        <label for="password2">新密码</label>
+
+        <div class="input-group ">
+            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+            <input type="password"name="password" id="password2" ng-model="key.new2" required="" class="form-control" placeholder="密码">
+        </div>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer">
+        <a type="button" class="btn btn-default" href="#/user/info">取消</a>
+        <button type="button" class="btn btn-primary" ng-click="changeKey()">保存</button>
+    </div>
+</div>
+
+

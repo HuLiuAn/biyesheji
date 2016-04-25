@@ -10,7 +10,12 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         }
 
     };
-
+    var API = {
+        logout: "sds",//退出
+        change_key: "dfs",//修改密码
+        change_info: "sdsdd",//修改信息
+        get_info: "dsd"//获取个人信息
+    };
     var _$Bs_API = {
         getUrl: function (index) {
             //index= 'work.vm.pending'
@@ -31,6 +36,9 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
                 }
             }
             return url;
+        },
+        getApi: function (name) {
+            return API[name];
         }
     };
 
@@ -58,11 +66,12 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }).state('main.user-info', {
             url: 'user/info',
             templateUrl: 'views/user/info.html',
-            controller: function ($scope, $http) {
+            controller: function ($scope, $http,$Bs_API) {
                 //获取用户信息
-                $http.get('user/info').success(function (data) {
+                $http.get($Bs_API.getApi('get_info')).success(function (data) {
                     //var use
                     $scope.user = data;
+                    $scope.info = data;
                 }).error(function (data) {
                     $scope.user = {
                         name: '获取失败',
@@ -70,9 +79,46 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                         type: '未知'
                     }
                 });
+                $scope.editToggle = function () {
+                    $scope.edit = !$scope.edit;
+                    if ($scope.edit) {
+                        $scope.info = extend($scope.user);
+                    }
+
+                };
+
+                $scope.save = function () {
+                    $http.post($Bs_API.getApi('change_info'), $scope.info).success(function (data) {
+                        //var use
+                        $scope.user = extend($scope.info);
+                    }).error(function (data) {
+
+                    });
+                };
+
+                function extend(data) {
+                    var cp = {};
+                    for (var i in data) {
+                        cp[i] = data[i];
+                    }
+                    return cp;
+                }
+            }
+        }).state('main.user-change', {
+            url: 'user/change',
+            templateUrl: 'views/user/change.html',
+            controller: function ($scope, $http, $Bs_API) {
+                //获取用户信息
+                $scope.key = {};
+
                 $scope.changeKey = function () {
-                    console.log('changeKey');
-                    $http.post('user/changekey', {
+
+                    if (!validation()) {
+                        console.log('密码不一致')
+                        return;
+                    }
+
+                    $http.post($Bs_API.getApi('change_key'), {
                         old: 'XX',
                         new: "ddd"
                     }).success(function (data) {
@@ -81,8 +127,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
 
                     });
                 };
-                $scope.changeInfo = function () {
-                    console.log('changeInfo');
+
+
+                function validation() {
+                    return ($scope.key.new1 && $scope.key.new2 && $scope.key.new1 == $scope.key.new2);
                 }
             }
         }).state('main.home', {
@@ -224,14 +272,14 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 number: 1,
                 list: 'good.list'
             }
-        }). state('main.check-order-detail', {
-        url: 'check/order-detail/:id',
-        templateUrl: 'views/check/order-detail.html',
-        controller: 'goodCheckOrderDetailCtrl'
-    }).state('main.check-good-detail', {
-        url: 'check/good-detail/:id',
-        templateUrl: 'views/check/good-detail.html',
-        controller: 'goodCheckGoodDetailCtrl'
-    });
+        }).state('main.check-order-detail', {
+            url: 'check/order-detail/:id',
+            templateUrl: 'views/check/order-detail.html',
+            controller: 'goodCheckOrderDetailCtrl'
+        }).state('main.check-good-detail', {
+            url: 'check/good-detail/:id',
+            templateUrl: 'views/check/good.html',
+            controller: 'goodCheckGoodDetailCtrl'
+        });
     $urlRouterProvider.otherwise('/')
 }]);
