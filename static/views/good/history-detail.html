@@ -9,7 +9,8 @@
             <div class="col-xs-12">
                 <h2 class="page-header">
                      清单详情
-                    <small class="pull-right">Date: 2/10/2014</small>
+                    <small class="pull-right"> <i class="fa fa-clock-o"></i>
+                        {{data.receiveorder_date|timeformat}}</small>
                 </h2>
             </div>
         </div>
@@ -21,27 +22,37 @@
                     <table class="table">
                         <tbody><tr>
                             <th style="width:50%">单号:</th>
-                            <td>$250.30</td>
+                            <td ng-bind="data.receiveorder_number"></td>
+                        </tr>
+                        <tr>
+                            <th>申请人</th>
+                            <td ng-bind="data.receiveuser_name"></td>
                         </tr>
                         <tr>
                             <th>状态</th>
-                            <td>$10.34</td>
+                            <td > <span class="label  {{stateColor[data.receiveorder_state]}}">{{stateText[data.receiveorder_state]}}</span></td>
                         </tr>
                         <tr>
-                            <th>经手人</th>
-                            <td>$5.80</td>
+                            <th>产品:</th>
+                            <td ><a ng-bind="data.product_name" href="#/good/detail/{{data.product_id}}"></a></td>
+                        </tr>
+                        <tr>
+                            <th>产品图片:</th>
+                            <td><img style="max-width:500px;" ng-src="{{data.product_photo}}"/></td>
                         </tr>
                         <tr>
                             <th>Total:</th>
-                            <td>$265.24</td>
+                            <td ng-bind="data.product_amount"></td>
+                        </tr>
+                        <tr>
+                            <th>经手人</th>
+                            <td ng-bind="data.admituser_name"></td>
                         </tr>
                         </tbody></table>
                 </div>
             </div>
             <!-- /.col -->
         </div>
-
-
     </div>
     <!-- /.box-body -->
     <div class="box-footer clearfix no-border">

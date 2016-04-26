@@ -3,5 +3,12 @@
   "receiveorder_number": "132432432",
   "receiveorder_date": 1325432543,
   "receiveorder_state": 0,
-  "admituser": "xxxxxxxxxx"
+  "product_id": 1,
+  "product_name": "苹果",
+  "product_photo": "style/img/photo4.jpg",
+  "product_amount": 10,
+  "receiveuser_id": 1,
+  "receiveuser_name": "djflafjd",
+  "admituser_id": 22,
+  "admituser_name": "xxxxxxxxxx"
 }

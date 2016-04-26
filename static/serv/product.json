@@ -1,7 +1,7 @@
 {
   "product_id": 1,
   "product_name": "apple",
-  "product_photo ": "style/img/photo4.jpg",
+  "product_photo": "style/img/photo4.jpg",
   "product_photogroup": ["style/img/photo4.jpg","style/img/photo4.jpg","style/img/photo4.jpg","style/img/photo4.jpg"],
   "count": 500,
   "product_barcode": 121200,

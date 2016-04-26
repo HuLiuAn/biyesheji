@@ -4,24 +4,30 @@
   "list": [
     {
       "receiveorder_id": 1,
-      //领取单ID
       "receiveorder_number": "232432432",
-      //领取单号
+      "product_id": 1,
+      "product_name": "apple",
+      "product_photo": "style/img/photo4.jpg",
       "receiveorder_date": 1325432543,
-      //领取单生成日期  ,日期应该是时间戳
       "receiveorder_state": 0
     },
     {
       "receiveorder_id": 2,
       "receiveorder_number": "2444432432",
+      "product_id": 1,
+      "product_name": "apple",
+      "product_photo": "style/img/photo4.jpg",
       "receiveorder_date": 1325432543,
-      "receiveorder_state": 0
+      "receiveorder_state": 1
     },
     {
       "receiveorder_id": 3,
       "receiveorder_number": "132432432",
+      "product_id": 1,
+      "product_name": "apple",
+      "product_photo": "style/img/photo4.jpg",
       "receiveorder_date": 1325432543,
-      "receiveorder_state": 0
+      "receiveorder_state": 2
     }
   ]
 }

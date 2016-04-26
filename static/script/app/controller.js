@@ -116,46 +116,24 @@ app.controller('goodCartCtrl', function ($scope) {
 });
 app.controller('goodHistoryCtrl', function ($scope) {
     $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
+        $scope.cartlist = data;
     });
-    $scope.cartlist = [
-        {
-            name: "apple",
-            icon: "style/img/user7-128x128.jpg",
-            description: "  26\" Mongoose Dolomite Men\'s 7-speed, Navy Blue.",
-            amount: 10
-        }
-        ,
-        {
-            name: "apple",
-            icon: "style/img/user7-128x128.jpg",
-            description: "  26\" Mongoose Dolomite Men\'s 7-speed, Navy Blue.",
-            amount: 10
-        }
-        ,
-        {
-            name: "apple",
-            icon: "style/img/user7-128x128.jpg",
-            description: "  26\" Mongoose Dolomite Men\'s 7-speed, Navy Blue.",
-            amount: 10
-        }
-        ,
-        {
-            name: "apple",
-            icon: "style/img/user7-128x128.jpg",
-            description: "  26\" Mongoose Dolomite Men\'s 7-speed, Navy Blue.",
-            amount: 10
-        }
+    $scope.stateText = [
+        "等待审核", "审核通过", "审核不通过"
     ];
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
+
 });
 app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.addToCart = function () {
         if ($scope.data.count && $scope.data.amount > $scope.data.count) {
-            $Bs_API.loading('余量不足,领取失败',1);
+            $Bs_API.loading('余量不足,领取失败', 1);
             return;
         }
-        if(!parseInt($scope.data.amount)){
-            $Bs_API.loading('请输入领取数量',1);
+        if (!parseInt($scope.data.amount)) {
+            $Bs_API.loading('请输入领取数量', 1);
             return;
         }
         $http.post($Bs_API.getApi('add_to_cart'), {
@@ -164,14 +142,14 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
         }).success(function (data) {
             $Bs_API.loading('领取成功');
         }).error(function () {
-           $Bs_API.loading('领取失败,请检查网络',1);
+            $Bs_API.loading('领取失败,请检查网络', 1);
         });
     };
     $http.get($Bs_API.getApi('receive_product_detail')).success(function (data) {
         $scope.data = data;
         rollPic(data.product_photogroup);
     }).error(function () {
-        $Bs_API.loading('获取失败！请检查网络',1);
+        $Bs_API.loading('获取失败！请检查网络', 1);
     });
 
     $scope.pro = {
@@ -221,11 +199,11 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.active = 0;
     var slides = $scope.slides = [];
 
-    $scope.addSlide = function (url,index) {
+    $scope.addSlide = function (url, index) {
         var newWidth = 600 + slides.length + 1;
         slides.push({
-            image:url,
-            text:'',
+            image: url,
+            text: '',
             id: index
         });
     };
@@ -236,13 +214,14 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     };
 
     // Randomize logic below
-    function rollPic(arr){
-        if(arr){
+    function rollPic(arr) {
+        if (arr) {
             for (var i = 0; i < arr.length; i++) {
-                $scope.addSlide(arr[i],i);
+                $scope.addSlide(arr[i], i);
             }
         }
     }
+
     function assignNewIndexesToSlides(indexes) {
         for (var i = 0, l = slides.length; i < l; i++) {
             slides[i].id = indexes.pop();
@@ -273,8 +252,18 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
         return array;
     }
 });
-app.controller('goodHisDetailCtrl', function ($scope) {
-
+app.controller('goodHisDetailCtrl', function ($scope, $http, $Bs_API, $state) {
+    $http.get($Bs_API.getApi('receive_detail')).success(function (data) {
+        $scope.data = data;
+    }).error(function () {
+        $Bs_API.loading('获取失败！请检查网络', 1);
+    });
+    $scope.stateText = [
+        "等待审核", "审核通过", "审核不通过"
+    ];
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
 });
 
 app.controller('goodManageListCtrl', function ($scope) {

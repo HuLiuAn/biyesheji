@@ -159,7 +159,7 @@ app.directive('bsSider', function () {
         }
     }
 });
-app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_List) {
+app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_List,$Bs_API) {
 
     return {
         restrict: 'E',
@@ -178,8 +178,7 @@ app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_Lis
                 $scope.currentPage = $stateParams.page;
                 $scope.hasData = data.list.length;
             }, function (data) {
-                $scope.hasData = false;
-                $scope.failload = true;
+                $Bs_API.loading('网络错误',1);
             });
             $scope.$on('PageWillChange', function (e, data) {
                 var searchdata = data;

@@ -7,15 +7,19 @@
         <ul class="products-list product-list-in-box" ng-repeat="ite in cartlist">
             <li class="item">
                 <div class="product-img">
-                    <img ng-src="{{ite.icon}}" alt="Product Image">
+                    <img ng-src="{{ite.product_photo}}" alt="Product Image">
                 </div>
                 <div class="product-info">
-                    <a href="javascript:void(0)" class="product-title">
-                        {{ite.name}}
-                        <a type="button" class="btn btn-default pull-right" href="#/good/list/1">详情</a>
+                    <a href="#/good/detail/ {{ite.product_id}}" class="product-title">
+                        {{ite.product_name}}
+                        <a type="button" class="btn btn-default pull-right"
+                           href="#/good/history/detail/{{ite.receiveorder_id}}">详情</a>
                     </a>
+
                         <span class="product-description">
-                         {{ite.description}}
+                         <i class="fa fa-clock-o"></i>
+                              {{ite.receiveorder_date|timeformat}}
+                             <span class="label  {{stateColor[ite.receiveorder_state]}}">{{stateText[ite.receiveorder_state]}}</span>
                         </span>
                 </div>
             </li>

@@ -17,7 +17,9 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         get_info: "dsd",//获取个人信息,
         receive_product_list: "serv/productlist.json",
         receive_product_detail: "serv/product.json",
-        add_to_cart: "serv"
+        add_to_cart: "serv",
+        receive_list: 'serv/receivelist.json',
+        receive_detail:"serv/receive.json"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -180,10 +182,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'good/history/:page',
             templateUrl: 'views/good/history.html',
             controller: 'goodHistoryCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.good-detail', {
             url: 'good/detail/:id',
             templateUrl: 'views/good/detail.html',
@@ -315,4 +314,36 @@ app.run(function ($rootScope, $location) {
         function (event, toState, toParams, fromState, fromParams, options) {
             Pace.restart();
         });
+});
+
+
+app.filter('timeformat', function () {
+    return function (input) {
+        if (typeof input == "string") {
+            return input;
+        }
+        var nowTime = new Date().getTime() / 1000;//当前时间戳
+        var result = nowTime - input;//计算时间差
+        //console.log(result);
+        //计算出相差天数
+        var days = Math.floor(result / (24 * 3600));
+        if (days < 1) {
+            //计算天数后剩余的毫秒数,计算出小时数
+            var leave1 = result % (24 * 3600 );
+            var hours = Math.floor(leave1 / 3600);
+            if (hours < 1) {
+                //计算小时数后剩余的毫秒数,计算相差分钟数
+                var leave2 = leave1 % 3600;
+                var minutes = Math.floor(leave2 / 60);
+                if (minutes < 1) {
+                    return "less one min ago";
+                }
+                return minutes + "mins ago";
+            }
+            return hours + "hours ago";
+
+        }
+        return days + "days ago";
+    };
+
 });
