@@ -3,16 +3,14 @@
  */
 //List
 app.factory('$Bs_List', ['$q', '$state','$http','$Bs_API' ,function ($q, $state,$http,$Bs_API) {
-    var _$God_List = {};
-    _$God_List.get = function () {
-        //console.log(data);
+    var _$Bs_List = {};
+    _$Bs_List.get = function () {
         var param = getParam($state.params);
-        var handlerNo = $state.$current.self.Handler.number;
-        var baseUrl = $Bs_API.getUrl($state.$current.self.Handler.list);
-        var Handler = getHandler(handlerNo);
-        return Handler.getList(baseUrl, param);
+        var baseUrl = $Bs_API.getApi($state.$current.self.Handler);
+        //var Handler =eval($state.$current.self.Handler);//æ³¨å…¥å‡½æ•°å
+        return Handler(baseUrl, param);
     };
-    return _$God_List;
+    return _$Bs_List;
 
     function getParam(stateparam) {
         var _param = {}, temp;
@@ -24,22 +22,20 @@ app.factory('$Bs_List', ['$q', '$state','$http','$Bs_API' ,function ($q, $state,
         }
         return _param;
     }
-    function getGoodList(baseUrl, data) {
+    function Handler(baseUrl, data) {
         var defer = $q.defer();
-        //var url = $Bs_API.concat(baseUrl, data);//TODO Áªµ÷ºóÈ¡Ïû×¢ÊÍ£¬·ñÔò·ÖÒ³Ê§°Ü
+        //var url = $Bs_API.concat(baseUrl, data);//TODO è”è°ƒåå–æ¶ˆæ³¨é‡Šï¼Œå¦åˆ™åˆ†é¡µå¤±è´¥
         var url=baseUrl;
         $http.get(url).success(function (result) {
-            //console.log(data);
             if (typeof result == "string") {
                 defer.reject(result);
                 return;
             }
-            //var results = listParse.parse(result);
             var results={
-                list:result,
-                page:2,
+                list:result.list,
+                page:result.page,
                 size:10,
-                count:1000
+                count:result.total
             };
             if (results) {
                 defer.resolve(results);
@@ -49,23 +45,6 @@ app.factory('$Bs_List', ['$q', '$state','$http','$Bs_API' ,function ($q, $state,
         );
         return defer.promise;
     }
-    function getHandler(handlerNo) {
-        var han = {};
-        switch (handlerNo) {
-            case 1:
-            {
-                han.getList = getGoodList;
-                break;
-            }
-            default :
-            {
-                han.getList = getGoodList;
-
-            }
-        }
-        return han;
-    }
-
     function isArray(v) {
         return toString.apply(v) === '[object Array]';
     }

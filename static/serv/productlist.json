@@ -1,13 +1,11 @@
 {
   "page": 1,
-  //当前页数
   "total": 1000,
-  //总记录数
   "list": [
     {
       "product_id": 1,
       "product_name": "苹果",
-      "product_photo ": "url",
+      "product_photo": "style/img/photo4.jpg",
       "count": 500,
       "product_barcode": 121200,
       "warehouse_number": "A仓库"
@@ -15,7 +13,7 @@
     {
       "product_id": 2,
       "product_name": "梨",
-      "product_photo ": "url",
+      "product_photo":  "style/img/photo4.jpg",
       "count": 1500,
       "product_barcode": 121202,
       "warehouse_number": "B仓库"
@@ -23,7 +21,7 @@
     {
       "product_id": 3,
       "product_name": "橙子",
-      "product_photo ": "url",
+      "product_photo":  "style/img/photo3.jpg",
       "count": 5100,
       "product_barcode": 121201,
       "warehouse_number": "C仓库"

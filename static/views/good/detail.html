@@ -15,8 +15,8 @@
                 </uib-carousel>
             </div>
             <div style="padding: 10px;">
-                <h3>
-                    万隆米景全系列64位苹果硬盘修复仪WL64位苹果硬盘测试架扩容改序
+                <h3 ng-bind="data.product_name">
+
                 </h3>
 
                 <div>
@@ -38,20 +38,21 @@
                         小
                     </button>
                 </div>
-
+                <div>
+                    剩余：{{data.count}}
+                </div>
                 <div style="margin-top:5px;">数量：
                     <a ng-click="minus()" style="height: 26px;width: 10px; margin: 0;"
                        class="btn btn-smamll btn-default">-</a>
                     <input type="text"
                            style="width: 60px;"
-                           data-max="4980"
-                           value="{{data.amount}}"
+                           ng-model="data.amount"
                            autocomplete="off">
                     <a ng-click="add()" style="height: 26px;width: 10px; margin: 0;"
                        class="btn btn-smamll btn-default">+</a>
                 </div>
                 <div style="position: relative;">
-                    <a href="#/good/detail/1" class="btn btn-primary"
+                    <a href="" ng-click="addToCart()" class="btn btn-primary"
                        style="position: absolute;top:-20px;;right: 20px;"><b>领取该商品</b></a>
                 </div>
             </div>
@@ -63,5 +64,5 @@
             <td ng-bind="item.value" style="text-align:center;width: 84%"></td>
         </tr>
     </table>
-    <bs-barcode code="{{data.barcode}}"></bs-barcode>
+    <bs-barcode code="data.product_barcode"></bs-barcode>
 </div>

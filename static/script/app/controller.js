@@ -69,7 +69,6 @@ app.controller('goodListCtrl', function ($scope) {
 app.controller('goodCartCtrl', function ($scope) {
 
 
-
     $scope.cartlist = {
         0: {
             name: "apple",
@@ -149,55 +148,71 @@ app.controller('goodHistoryCtrl', function ($scope) {
         }
     ];
 });
-app.controller('goodDetailCtrl', function ($scope) {
+app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.addToCart = function () {
-        console.log('假如购物车')
+        if ($scope.data.count && $scope.data.amount > $scope.data.count) {
+            $Bs_API.loading('余量不足,领取失败',1);
+            return;
+        }
+        if(!parseInt($scope.data.amount)){
+            $Bs_API.loading('请输入领取数量',1);
+            return;
+        }
+        $http.post($Bs_API.getApi('add_to_cart'), {
+            "product_id": $state.params.id,
+            "amount": parseInt($scope.data.amount)
+        }).success(function (data) {
+            $Bs_API.loading('领取成功');
+        }).error(function () {
+           $Bs_API.loading('领取失败,请检查网络',1);
+        });
     };
-    $scope.data = {
-        pictures: [],
-        description: "这是商品描述",
-        barcode: "132421432153312432421",
-        specify: [],
-        properties: {}
-    };
-    $scope.pro={
-        a:{
-            title:"名称",
-            value:"apple"
+    $http.get($Bs_API.getApi('receive_product_detail')).success(function (data) {
+        $scope.data = data;
+        rollPic(data.product_photogroup);
+    }).error(function () {
+        $Bs_API.loading('获取失败！请检查网络',1);
+    });
+
+    $scope.pro = {
+        a: {
+            title: "名称",
+            value: "apple"
         },
-        b:{
-            title:"大小",
-            value:"10KG 20KG 30KG"
-        },c:{
-            title:"大范德萨",
-            value:"apple"
+        b: {
+            title: "大小",
+            value: "10KG 20KG 30KG"
+        }, c: {
+            title: "大范德萨",
+            value: "apple"
         },
-        d:{
-            title:"宿舍",
-            value:"apple"
+        d: {
+            title: "宿舍",
+            value: "apple"
         },
-        e:{
-            title:"地方",
-            value:"阿凡达放大阿凡达三分"
+        e: {
+            title: "地方",
+            value: "阿凡达放大阿凡达三分"
         },
-        f:{
-            title:"那天",
-            value:"发的发放打三分大赛分"
+        f: {
+            title: "那天",
+            value: "发的发放打三分大赛分"
         }
     };
-
     $scope.add = function () {
-      if($scope.data.amount){
-          $scope.data.amount++;
-      }else{
-          $scope.data.amount=1;
-      }
+        if ($scope.data.amount) {
+            if ($scope.data.count && $scope.data.amount < $scope.data.count) {
+                $scope.data.amount++;
+            }
+        } else {
+            $scope.data.amount = 1;
+        }
     };
     $scope.minus = function () {
-        if($scope.data.amount){
+        if ($scope.data.amount) {
             $scope.data.amount--;
-        }else{
-            $scope.data.amount=0;
+        } else {
+            $scope.data.amount = 0;
         }
     };
     //图片滚动
@@ -205,14 +220,13 @@ app.controller('goodDetailCtrl', function ($scope) {
     $scope.noWrapSlides = false;
     $scope.active = 0;
     var slides = $scope.slides = [];
-    var currIndex = 0;
 
-    $scope.addSlide = function () {
+    $scope.addSlide = function (url,index) {
         var newWidth = 600 + slides.length + 1;
         slides.push({
-            image: 'http://lorempixel.com/' + newWidth + '/300',
-            text: ['Nice image', 'Awesome photograph', 'That is so cool', 'I love that'][slides.length % 4],
-            id: currIndex++
+            image:url,
+            text:'',
+            id: index
         });
     };
 
@@ -221,12 +235,14 @@ app.controller('goodDetailCtrl', function ($scope) {
         assignNewIndexesToSlides(indexes);
     };
 
-    for (var i = 0; i < 4; i++) {
-        $scope.addSlide();
-    }
-
     // Randomize logic below
-
+    function rollPic(arr){
+        if(arr){
+            for (var i = 0; i < arr.length; i++) {
+                $scope.addSlide(arr[i],i);
+            }
+        }
+    }
     function assignNewIndexesToSlides(indexes) {
         for (var i = 0, l = slides.length; i < l; i++) {
             slides[i].id = indexes.pop();

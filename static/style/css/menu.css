@@ -1,0 +1,45 @@
+.loading-info {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.62);
+    position: fixed;
+    z-index: 1999;
+    display: none;
+}
+.loading-show{
+    display: block;
+}
+.loading-msg{
+    z-index: 2000;
+    position: fixed;
+    margin: auto;
+    top: 12px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+.loading-content{
+    position: absolute;
+    width: 100%;
+    /*height: 200px;*/
+    z-index: 2001;
+    border:2px solid #fff;
+    /*box-shadow: inset 0 0 0 2px #29d, inset 0 0 0 7px #FFF;*/
+    border-radius: 10px;
+    margin: auto;
+    padding:12px;
+    background-color: #ddd !important;
+}
+.loading-success{
+    color:#fff;
+    background-color: #00a65a !important;
+}
+.loading-error{
+    color:#fff;
+    background-color: #dd4b39 !important;
+}

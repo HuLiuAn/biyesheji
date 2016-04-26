@@ -14,7 +14,10 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         logout: "sds",//退出
         change_key: "dfs",//修改密码
         change_info: "sdsdd",//修改信息
-        get_info: "dsd"//获取个人信息
+        get_info: "dsd",//获取个人信息,
+        receive_product_list: "serv/productlist.json",
+        receive_product_detail: "serv/product.json",
+        add_to_cart: "serv"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -39,11 +42,36 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         },
         getApi: function (name) {
             return API[name];
-        }
+        },
+        loading: loading
     };
 
 
     return _$Bs_API;
+
+
+    //信息提示
+    function loading(msg, type, time) {
+        $('#loading-info').show();
+        var content = $('#loading-content');
+        if (!time || time < 500) {
+            time = 1000;
+        } else {
+
+        }
+
+        if (type) {
+            content.addClass('loading-error');
+            content.removeClass('loading-success');
+        } else {
+            content.removeClass('loading-error');
+            content.addClass('loading-success');
+        }
+        content.text(msg);
+        setTimeout(function () {
+            $('#loading-info').hide();
+        }, time)
+    }
 });
 var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
@@ -66,7 +94,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }).state('main.user-info', {
             url: 'user/info',
             templateUrl: 'views/user/info.html',
-            controller: function ($scope, $http,$Bs_API) {
+            controller: function ($scope, $http, $Bs_API) {
                 //获取用户信息
                 $http.get($Bs_API.getApi('get_info')).success(function (data) {
                     //var use
@@ -139,14 +167,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             controller: 'homeCtrl'
         }).
         //商品领取
-        state('main.good-list', {
+        state('main.re-product-list', {
             url: 'good/list/:page?search',
             templateUrl: 'views/good/list.html',
             controller: 'goodListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_product_list"
         }).state('main.good-cart', {
             url: 'good/cart',
             templateUrl: 'views/good/cart.html',
@@ -281,7 +306,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: 'views/check/good.html',
             controller: 'goodCheckGoodDetailCtrl'
         });
-    $urlRouterProvider.otherwise('/')
+    $urlRouterProvider.otherwise('/home')
 }]);
 
 //投影幕

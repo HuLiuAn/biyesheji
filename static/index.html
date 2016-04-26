@@ -32,6 +32,7 @@
      <!--upload-->
     <link rel="stylesheet" href="plugins/upload/uploadify.css">
     <link rel="stylesheet" href="style/css/pace.min.css">
+    <link rel="stylesheet" href="style/css/menu.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you views the page via file:// -->
     <!--[if lt IE 9]>
@@ -61,6 +62,11 @@
 </head>
 <body class="hold-transition skin-blue sidebar-mini " ng-app="myApp" >
 <!--删-->
+<div id="loading-info" class="loading-info">
+        <div class="loading-msg">
+            <div id="loading-content" class="loading-content"></div>
+        </div>
+</div>
 <div ui-view></div>
 
 

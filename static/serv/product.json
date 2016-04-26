@@ -1,13 +1,8 @@
 {
   "product_id": 1,
   "product_name": "apple",
-  "product_photo ": "url",
-  "product_photogroup": [
-    "url",
-    "url",
-    "url",
-    "url"
-  ],
+  "product_photo ": "style/img/photo4.jpg",
+  "product_photogroup": ["style/img/photo4.jpg","style/img/photo4.jpg","style/img/photo4.jpg","style/img/photo4.jpg"],
   "count": 500,
   "product_barcode": 121200,
   "warehouse_number": "A仓库"
