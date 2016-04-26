@@ -298,7 +298,7 @@ app.controller('goodManageListCtrl', function ($scope) {
 });
 app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.images = [];
-    $scope.image = 'style/img/photo4.jpg';
+    $scope.image = '';
     $scope.data = {};
     $http.get($Bs_API.getApi('product_detail')).success(function (data) {
         $scope.data = data;

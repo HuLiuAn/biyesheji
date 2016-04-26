@@ -245,7 +245,7 @@ app.directive('bsUpload', function ($Bs_API) {
 
             function changeImage(url) {
                 var btn = el.find('#' + time + "-button");
-                btn.css("background-image", " url('style/img/photo4.jpg')");
+                btn.css("background-image", " url('" + url + "')");
             }
         }
     }
