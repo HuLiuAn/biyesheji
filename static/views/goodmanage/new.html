@@ -22,18 +22,32 @@
             <label>组图</label>
 
             <div></div>
-            <span>1</span>
-            <bs-upload image="images['0']"></bs-upload>
-            <span>2</span>
-            <bs-upload image="images['1']"></bs-upload>
-            <span>3</span>
-            <bs-upload image="images['2']"></bs-upload>
-            <span>4</span>
-            <bs-upload image="images['3']"></bs-upload>
-            <span>5</span>
-            <bs-upload image="images['4']"></bs-upload>
-            <span>6</span>
-            <bs-upload image="images['5']"></bs-upload>
+            <div class="row">
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>1</span>
+                    <bs-upload image="images['0']"></bs-upload>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>2</span>
+                    <bs-upload image="images['1']"></bs-upload>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>3</span>
+                    <bs-upload image="images['2']"></bs-upload>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>4</span>
+                    <bs-upload image="images['3']"></bs-upload>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>5</span>
+                    <bs-upload image="images['4']"></bs-upload>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <span>6</span>
+                    <bs-upload image="images['5']"></bs-upload>
+                </div>
+            </div>
         </div>
         <div class="form-group" style="margin-bottom: 5px;">
             <label>单图</label>
@@ -43,7 +57,7 @@
     <!-- /.box-body -->
 
     <div class="box-footer">
-        <a type="submit"  href="#/good-manage/list/1" class="btn btn-default" style="margin-bottom: 10px;">取消</a>
+        <a type="submit" href="#/good-manage/list/1" class="btn btn-default" style="margin-bottom: 10px;">取消</a>
         <button type="submit" ng-click="submit()" class="btn btn-primary" style="margin-bottom: 10px;">提交</button>
     </div>
 </div>

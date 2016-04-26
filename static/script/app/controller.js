@@ -7,15 +7,15 @@ app.controller('loginCtrl', function ($scope, $http) {
     //this code providing a feature that we
     $scope.data = $scope;
     $scope.submit = function () {
-        console.log($scope.account);
-        console.log($scope.key);
+        ////console.log($scope.account);
+        ////console.log($scope.key);
     };
     //'/getUser'
     var obj = $http.get('/serv/hehe.json');
     obj.success(function (data) {
-        console.log(data);
+        ////console.log(data);
     }).error(function (data) {
-        console.log("失败了")
+        ////console.log("失败了")
 
     });
 });
@@ -302,9 +302,9 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
     $scope.data = {};
     $http.get($Bs_API.getApi('product_detail')).success(function (data) {
         $scope.data = data;
-        console.log(data);
+        ////console.log(data);
         $scope.images = data.product_photogroup;
-        console.log($scope.images);
+        ////console.log($scope.images);
         $scope.image = data.product_photo;
     }).error(function () {
         $Bs_API.loading('获取失败！请检查网络', 1);
@@ -318,7 +318,7 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
             }
         }
         $scope.data.photo = $scope.image;
-        console.log($scope.data);
+        ////console.log($scope.data);
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
             $Bs_API.loading('成功');
             $state.go('main.good-manage-list', {page: 1});
@@ -352,7 +352,7 @@ app.controller('goodManageNewCtrl', function ($scope, $http, $Bs_API, $state) {
             }
         }
         $scope.data.product_photo = $scope.image;
-        //console.log($scope.data);
+        //////console.log($scope.data);
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
             $Bs_API.loading('成功');
             $state.go('main.good-manage-list', {page: 1});
@@ -379,7 +379,7 @@ app.controller('goodProviderDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
@@ -408,7 +408,7 @@ app.controller('goodOrderDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
@@ -438,7 +438,7 @@ app.controller('goodHubDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
@@ -467,7 +467,7 @@ app.controller('goodInoutDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
@@ -497,7 +497,7 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
@@ -522,7 +522,7 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope) {
     //获取当前页面
     $scope.data = {};
     $scope.search = function () {
-        console.log('click search')
+        ////console.log('click search')
         $scope.$broadcast('PageWillChange', $scope.data);
     };
 
