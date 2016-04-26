@@ -1,34 +1,49 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
         <h3 class="box-title">新增商品</h3>
     </div>
     <!-- /.box-header -->
     <!-- form start -->
     <div class="box-body" style="padding-right: 20px;">
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">名称</span>
-            <input type="email" class="form-control" id="name" placeholder="名称"/>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <label for="name">名称</label>
+            <input type="text" ng-model="data.product_name" class="form-control" id="name" placeholder="名称"/>
         </div>
-        <div class="input-group"  style="margin-bottom: 5px;" >
-            <span class="input-group-addon">条形码</span>
-            <input type="email" class="form-control" id="linecode" placeholder="条形码"/>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <label for="barcode">条形码</label>
+            <input type="number" ng-model="data.product_barcode" class="form-control" id="barcode" placeholder="条形码"/>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">属性</span>
-            <input type="email" class="form-control" id="property" placeholder="属性"/>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <label for="property">属性</label>
+            <input type="text" class="form-control" ng-model="data.product_property" id="property" placeholder="属性"/>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">类别</span>
-            <input type="email" class="form-control" id="cat" placeholder="类别"/>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <label>组图</label>
+
+            <div></div>
+            <span>1</span>
+            <bs-upload image="images['0']"></bs-upload>
+            <span>2</span>
+            <bs-upload image="images['1']"></bs-upload>
+            <span>3</span>
+            <bs-upload image="images['2']"></bs-upload>
+            <span>4</span>
+            <bs-upload image="images['3']"></bs-upload>
+            <span>5</span>
+            <bs-upload image="images['4']"></bs-upload>
+            <span>6</span>
+            <bs-upload image="images['5']"></bs-upload>
         </div>
-        <div class="form-group" style="margin-bottom: 5px;" >
-            <label >组图</label>
-            <bs-upload code="124321431"></bs-upload>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <label>单图</label>
+            <bs-upload image="image"></bs-upload>
         </div>
     </div>
     <!-- /.box-body -->
 
     <div class="box-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <a type="submit"  href="#/good-manage/list/1" class="btn btn-default" style="margin-bottom: 10px;">取消</a>
+        <button type="submit" ng-click="submit()" class="btn btn-primary" style="margin-bottom: 10px;">提交</button>
     </div>
 </div>

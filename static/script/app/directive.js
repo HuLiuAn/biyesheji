@@ -195,31 +195,58 @@ app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_Lis
         }
     };
 });
-app.directive('bsUpload', function () {
+app.directive('bsUpload', function ($Bs_API) {
     //永远都会返回一个对象
 
     return {
         //定义，这个指令是什么，元素？类？注释？属性？,用restrict
         restrict: "E",
-        //模版，template,templateUrl
-        template: '<p><input type="file" name="upload" id="upload" /><button ng-click="upload()">上传</button></p>',
-        //templateUrl: "views/template/sider.html",
-        scope: {},//定义scope,把作用域隔离开
-        //那我作用域的函数，逻辑什么的，放哪里,放link，类似controller:区别，link无法注入服务,link参数是固定，4个参数
+        template: '<p><input type="file" name="upload" /></p>',
+        scope: {
+            image: "="
+        },
         link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
-            var up = el.children('#upload');
-            //console.log(up)
+            var up = el.find('input[name=upload]');
+            var time = new Date().getTime().toString();
+            up.attr('id', time);
+            var image = $scope.image;
             up.uploadify({
-                height: 30,
-                'auto': false,
+                height: 100,
+                multi: false,
+                buttonImage: image,// 'style/img/photo4.jpg',
                 swf: 'plugins/upload/uploadify.swf',
                 uploader: '/uploadify/uploadify.php',
+                nUploadSuccess: onUploadSuccess,
+                onUploadError: onUploadError,
                 width: 120
             });
-            $scope.upload = function () {
-                console.log('upload')
-                up.uploadify('upload')
-            };
+
+            var watch = $scope.$watch('image', function (newValue, oldValue, scope) {
+                if (!newValue) {
+                    return;
+                }
+                changeImage(newValue);
+                image = newValue;
+                watch();
+            });
+            setTimeout(watch, 5000);
+
+            function onUploadSuccess(file, data, response) {
+                $Bs_API.loading('文件' + file.name + '上传成功 ' + response + ':' + data);
+                $scope.image = image = data.picture;
+                changeImage(image);
+            }
+
+            function onUploadError(file, errorCode, errorMsg, errorString) {
+                $Bs_API.loading('文件' + file.name + ' 上传失败: ' + errorString, 1);
+                //changeImage($scope.image);
+            }
+
+
+            function changeImage(url) {
+                var btn = el.find('#' + time + "-button");
+                btn.css("background-image", " url('style/img/photo4.jpg')");
+            }
         }
     }
 });
@@ -251,15 +278,15 @@ app.directive('bsSearch', function ($state) {
         template: '<div class="box-tools" style="width:400px;"> <div class="input-group input-group-sm" > <span class="input-group-addon" ng-if="hasSearch"> 当前搜索：<a href="" ng-repeat="(key,value) in searchParams" ng-click="noSearch(key)">{{value+";"}}</a> </span> <input  id="typeahead" type="text" ng-model="data.search" placeholder="search" class="form-control " uib-typeahead="address for address in getLocation($viewValue)" typeahead-template-url="{{typeaheadtemplate}}" typeahead-loading="loadingLocations" typeahead-on-select="searchSelected($item)" typeahead-no-results="noResults" class="form-control"> <div class="input-group-btn"> <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"> <i class="fa fa-search"></i> </button> </div> </div> </div> ',
         link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
 
-            if ($('#customTemplate.html').length == 0) {
-                $scope.typeaheadtemplate = "customTemplate.html";
+            if (attr.template) {
+                $scope.typeaheadtemplate = attr.template;
             } else {
                 $scope.typeaheadtemplate = "uib/template/typeahead/typeahead-match.html";
             }
 
             $scope.data = {};
             $scope.search = function () {
-                console.log('click search');
+                //console.log('click search');
                 $scope.$broadcast('PageWillChange', $scope.data);
             };
 
@@ -287,11 +314,12 @@ app.directive('bsSearch', function ($state) {
                 $scope.search();
             };
             $scope.searchSelected = function ($item) {
-                $scope.search();
+
                 if (value) {
                     $scope.data.search = $item[value];
                     $scope.data[$item[field]] = $item[value];
                 }
+                $scope.search();
             };
             $scope.getLocation = function (val) {
                 if (value) {

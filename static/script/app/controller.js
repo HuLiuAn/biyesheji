@@ -285,26 +285,81 @@ app.controller('goodManageListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-});
-app.controller('goodManageDetailCtrl', function ($scope) {
-
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
-    });
     //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
+    $scope.searchField = [{
+        flag: "名称",
+        field: 'name',
+        value: ''
+    }, {
+        flag: "条形码",
+        field: 'barcode',
+        value: ''
+    }];
 });
-app.controller('goodManageNewCtrl', function ($scope) {
+app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state) {
+    $scope.images = [];
+    $scope.image = 'style/img/photo4.jpg';
+    $scope.data = {};
+    $http.get($Bs_API.getApi('product_detail')).success(function (data) {
+        $scope.data = data;
+        console.log(data);
+        $scope.images = data.product_photogroup;
+        console.log($scope.images);
+        $scope.image = data.product_photo;
+    }).error(function () {
+        $Bs_API.loading('获取失败！请检查网络', 1);
+    });
 
+    $scope.submit = function () {
+        $scope.data.photogroup = [];
+        for (var i in $scope.images) {
+            if ($scope.images[i]) {
+                $scope.data.photogroup.push($scope.images[0]);
+            }
+        }
+        $scope.data.photo = $scope.image;
+        console.log($scope.data);
+        $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
+            $Bs_API.loading('成功');
+            $state.go('main.good-manage-list', {page: 1});
+        }).error(function () {
+            $Bs_API.loading('添加失败', 1);
+        });
+    }
+    $scope.edit = function () {
+        $scope.isEdit = true;
+    };
+    $scope.cancel = function () {
+        $scope.isEdit = false;
+    }
+});
+app.controller('goodManageNewCtrl', function ($scope, $http, $Bs_API, $state) {
+    $scope.images = [
+        //'style/img/photo4.jpg',
+        //'style/img/photo4.jpg',
+        //'style/img/photo4.jpg',
+        //'style/img/photo4.jpg',
+        //'style/img/photo4.jpg',
+        //'style/img/photo4.jpg'
+    ];
+    $scope.image = '';//'style/img/photo4.jpg';
+    $scope.data = {};
+    $scope.submit = function () {
+        $scope.data.product_photogroup = [];
+        for (var i in $scope.images) {
+            if ($scope.images[i]) {
+                $scope.data.photogroup.push($scope.images[0]);
+            }
+        }
+        $scope.data.product_photo = $scope.image;
+        //console.log($scope.data);
+        $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
+            $Bs_API.loading('成功');
+            $state.go('main.good-manage-list', {page: 1});
+        }).error(function () {
+            $Bs_API.loading('添加失败', 1);
+        });
+    }
 });
 
 app.controller('goodProviderListCtrl', function ($scope) {

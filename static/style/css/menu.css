@@ -43,5 +43,12 @@
     color:#fff;
     background-color: #dd4b39 !important;
 }
-
-
+.uploadify-button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    background-size: 120px 100px;
+}
+.uploadify:hover .uploadify-button {
+    background-color: transparent;
+}

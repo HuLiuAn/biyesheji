@@ -7,29 +7,25 @@
             <a type="submit" name="submit" style="height: 20px;margin:0;margin-left:20px;padding:1px 8px;" href="#/good-manage/new" class="btn btn-success btn-flat">
                 <i class="fa fa-plus"></i>新增
             </a>
-            <bs-search class="pull-right"></bs-search>
+            <bs-search class="pull-right" search="field:value"  template="customTemplate.html" ></bs-search>
         </div>
         <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
             <table class="table table-hover">
                 <tbody>
                 <tr>
-                    <th>选中</th>
                     <th>ID</th>
                     <th>名称</th>
                     <th>缩略图</th>
                     <th>条形码</th>
-                    <th>类别</th>
                     <th>查看</th>
                 </tr>
                 <tr ng-repeat="item in list">
-                    <td><input type="checkbox"/></td>
-                    <td ng-bind="item.id"></td>
-                    <td ng-bind="item.name"></td>
-                    <td><img src="style/img/avatar.png" style="height: 20px;"></td>
-                    <td ng-bind="item.linecode"></td>
-                    <td ng-bind="item.cat">.</td>
-                    <td><a href="#/good-manage/detail/1"><i class="fa fa-edit"></i></a></td>
+                    <td ng-bind="item.product_id"></td>
+                    <td ng-bind="item.product_name"></td>
+                    <td><img ng-src="{{item.product_photo}}" style="height: 20px;"></td>
+                    <td ng-bind="item.product_barcode"></td>
+                    <td><a href="#/good-manage/detail/{{item.product_id}}"><i class="fa fa-edit"></i></a></td>
                 </tr>
                 </tbody>
             </table>
@@ -41,3 +37,9 @@
         </div>
     </div>
 </div>
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span>{{match.model.flag}}</span>
+        <span ng-bind-html="match.model.value | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>

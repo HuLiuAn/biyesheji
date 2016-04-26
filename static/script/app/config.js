@@ -19,7 +19,10 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         receive_product_detail: "serv/product.json",
         add_to_cart: "serv",
         receive_list: 'serv/receivelist.json',
-        receive_detail:"serv/receive.json"
+        receive_detail: "serv/receive.json",
+        "product-manage-list":"serv/baseproductlist.json",
+        new_product:"serv",
+        product_detail:"serv/baseproduct.json"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -194,13 +197,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }).
         //商品管理
         state('main.good-manage-list', {
-            url: 'good-manage/list/:page?search',
+            url: 'good-manage/list/:page?barcode&name',
             templateUrl: 'views/goodmanage/list.html',
             controller: 'goodManageListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "product-manage-list"
         }).state('main.good-manage-detail', {
             url: 'good-manage/detail/:id',
             templateUrl: 'views/goodmanage/detail.html',
