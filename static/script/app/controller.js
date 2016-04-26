@@ -64,7 +64,15 @@ app.controller('goodListCtrl', function ($scope) {
 
     });
     //获取当前页面
-
+    $scope.searchField = [{
+        flag: "名称",
+        field: 'name',
+        value: ''
+    }, {
+        flag: "条形码",
+        field: 'barcode',
+        value: ''
+    }];
 });
 app.controller('goodCartCtrl', function ($scope) {
 
@@ -114,7 +122,7 @@ app.controller('goodCartCtrl', function ($scope) {
         //提交
     }
 });
-app.controller('goodHistoryCtrl', function ($scope) {
+app.controller('goodHistoryCtrl', function ($scope, $state) {
     $scope.$on('PageLoaded', function (e, data) {
         $scope.cartlist = data;
     });
@@ -124,7 +132,12 @@ app.controller('goodHistoryCtrl', function ($scope) {
     $scope.stateColor = [
         "label-info", "label-success", "label-danger"
     ];
-
+    $scope.radioModel = $state.params.state;
+    $scope.select = function () {
+        $scope.$broadcast('PageWillChange', {
+            state: $scope.radioModel
+        });
+    }
 });
 app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.addToCart = function () {

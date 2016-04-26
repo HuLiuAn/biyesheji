@@ -1,7 +1,7 @@
 <div style="margin: 0 20px;padding-top:10px;padding-bottom: 40px;">
     <div class="box-header">
         <h3 class="box-title">商品列表</h3>
-        <bs-search class="pull-right"></bs-search>
+        <bs-search class="pull-right" search="field:value"  ></bs-search>
     </div>
     <div class="box-body">
         <div class="row margin-bottom">
@@ -31,3 +31,9 @@
         <bs-pagination></bs-pagination>
     </div>
 </div>
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span>{{match.model.flag}}</span>
+        <span ng-bind-html="match.model.value | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>

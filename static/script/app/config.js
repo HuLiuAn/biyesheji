@@ -170,7 +170,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }).
         //商品领取
         state('main.re-product-list', {
-            url: 'good/list/:page?search',
+            url: 'good/list/:page?barcode&name',
             templateUrl: 'views/good/list.html',
             controller: 'goodListCtrl',
             Handler: "receive_product_list"
@@ -179,7 +179,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: 'views/good/cart.html',
             controller: 'goodCartCtrl'
         }).state('main.good-his', {
-            url: 'good/history/:page',
+            url: 'good/history/:page?state',
             templateUrl: 'views/good/history.html',
             controller: 'goodHistoryCtrl',
             Handler: "receive_list"

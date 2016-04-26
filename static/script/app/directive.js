@@ -40,9 +40,9 @@ app.directive('bsSider', function () {
                     subMenu: [{
                         name: '商品列表',
                         href: 'good/list/1'
-                    }, {
-                        name: '领取清单',
-                        href: 'good/cart'
+                        //}, {
+                        //    name: '领取清单',
+                        //    href: 'good/cart'
                     }, {
                         name: '领取记录',
                         href: 'good/history/1'
@@ -159,7 +159,7 @@ app.directive('bsSider', function () {
         }
     }
 });
-app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_List,$Bs_API) {
+app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_List, $Bs_API) {
 
     return {
         restrict: 'E',
@@ -178,7 +178,7 @@ app.directive('bsPagination', function ($stateParams, $location, $state, $Bs_Lis
                 $scope.currentPage = $stateParams.page;
                 $scope.hasData = data.list.length;
             }, function (data) {
-                $Bs_API.loading('网络错误',1);
+                $Bs_API.loading('网络错误', 1);
             });
             $scope.$on('PageWillChange', function (e, data) {
                 var searchdata = data;
@@ -232,14 +232,14 @@ app.directive('bsBarcode', function () {
         },
         link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
             var div = el.children('div');
-           var watch= $scope.$watch('code', function(newValue,oldValue, scope) {
+            var watch = $scope.$watch('code', function (newValue, oldValue, scope) {
                 if (!newValue) {
                     return;
                 }
-               div.barcode(newValue, "ean13");//如果没有成功，则是newValue长度不够
-               watch();
+                div.barcode(newValue, "ean13");//如果没有成功，则是newValue长度不够
+                watch();
             });
-            setTimeout(watch,5000);
+            setTimeout(watch, 5000);
 
         }
     }
@@ -248,23 +248,58 @@ app.directive('bsSearch', function ($state) {
     return {
         restrict: "E",
         replace: true,
-        template: '<div class="box-tools" style="width:400px;"> <div class="input-group input-group-sm" > <span class="input-group-addon" ng-if="hasSearch"> 当前搜索：<a href="" ng-bind="hasSearch" ng-click="noSearch()">safdsafa</a> </span> <input type="text" ng-model="data.search" placeholder="search" class="form-control " uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control"> <div class="input-group-btn"> <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"> <i class="fa fa-search"></i> </button> </div> </div> </div> ',
+        template: '<div class="box-tools" style="width:400px;"> <div class="input-group input-group-sm" > <span class="input-group-addon" ng-if="hasSearch"> 当前搜索：<a href="" ng-repeat="(key,value) in searchParams" ng-click="noSearch(key)">{{value+";"}}</a> </span> <input  id="typeahead" type="text" ng-model="data.search" placeholder="search" class="form-control " uib-typeahead="address for address in getLocation($viewValue)" typeahead-template-url="{{typeaheadtemplate}}" typeahead-loading="loadingLocations" typeahead-on-select="searchSelected($item)" typeahead-no-results="noResults" class="form-control"> <div class="input-group-btn"> <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat"> <i class="fa fa-search"></i> </button> </div> </div> </div> ',
         link: function ($scope, el, attr) { //el是jquery的$,$('#heh')
+
+            if ($('#customTemplate.html').length == 0) {
+                $scope.typeaheadtemplate = "customTemplate.html";
+            } else {
+                $scope.typeaheadtemplate = "uib/template/typeahead/typeahead-match.html";
+            }
+
             $scope.data = {};
             $scope.search = function () {
                 console.log('click search');
                 $scope.$broadcast('PageWillChange', $scope.data);
             };
-            $scope.hasSearch = $state.params.search;
-            $scope.noSearch = function () {
-                $scope.data = {
-                    search: ""
-                };
+
+
+            var field;
+            var value;
+            if (attr.search) {
+                var sss = attr.search.split(':');
+                field = sss[0];
+                value = sss[1];
+            }
+
+            //获取字段的值
+            var params = $state.params;
+            $scope.searchParams = {};
+            for (var i in params) {
+                if (i != 'page' && params[i]) {
+                    $scope.hasSearch = true;
+                    $scope.searchParams[i] = params[i];
+                }
+            }
+
+            $scope.noSearch = function (f) {
+                $scope.data[f] = "";
                 $scope.search();
             };
-
+            $scope.searchSelected = function ($item) {
+                $scope.search();
+                if (value) {
+                    $scope.data.search = $item[value];
+                    $scope.data[$item[field]] = $item[value];
+                }
+            };
             $scope.getLocation = function (val) {
-                return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+                if (value) {
+                    for (var ii in $scope.searchField) {
+                        $scope.searchField[ii][value] = val;
+                    }
+                }
+                return $scope.searchField;
             };
         }
     }
