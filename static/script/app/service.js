@@ -24,8 +24,8 @@ app.factory('$Bs_List', ['$q', '$state','$http','$Bs_API' ,function ($q, $state,
     }
     function Handler(baseUrl, data) {
         var defer = $q.defer();
-        //var url = $Bs_API.concat(baseUrl, data);//TODO 联调后取消注释，否则分页失败
-        var url=baseUrl;
+        var url = $Bs_API.concat(baseUrl, data);//TODO 联调后取消注释，否则分页失败
+        //var url=baseUrl;
         $http.get(url).success(function (result) {
             if (typeof result == "string") {
                 defer.reject(result);

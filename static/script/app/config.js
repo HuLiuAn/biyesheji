@@ -13,9 +13,9 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
     var API = {
         logout: "sds",//退出
         change_key: "dfs",//修改密码
-        change_info: "sdsdd",//修改信息
-        get_info: "dsd",//获取个人信息,
-        receive_product_list: "serv/productlist.json",
+        change_info: "../index.php/Home/Staff/modifyUserInfo",//修改信息
+        get_info: "../index.php/Home/Staff/showUserDetail",//获取个人信息,
+        receive_product_list: "../index.php/Home/Staff/showProductList",
         receive_product_detail: "serv/product.json",
         add_to_cart: "serv",
         receive_list: 'serv/receivelist.json',
@@ -82,7 +82,7 @@ var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 //检查登陆信息
 app.run(function ($rootScope, $location, $http) {
     $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
-        console.log(data);
+        //console.log(data);
         var user = JSON.parse(data);
         if (user && user.status == 1) {
             $rootScope.USERLOGIN = JSON.parse(data);
@@ -126,8 +126,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 ];
                 $http.get($Bs_API.getApi('get_info')).success(function (data) {
                     //var use
-                    $scope.user = data;
-                    $scope.info = data;
+                    $scope.user = JSON.parse(data)
+                    $scope.info = JSON.parse(data);
                 }).error(function (data) {
                     $Bs_API.loading('网络错误，信息获取失败！', 1);
                 });
