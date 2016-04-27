@@ -69,12 +69,15 @@
 
             //检查用户是否登录
             if(session('?user_id')){
-                //跳转到首页
-                $this->display('Index/index');
+                //返回信息
+                 $st =session();
+                 $st['status']=1;
+                 $this->ajaxReturn (json_encode($st),'JSON');
             }
             else {
-                //跳转到登录页面
-                $this->display('Staff/login');
+                //提示错误
+              $st = array ('status'=>0);
+              $this->ajaxReturn (json_encode($st),'JSON');
             }
         }  
 
@@ -105,11 +108,10 @@
             
             if($result){
 
-               // session('user_id',             $result['user_id']);
-                //session('user_name',           $result['user_name']);
-               // session('user_department',     $result['user_department']);
-               // session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
-                
+                session('user_id',             $result['user_id']);
+               session('user_name',           $result['user_name']);
+               session('user_department',     $result['user_department']);
+                session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
                 $user->where( $map )->setField('user_lastlogintime',time());
                  $st = array ('status'=>1);
                  $this->ajaxReturn (json_encode($st),'JSON');

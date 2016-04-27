@@ -1,4 +1,5 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
         <h3 class="box-title">个人信息</h3>
         <a class="btn btn-warning btn-small pull-right" href="#/user/change">修改密码</a>
@@ -9,7 +10,7 @@
         <strong><i class="fa fa-book margin-r-5"></i> 姓名</strong>
 
         <p class="text-muted">
-          <span  ng-if="!edit">{{user.name}}</span>  <input ng-if="edit" type="text" ng-model="info.name" />
+            <span ng-if="!edit">{{user.user_name}}</span> <input ng-if="edit" type="text" ng-model="info.name"/>
         </p>
 
         <hr>
@@ -17,7 +18,7 @@
         <strong><i class="fa fa-mobile-phone margin-r-5"></i> 手机号</strong>
 
         <p class="text-muted">
-            <span  ng-if="!edit">{{user.phone}}</span><input ng-if="edit" type="text" ng-model="info.phone" />
+            <span ng-if="!edit">{{user.user_phone}}</span><input ng-if="edit" type="text" ng-model="info.phone"/>
         </p>
 
         <hr>
@@ -25,18 +26,13 @@
         <strong><i class="fa  fa-user    margin-r-5"></i> 角色</strong>
 
         <p class="text-muted">
-            <span  ng-if="!edit">{{user.type}}</span>
-            <select ng-if="edit" ng-model="info.type" >
-                <option value="1">管理员</option>
-                <option value="2">采购员</option>
-                <option value="3">员工</option>
-            </select>
+            <span>{{role[user.user_role]}}</span>
         </p>
 
 
         <hr>
-        <a type="button"  ng-if="edit" class="btn btn-default" href="" ng-click="editToggle()">取消</a>
-        <button  ng-if="edit" type="button" class="btn btn-primary" ng-click="save()">保存</button>
+        <a type="button" ng-if="edit" class="btn btn-default" href="" ng-click="editToggle()">取消</a>
+        <button ng-if="edit" type="button" class="btn btn-primary" ng-click="save()">保存</button>
     </div>
     <!-- /.box-body -->
 </div>

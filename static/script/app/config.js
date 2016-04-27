@@ -20,9 +20,9 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         add_to_cart: "serv",
         receive_list: 'serv/receivelist.json',
         receive_detail: "serv/receive.json",
-        "product-manage-list":"serv/baseproductlist.json",
-        new_product:"serv",
-        product_detail:"serv/baseproduct.json"
+        "product-manage-list": "serv/baseproductlist.json",
+        new_product: "serv",
+        product_detail: "serv/baseproduct.json"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -79,6 +79,22 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
     }
 });
 var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
+//检查登陆信息
+app.run(function ($rootScope, $location, $http) {
+    $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
+        console.log(data);
+        var user = JSON.parse(data);
+        if (user && user.status == 1) {
+            $rootScope.USERLOGIN = JSON.parse(data);
+        } else {
+            alert('尚未登陆，请重新登陆！');
+            window.location = 'login.html';
+        }
+    }).error(function () {
+        alert('网络错误，请重新登陆！');
+        window.location = 'login.html';
+    })
+});
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //配置网址
 
@@ -99,18 +115,21 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         }).state('main.user-info', {
             url: 'user/info',
             templateUrl: 'views/user/info.html',
-            controller: function ($scope, $http, $Bs_API) {
+            controller: function ($scope, $http, $Bs_API, $rootScope) {
                 //获取用户信息
+                $scope.user = {
+                    user_id: $rootScope.USERLOGIN.user_id,
+                    user_name: $rootScope.USERLOGIN.user_name
+                };
+                $scope.role = [
+                    '超级管理员', '管理员', '采购员', '员工'
+                ];
                 $http.get($Bs_API.getApi('get_info')).success(function (data) {
                     //var use
                     $scope.user = data;
                     $scope.info = data;
                 }).error(function (data) {
-                    $scope.user = {
-                        name: '获取失败',
-                        phone: '获取失败',
-                        type: '未知'
-                    }
+                    $Bs_API.loading('网络错误，信息获取失败！', 1);
                 });
                 $scope.editToggle = function () {
                     $scope.edit = !$scope.edit;
