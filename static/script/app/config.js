@@ -22,7 +22,8 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         receive_detail: "serv/receive.json",
         "product-manage-list": "serv/baseproductlist.json",
         new_product: "serv",
-        product_detail: "serv/baseproduct.json"
+        product_detail: "serv/baseproduct.json",
+        upload_picture:"../index.php/Home/Upload/picture"
     };
     var _$Bs_API = {
         getUrl: function (index) {

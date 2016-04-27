@@ -215,8 +215,8 @@ app.directive('bsUpload', function ($Bs_API) {
                 multi: false,
                 buttonImage: image,// 'style/img/photo4.jpg',
                 swf: 'plugins/upload/uploadify.swf',
-                uploader: '/uploadify/uploadify.php',
-                nUploadSuccess: onUploadSuccess,
+                uploader:$Bs_API.getApi('upload_picture'),
+                onUploadSuccess: onUploadSuccess,
                 onUploadError: onUploadError,
                 width: 120
             });
@@ -234,6 +234,8 @@ app.directive('bsUpload', function ($Bs_API) {
             function onUploadSuccess(file, data, response) {
                 $Bs_API.loading('文件' + file.name + '上传成功 ' + response + ':' + data);
                 $scope.image = image = data.picture;
+                //var s=JSON.parse(data);
+                console.log(data);
                 changeImage(image);
             }
 
@@ -241,7 +243,6 @@ app.directive('bsUpload', function ($Bs_API) {
                 $Bs_API.loading('文件' + file.name + ' 上传失败: ' + errorString, 1);
                 //changeImage($scope.image);
             }
-
 
             function changeImage(url) {
                 var btn = el.find('#' + time + "-button");
