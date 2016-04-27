@@ -42,8 +42,8 @@
          */
         function checkVerifyCode(){
         
-            if(!IS_AJAX)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           // if(!IS_AJAX)
+               // E("页面不存在");     //防止URL直接访问，开发阶段可关闭
         
             $verify = new \Think\Verify();
             $result = $verify->check(I('verifyCode','','trim'));
@@ -179,8 +179,8 @@
          
         public function modifyPassword(){
             
-            if(!IS_AJAX)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           // if(!IS_AJAX)
+                //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
             $map['user_id']      = session('user_id');
             $map['user_password']    = I('oldPassword','','md5');
@@ -209,8 +209,8 @@
          */
         
         public function getNewPassword(){
-            if(!IS_AJAX)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           // if(!IS_AJAX)
+               // E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
             
         }
@@ -230,8 +230,8 @@
          
         public function showModifyUserInfo(){
         
-            if(!IS_AJAX)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+         //   if(!IS_AJAX)
+              //  E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
             $map['user_id']      = session('user_id');
             $user = M('User');
@@ -257,8 +257,8 @@
          
         public function modifyUserInfo(){
             //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
-            if(!IS_POST)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           // if(!IS_POST)
+             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
             $rules = array(
                array('user_phone1','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
