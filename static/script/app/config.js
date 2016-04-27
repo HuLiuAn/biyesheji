@@ -215,10 +215,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'provider/list/:page?search',
             templateUrl: 'views/provider/list.html',
             controller: 'goodProviderListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.provider-detail', {
             url: 'provider/detail/:id',
             templateUrl: 'views/provider/detail.html',
@@ -233,10 +230,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'order/list/:page?search',
             templateUrl: 'views/order/list.html',
             controller: 'goodOrderListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.order-detail', {
             url: 'order/detail/:id',
             templateUrl: 'views/order/detail.html',
@@ -250,10 +244,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'hub/list/:page?search',
             templateUrl: 'views/hub/list.html',
             controller: 'goodHubListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.hub-detail', {
             url: 'hub/detail/:id',
             templateUrl: 'views/hub/detail.html',
@@ -267,10 +258,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'inout/list/:page?search',
             templateUrl: 'views/inout/list.html',
             controller: 'goodInoutListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.inout-detail', {
             url: 'inout/detail/:id',
             templateUrl: 'views/inout/detail.html',
@@ -284,18 +272,12 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: 'check/order/:page?search',
             templateUrl: 'views/check/order.html',
             controller: 'goodCheckOrderListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.check-good', {
             url: 'check/good/:page?search',
             templateUrl: 'views/check/good.html',
             controller: 'goodCheckGoodListCtrl',
-            Handler: {
-                number: 1,
-                list: 'good.list'
-            }
+            Handler: "receive_list"
         }).state('main.check-order-detail', {
             url: 'check/order-detail/:id',
             templateUrl: 'views/check/order-detail.html',
