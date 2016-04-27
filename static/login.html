@@ -191,16 +191,20 @@
             }
             error.hide();
             $.ajax({
-                url: "/auth/login/",
+                url: "../index.php/Home/Staff/login",
                 method: "POST",
                 data: {
-                    username: $('#user').val(),
+                    usernumber: $('#user').val(),
                     password: $('#password').val()
                 }
             }).done(function (data) {
-                window.location = 'index.html';
+                if(data&&JSON.parse(data).status==1){
+                    window.location = 'index.html'
+                }else{
+                    error.text('帐号/密码错误').show();
+                }
             }).fail(function (data) {
-                error.text('帐号/密码错误').show();
+                error.text('网络错误').show();
             })
         });
         if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {

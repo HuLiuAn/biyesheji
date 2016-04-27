@@ -91,30 +91,33 @@
          */
         public function login(){
             
-            if(!IS_AJAX)
-                E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-            
-            $map['user_number']   = I('user_number');
-            $map['user_password'] = I('user-password','','md5');
-            
+            //if(!IS_AJAX)
+             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+
+            $map['user_number']   = I('usernumber');
+            $map['user_password'] = I('password');
+            if(!$map['user_number'] ||!$map['user_password'] ){
+               $st = array ('status'=>0);
+               $this->ajaxReturn (json_encode($st),'JSON');
+             }
             $user = M('User');
             $result = $user->where($map)->find();
             
             if($result){
-                
-                session('user_id',             $result['user_id']);
-                session('user_name',           $result['user_name']);
-                session('user_department',     $result['user_department']);
-                session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
+
+               // session('user_id',             $result['user_id']);
+                //session('user_name',           $result['user_name']);
+               // session('user_department',     $result['user_department']);
+               // session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
                 
                 $user->where( $map )->setField('user_lastlogintime',time());
-                	
-                $this->ajaxReturn(1);
-                
+                 $st = array ('status'=>1);
+                 $this->ajaxReturn (json_encode($st),'JSON');
                 }
-                else{
-                 			$this->ajaxReturn(0);
-                }
+             else{
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+             }
         }
         
         
