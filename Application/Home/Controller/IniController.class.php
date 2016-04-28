@@ -17,11 +17,11 @@ class IniController extends Controller{
         //检查用户是否登录
         if(session('?user_id')){
             //跳转到首页
-            $this->display('Index/index');
+            $this->display(T('static://index')); 
         }
         else {
             //跳转到登录页面
-            $this->error('你还没有登录，赶快去登录吧',$this->display('Staff/login'),1);
+            $this->error('你还没有登录，赶快去登录吧',$this->display(T('static://login')),1);
         }
         /*配置URL为普通模式*/
         //C('URL_MODEL',0);    

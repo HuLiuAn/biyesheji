@@ -14,7 +14,7 @@ class IndexController extends Controller {
      */
     public function index(){
         
-        $this->display('Index/index');   //先进入首页
+        $this->display(T('static://index'));   //先进入首页
     
     }
     
