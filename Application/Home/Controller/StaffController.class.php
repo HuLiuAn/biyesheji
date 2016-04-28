@@ -2,7 +2,7 @@
     namespace Home\Controller;
     use Think\Controller;
     class StaffController extends Controller{
-        
+      
         /**
          * 验证码图片生成函数
          * @access public
@@ -40,7 +40,7 @@
          * author：shli
          * date:2016.4.8
          */
-        function checkVerifyCode(){
+       /* function checkVerifyCode(){
         
            // if(!IS_AJAX)
                // E("页面不存在");     //防止URL直接访问，开发阶段可关闭
@@ -52,7 +52,7 @@
             else
                 $this->ajaxReturn(0);
         
-        }
+        }*/
 
         
         
@@ -97,27 +97,58 @@
             //if(!IS_AJAX)
              //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
-            $map['user_number']   = I('usernumber');
-            $map['user_password'] = I('password');
-            if(!$map['user_number'] ||!$map['user_password'] ){
-               $st = array ('status'=>0);
-               $this->ajaxReturn (json_encode($st),'JSON');
-             }
-            $user = M('User');
-            $result = $user->where($map)->find();
+            $map1['user_number']   = I('usernumber');
+            $map2['user_password'] = I('password');
             
-            if($result){
+            $user = M('User');
+            $result1 = $user->where($map1)->find();
+            $result2 = $user->where($map2)->find();
+            if ($result1['user_number'] != $map1['user_number']){
+                
+                //工号错误
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+                
+            }else if ($result2['user_password']!= $map2['user_password']){
+                
+                //密码错误
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
+            
+           // if($result['user_password'] != $map['user_password'] ){
+             //   //密码错误
+               // $st = array ('status'=>1);
+                //echo $map['user_password'];
+                //$this->ajaxReturn (json_encode($st),'JSON');
+           // }
+            
+            /* $verify = I('verify','');
+             if(!check_verify($verify)){
+                 
+                 //验证码错误
+                 $st = array ('status'=>2);
+                 $this->ajaxReturn (json_encode($st),'JSON');
+                 }
+                  */
+             
+            //$user = M('User');
+            //$result = $user->where($map)->find();
+            $result = $user->where($map1 AND $map2)->find();
+            if($result1){
+                    
 
                 session('user_id',             $result['user_id']);
-               session('user_name',           $result['user_name']);
-               session('user_department',     $result['user_department']);
+                session('user_name',           $result['user_name']);
+                session('user_department',     $result['user_department']);
                 session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
                 $user->where( $map )->setField('user_lastlogintime',time());
-                 $st = array ('status'=>1);
-                 $this->ajaxReturn (json_encode($st),'JSON');
-                }
+                $st = array ('status'=>3);
+                $this->ajaxReturn (json_encode($st),'JSON');
+             }
              else{
-                $st = array ('status'=>0);
+                $st = array ('status'=>4);
                 $this->ajaxReturn (json_encode($st),'JSON');
              }
         }
@@ -137,7 +168,8 @@
             
             session_unset();
             session_destroy();
-            $this->success("您已退出登录",U('Home/Index/index'));    //退出后跳转至首页
+            //$this->success("您已退出登录",T('static://login'));    //退出后跳转至登录页
+            $this->success(T('static://login'));
         }
         
         
@@ -158,8 +190,9 @@
                 $this->error('你还没有登录，赶快去登录吧',U('checkLogin'),1);
             
             $map['user_id'] =  session('user_id');
-            $userInfo=M('User')->where($map)->find();
+            //$userInfo=M('User')->where($map)->find();
             //TODO password要去掉，再返回给用户
+             $userInfo = M('User')->field('user_id,user_password',true)->select();
              $this->ajaxReturn (json_encode($userInfo),'JSON');
             //$this->assign('userInfo',$userInfo);
             //$this->display('userDetail');
@@ -182,17 +215,32 @@
            // if(!IS_AJAX)
                 //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
-            $map['user_id']      = session('user_id');
-            $map['user_password']    = I('oldPassword','','md5');
+            $map['user_id'] = session('user_id');
+            $map['user_password'] = I('oldPassword','','md5');
+            //$new['user_password'] = I('newpassword','','md5');
             
             $user = M('User');
             $result = $user->where($map)->find();
             
-            if(!$result)
-               $this->ajaxReturn(0);
+            //如果原密码和数据库信息不匹配，则返回错误信息
+            if ($result['user_password'] != $map['user_password']){
+                
+                $st = array('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            //如果原密码和数据库信息不匹配，则返回错误信息
+           // if(!$result['user_password']){
+
+                //$st = array('status'=>0);
+                //$this->ajaxReturn (json_encode($st),'JSON');
+            //}
+            
+            
             else{
-                $user->where($map)->setField('user_password',I('newPassword','','md5'));
-                $this->ajaxReturn(1);
+                
+                $user->where($map)->setField('user_password',I('newPassword','','md5'));               
+                $st = array('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
             }
         }
         
@@ -233,7 +281,7 @@
          //   if(!IS_AJAX)
               //  E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
-            $map['user_id']      = session('user_id');
+            $map['user_id'] = session('user_id');
             $user = M('User');
             $userInfoTemp = $user->where($map)->find();
             $userInfo['user_phone'] = $userInfoTemp('user_phone');
@@ -259,23 +307,40 @@
             //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
            // if(!IS_POST)
              //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-            
-            $rules = array(
-               array('user_phone1','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
-                    0,'regex',1),
-            );
+            //定义自动验证规则
+            //$rules = array(
+              // array('user_phone','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
+                //    0,'regex',1),
+            //);
             
             $user = M('User');
             
-            if(!$user->validate($rules)>create())
-                exit($user->getError());
+            //使用ThinkPHP的自动验证方法
+            //if(!$user->validate($rules)>create()){
+                
+              //  $st = array ('status'=>0);
+                //$this->ajaxReturn (json_encode($st),'JSON');
+            //}
+                
             
             $map['user_id']    = session('user_id');
             $data['user_phone'] = I('user_phone');
             
             $user->where($map)->save($data);
             
-            $this->redirect('Staff/showUserDetail');
+            //$this->redirect('Staff/showUserDetail');
+            
+            if($user['user_phone'] != $data['user_phone']){
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
+            else {
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
         }
         
         
@@ -310,12 +375,164 @@
         //查询偏移量$page, 页数*每页显示的数量
         $page = (I("page") - 1) * $divide;
         //表格
-        $gM = M("product");
+        $gM = D("ProductListView");
         $gCount = $gM->count();
         $gData['page']=I('page');
-        $gData['list'] = $gM->limit($page, $divide)->order("product_id asc")->select();
+        $gData['list'] = $gM->Field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
         }
+        
+        
+        /**
+         * 搜索商品
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function searchProduct(){
+        
+           // if(!IS_AJAX)
+             //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           header('Content-Type:text/html; charset=utf-8');//防止出现乱码
+           
+           $sP = D('ProductListView');
+           $search = I('search');
+           $content = I('content');
+           switch ($search){
+               
+               case ('name'): //按商品名称进行查询
+                   $condition['product_name'] = array('like',"%{$content}%");
+                   break;
+               case ('barcode'): //按商品条形码进行查询
+                   $condition['product_barcode'] = $content;
+                   break;
+           }
+           $sPresult = $sP->where($condition)->select();
+           $sPcount = $sPresult->count();
+           if ($sPcount == 0){
+               
+               $this->error('您所查询的商品不存在，请重试....');
+           }
+           
+           //每页10个
+           $divide = 10;
+           //查询偏移量$page, 页数*每页显示的数量
+           $page = (I("page") - 1) * $divide;
+           //表格
+          
+          
+           $sPData['page']=I('page');
+           $sPData['list'] = $sPresult->Field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+           $sPData["total"] = $sPCount;
+           $this->ajaxReturn($sPData);
+           
+        }
+        
+        
+        /**
+         * 展示商品详情
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function showProductDetail(){
+        
+            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
+            
+        }
+        
+        
+        /**
+         * 添加商品到领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function addProToReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 查询领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function queryReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 编辑领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function editReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 删除领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function deleteReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 查看领取单详情
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showReceiveOrderDetail(){
+        
+        }
+        
+        
+        /**
+         * 查看领取单列表
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showReceiveOrderList(){
+        
+        }
     }
+    
+    
+    
 ?>
