@@ -12,7 +12,7 @@ class IniController extends Controller{
      * author: shli
      * date: 2016.04.8
      */
-    public function initialize(){
+     public function initialize(){
        
         //检查用户是否登录
         if(session('?user_id')){

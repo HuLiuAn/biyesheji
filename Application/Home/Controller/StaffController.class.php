@@ -2,7 +2,7 @@
     namespace Home\Controller;
     use Think\Controller;
     class StaffController extends Controller{
-        
+      
         /**
          * 验证码图片生成函数
          * @access public
@@ -261,7 +261,7 @@
              //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
             $rules = array(
-               array('user_phone1','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
+               array('user_phone','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
                     0,'regex',1),
             );
             
@@ -275,7 +275,18 @@
             
             $user->where($map)->save($data);
             
-            $this->redirect('Staff/showUserDetail');
+            //$this->redirect('Staff/showUserDetail');
+            
+            if(!$user['user_phone'] = $data['user_phone']){
+            $st = array ('status'=>0);
+            $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
+            else {
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
         }
         
         
@@ -317,5 +328,121 @@
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
         }
+        
+        
+        /**
+         * 搜索商品
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function searchProduct(){
+        
+        }
+        
+        
+        /**
+         * 展示商品详情
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function showProductDetail(){
+        
+            
+        }
+        
+        
+        /**
+         * 添加商品到领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function addProToReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 查询领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.26
+         */
+        public function queryReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 编辑领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function editReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 删除领取单
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function deleteReceiveOrder(){
+        
+        }
+        
+        
+        /**
+         * 查看领取单详情
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showReceiveOrderDetail(){
+        
+        }
+        
+        
+        /**
+         * 查看领取单列表
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showReceiveOrderList(){
+        
+        }
     }
+    
+    
+    
 ?>
