@@ -97,13 +97,25 @@
             //if(!IS_AJAX)
              //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
-            $map1['user_number']   = I('usernumber');
-            $map2['user_password'] = I('password');
+           // $map1['user_number']   = I('usernumber');
+            //$map2['user_password'] = I('password');
+            
+            $map['user_number']   = I('usernumber');
+            $map['user_password'] = I('password');
             
             $user = M('User');
-            $result1 = $user->where($map1)->find();
-            $result2 = $user->where($map2)->find();
-            if ($result1['user_number'] != $map1['user_number']){
+            
+            //$result1 = $user->where($map1)->find();
+            //$result2 = $user->where($map2)->find();
+            
+            $result = $user->where($map)->find();
+            if (($result['user_number'] and $result['user_password']) == 0){
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
+            /*if ($result1['user_number'] != $map1['user_number']){
                 
                 //工号错误
                 $st = array ('status'=>0);
@@ -114,7 +126,7 @@
                 //密码错误
                 $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
-            }
+            }*/
             
             
            // if($result['user_password'] != $map['user_password'] ){
@@ -135,20 +147,21 @@
              
             //$user = M('User');
             //$result = $user->where($map)->find();
-            $result = $user->where($map1 AND $map2)->find();
-            if($result1){
+            
+            //$result = $user->where($map1 AND $map2)->find();
+            if($result){
                     
 
                 session('user_id',             $result['user_id']);
                 session('user_name',           $result['user_name']);
                 session('user_department',     $result['user_department']);
                 session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
-                $user->where( $map )->setField('user_lastlogintime',time());
-                $st = array ('status'=>3);
+                $user->where( $map)->setField('user_lastlogintime',time());
+                $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
              }
              else{
-                $st = array ('status'=>4);
+                $st = array ('status'=>0);
                 $this->ajaxReturn (json_encode($st),'JSON');
              }
         }
@@ -446,6 +459,13 @@
         
             header('Content-Type:text/html; charset=utf-8');//防止出现乱码
             
+            $get['product_name'] = I('product_name');
+            $get['warehouse_number'] = I('warehouse_number');
+            
+            $pD = D('ProductDetail');
+            $proInfo = $pD->whrer($get)->select();
+            
+            $this->ajaxReturn($proInfo);
         }
         
         
@@ -460,11 +480,14 @@
          */
         public function addProToReceiveOrder(){
         
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
         }
         
         
         /**
-         * 查询领取单
+         * 搜索领取单
          * @access public
          * @param void
          * @return void
@@ -474,11 +497,49 @@
          */
         public function queryReceiveOrder(){
         
+            // if(!IS_AJAX)
+             //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+           header('Content-Type:text/html; charset=utf-8');//防止出现乱码
+           
+           $qR = M('receiveorder');
+           $search = I('search');
+           $content = I('content');
+           switch ($search){
+               
+               case ('date'): //按领取单生成日期搜索
+                   $condition['receiveorder_date'] = $content;
+                   break;
+               case ('number'): //按领取单号搜索
+                   $condition['receiveorder_number'] = $content;
+                   break;
+			   case ('state'): //按领取单状态搜索
+                   $condition['receiveorder_state'] = $content;
+                   break;
+           }
+           $qRresult = $qR->where($condition)->select();
+           $qRcount = $qRresult->count();
+           if ($qRcount == 0){
+               
+               $this->error('您所查询的领取单不存在，请重试....');
+           }
+           
+           //每页10个
+           $divide = 10;
+           //查询偏移量$page, 页数*每页显示的数量
+           $page = (I("page") - 1) * $divide;
+           //表格
+          
+          
+           $qRData['page']=I('page');
+           $qRData['list'] = $qRresult->Field('receiveuser_id',true)->limit($page, $divide)->order("receiveorder_id asc")->select();
+           $qRData["total"] = $qRCount;
+           $this->ajaxReturn($qRData);
+           
         }
         
         
         /**
-         * 编辑领取单
+         * 编辑领取单：只能编辑未经审核的领取单
          * @access public
          * @param void
          * @return void
@@ -492,7 +553,10 @@
         
         
         /**
-         * 删除领取单
+         * 删除领取单:只能删除未经审核的领取单
+         * 0:待审核
+         * 1：审核通过
+         * 2：审核不通过
          * @access public
          * @param void
          * @return void
@@ -501,7 +565,26 @@
          * date: 2016.04.12
          */
         public function deleteReceiveOrder(){
-        
+            
+            $get['receiveorder_id'] = session('receiveorder_id');
+            
+            $temp = M('receiveorder');
+            
+            $state = $temp->$temp->where($get)->find();
+            
+            //只能删除未经审核的领取单
+            if ($state['receiveorder_state'] == 0){
+                
+                $temp->where($get)->delete();
+				$st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+				
+            }
+			else {
+				
+				$st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+			} 
         }
         
         
@@ -516,6 +599,7 @@
          */
         public function showReceiveOrderDetail(){
         
+            
         }
         
         
@@ -530,6 +614,20 @@
          */
         public function showReceiveOrderList(){
         
+           
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+        	//每页10个
+            $divide = 10;
+            //查询偏移量$page, 页数*每页显示的数量
+            $page = (I("page") - 1) * $divide;
+            //表格
+            $receive = M('receiveorder');
+			$rCount = $receive->count();
+			$rData['page'] = I('page');
+			$rData['list'] = $receive->Field('receiveorder_id,receiveorder_number,receiveorder_date,receiveorder_state')->limit($page, $divide)->order("receiveorder_id asc")->select();
+			$rData['total'] = $rCount;
+            $this->ajaxReturn($rData);
         }
     }
     
