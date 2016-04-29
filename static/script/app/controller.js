@@ -310,15 +310,28 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
         $Bs_API.loading('获取失败！请检查网络', 1);
     });
 
+    var Upload = {};
+    $scope.$on('FileUploadFinish', function (e, msg) {
+        Upload[e.targetScope.name] = msg;
+    });
     $scope.submit = function () {
-        $scope.data.photogroup = [];
-        for (var i in $scope.images) {
-            if ($scope.images[i]) {
-                $scope.data.photogroup.push($scope.images[0]);
+        var photogroup = [];
+        var len = 6;
+        var temp;
+        for (var i = 0; i < len; i++) {
+            temp = "images['" + i + "']";
+            if (Upload[temp]) {
+                photogroup[i] = Upload[temp];
+            } else {
+                photogroup[i] = $scope.data.product_photogroup[i];
             }
         }
-        $scope.data.photo = $scope.image;
-        ////console.log($scope.data);
+        $scope.data.product_photogroup = photogroup;
+
+        if (Upload['image']) {
+            $scope.data.product_photo = Upload['image'];
+        }
+
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
             $Bs_API.loading('成功');
             $state.go('main.good-manage-list', {page: 1});
@@ -334,25 +347,32 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
     }
 });
 app.controller('goodManageNewCtrl', function ($scope, $http, $Bs_API, $state) {
-    $scope.images = [
-        //'style/img/photo4.jpg',
-        //'style/img/photo4.jpg',
-        //'style/img/photo4.jpg',
-        //'style/img/photo4.jpg',
-        //'style/img/photo4.jpg',
-        //'style/img/photo4.jpg'
-    ];
+
+    $scope.images = [];
     $scope.image = '';//'style/img/photo4.jpg';
     $scope.data = {};
+
+    var Upload = {};
+    $scope.$on('FileUploadFinish', function (e, msg) {
+        Upload[e.targetScope.name] = msg;
+    });
     $scope.submit = function () {
         $scope.data.product_photogroup = [];
-        for (var i in $scope.images) {
-            if ($scope.images[i]) {
-                $scope.data.photogroup.push($scope.images[0]);
+        var len = 6;
+        var temp;
+        for (var i = 0; i < len; i++) {
+            temp = "images['" + i + "']";
+            if (Upload[temp]) {
+                $scope.data.product_photogroup.push(Upload[temp]);
             }
         }
-        $scope.data.product_photo = $scope.image;
-        //////console.log($scope.data);
+        if (Upload['image']) {
+            $scope.data.product_photo = Upload['image'];
+        } else {
+            if ($scope.data.product_photogroup.length > 0) {
+                $scope.data.product_photo = $scope.data.product_photogroup[0];
+            }
+        }
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
             $Bs_API.loading('成功');
             $state.go('main.good-manage-list', {page: 1});

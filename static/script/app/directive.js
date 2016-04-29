@@ -201,7 +201,7 @@ app.directive('bsUpload', function ($Bs_API) {
     return {
         //定义，这个指令是什么，元素？类？注释？属性？,用restrict
         restrict: "E",
-        template: '<p><input type="file" name="upload" /></p>',
+        template: '<p><input type="file" name="upload" /><a href="" class="btn btn-danger" ng-click="del()">删除</a><a href="" class="btn btn-warning" ng-click="back()">还原</a></p>',
         scope: {
             image: "="
         },
@@ -210,12 +210,13 @@ app.directive('bsUpload', function ($Bs_API) {
             var time = new Date().getTime().toString();
             up.attr('id', time);
             var image = $scope.image;
+            $scope.name = attr['name'];
             up.uploadify({
                 height: 100,
                 multi: false,
                 buttonImage: image,// 'style/img/photo4.jpg',
                 swf: 'plugins/upload/uploadify.swf',
-                uploader:$Bs_API.getApi('upload_picture'),
+                uploader: $Bs_API.getApi('upload_picture'),
                 onUploadSuccess: onUploadSuccess,
                 onUploadError: onUploadError,
                 width: 120
@@ -232,11 +233,11 @@ app.directive('bsUpload', function ($Bs_API) {
             setTimeout(watch, 5000);
 
             function onUploadSuccess(file, data, response) {
-                $Bs_API.loading('文件' + file.name + '上传成功 ' + response + ':' + data);
-                $scope.image = image = data.picture;
-                //var s=JSON.parse(data);
-                console.log(data);
+                $Bs_API.loading('文件' + file.name + '上传成功 ');
+                var s = JSON.parse(data);
+                var url = image = "../Uploads/" + s.Filedata.savepath + s.Filedata.savename;
                 changeImage(image);
+                $scope.$emit('FileUploadFinish', url);
             }
 
             function onUploadError(file, errorCode, errorMsg, errorString) {
@@ -247,6 +248,15 @@ app.directive('bsUpload', function ($Bs_API) {
             function changeImage(url) {
                 var btn = el.find('#' + time + "-button");
                 btn.css("background-image", " url('" + url + "')");
+            }
+
+            $scope.back = function () {
+                changeImage($scope.image);
+                $scope.$emit('FileUploadFinish', $scope.image);
+            };
+            $scope.del = function () {
+                changeImage('default.jpg');
+                $scope.$emit('FileUploadFinish', 'default.jpg');
             }
         }
     }
