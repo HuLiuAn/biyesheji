@@ -103,7 +103,7 @@
             $map['user_number']   = I('usernumber');
             $map['user_password'] = I('password');
             
-            $user = M('User');
+            $user = M('user');
             
             //$result1 = $user->where($map1)->find();
             //$result2 = $user->where($map2)->find();
@@ -151,19 +151,17 @@
             //$result = $user->where($map1 AND $map2)->find();
             if($result){
                     
-
+                $time = date("Y-m-d H:i:s",time());
                 session('user_id',             $result['user_id']);
                 session('user_name',           $result['user_name']);
                 session('user_department',     $result['user_department']);
-                session('user_lastlogintime',  date('Y-m-d H:i',$result['user_lastlogintime']));
-                $user->where( $map)->setField('user_lastlogintime',time());
+                //session('user_lastlogintime',  $result['user_lastlogintime']);
+                $user->where($map)->setField('user_lastlogintime',$time);
+                
                 $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
              }
-             else{
-                $st = array ('status'=>0);
-                $this->ajaxReturn (json_encode($st),'JSON');
-             }
+            
         }
         
         
@@ -202,10 +200,10 @@
             if(!session('?user_id'))
                 $this->error('你还没有登录，赶快去登录吧',U('checkLogin'),1);
             
-            $map['user_id'] =  session('user_id');
+            $map['user_id'] =  session('id');
             //$userInfo=M('User')->where($map)->find();
             //TODO password要去掉，再返回给用户
-             $userInfo = M('User')->field('user_id,user_password',true)->select();
+             $userInfo = M('user')->where($map)->field('user_id,user_password',true)->select();
              $this->ajaxReturn (json_encode($userInfo),'JSON');
             //$this->assign('userInfo',$userInfo);
             //$this->display('userDetail');
@@ -228,11 +226,11 @@
            // if(!IS_AJAX)
                 //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
-            $map['user_id'] = session('user_id');
+            $map['user_id'] = session('id');
             $map['user_password'] = I('oldPassword','','md5');
             //$new['user_password'] = I('newpassword','','md5');
             
-            $user = M('User');
+            $user = M('user');
             $result = $user->where($map)->find();
             
             //如果原密码和数据库信息不匹配，则返回错误信息
@@ -295,7 +293,7 @@
               //  E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
             $map['user_id'] = session('user_id');
-            $user = M('User');
+            $user = M('user');
             $userInfoTemp = $user->where($map)->find();
             $userInfo['user_phone'] = $userInfoTemp('user_phone');
             
@@ -326,7 +324,7 @@
                 //    0,'regex',1),
             //);
             
-            $user = M('User');
+            $user = M('user');
             
             //使用ThinkPHP的自动验证方法
             //if(!$user->validate($rules)>create()){
@@ -336,7 +334,7 @@
             //}
                 
             
-            $map['user_id']    = session('user_id');
+            $map['user_id']    = session('id');
             $data['user_phone'] = I('user_phone');
             
             $user->where($map)->save($data);
@@ -391,7 +389,7 @@
         $gM = D("ProductListView");
         $gCount = $gM->count();
         $gData['page']=I('page');
-        $gData['list'] = $gM->Field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+        $gData['list'] = $gM->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
         }
@@ -439,7 +437,7 @@
           
           
            $sPData['page']=I('page');
-           $sPData['list'] = $sPresult->Field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+           $sPData['list'] = $sPresult->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
            $sPData["total"] = $sPCount;
            $this->ajaxReturn($sPData);
            
@@ -459,11 +457,15 @@
         
             header('Content-Type:text/html; charset=utf-8');//防止出现乱码
             
-            $get['product_name'] = I('product_name');
-            $get['warehouse_number'] = I('warehouse_number');
+           // $get['product_name'] = I('product_name');
+            //$get['warehouse_number'] = I('warehouse_number');
             
-            $pD = D('ProductDetail');
-            $proInfo = $pD->whrer($get)->select();
+            $get['product_id'] = session('id');
+            //$pD = D('ProductDetailView');
+            
+            $pD = M('product');
+            $where = $pD->whrer($get);
+            $proInfo = $where->field('product_photogroup,product_barcode,properties')->select();
             
             $this->ajaxReturn($proInfo);
         }
@@ -483,7 +485,42 @@
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $rC = D('ReceiveView');
+            
+            
+            $rCInfo['receiveuser_id']      = session('user_id');
+            $rCInfo['product_id']          = session('product_id');
+            $rCInfoTemp['warehouse_name']  = session('warehouse_name');
+            $rCInfo['count']               = session('count');
+            
+            $wH = M('warehouse');
+            $wHInfo = $wH->where($rCInfoTemp)->select();
+            $rCInfo['warehouse_id'] = $wHInfo['warehouse_id'];
+            
+            
+            /* 选择一个随机的方案 */
+            mt_srand((double) microtime() * 1000000);
+            //生成订单号
+            $rCInfo['receiveorder_number'] =  'TROL'.date('Ymd').str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
+            $rCInfo['receiveorder_date'] = date('Y-m-d',time());
+            
+            $rC-> add($rCInfo);
+            
+            if ($rC->where($rCInfo)->find()){
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }else {
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
         }
+        
+        
+        
+        
         
         
         /**
