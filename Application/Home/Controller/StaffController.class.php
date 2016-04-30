@@ -287,6 +287,7 @@
          * date: 2016.04.12
          */
          
+        
         public function showModifyUserInfo(){
         
          //   if(!IS_AJAX)
@@ -490,7 +491,7 @@
             
             $rCInfo['receiveuser_id']      = session('user_id');
             $rCInfo['product_id']          = session('product_id');
-            $rCInfoTemp['warehouse_name']  = session('warehouse_name');
+            $rCInfoTemp['warehouse_number']  = session('warehouse_name');
             $rCInfo['count']               = session('count');
             
             $wH = M('warehouse');
@@ -539,8 +540,10 @@
            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
            
            $qR = M('receiveorder');
+           $map ('receiveuser_id') = session('user_id');
            $search = I('search');
            $content = I('content');
+           $condition = $qR->where($map)->select();
            switch ($search){
                
                case ('date'): //按领取单生成日期搜索
@@ -568,7 +571,7 @@
           
           
            $qRData['page']=I('page');
-           $qRData['list'] = $qRresult->Field('receiveuser_id',true)->limit($page, $divide)->order("receiveorder_id asc")->select();
+           $qRData['list'] = $qRresult->Field('receiveuser_id，admituser_id,receiveorderdetail_id',true)->limit($page, $divide)->order("receiveorder_id asc")->select();
            $qRData["total"] = $qRCount;
            $this->ajaxReturn($qRData);
            
@@ -577,6 +580,7 @@
         
         /**
          * 编辑领取单：只能编辑未经审核的领取单
+         * 暂时不实现
          * @access public
          * @param void
          * @return void
@@ -585,6 +589,7 @@
          * date: 2016.04.12
          */
         public function editReceiveOrder(){
+            
         
         }
         
@@ -594,6 +599,10 @@
          * 0:待审核
          * 1：审核通过
          * 2：审核不通过
+         * 暂时不做这个功能，
+         * 如果用户想取消领取单，
+         * 私下联系审核员，
+         * 更改状态为未通过审核
          * @access public
          * @param void
          * @return void
@@ -601,13 +610,13 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function deleteReceiveOrder(){
+        /*public function deleteReceiveOrder(){
             
             $get['receiveorder_id'] = session('receiveorder_id');
             
             $temp = M('receiveorder');
             
-            $state = $temp->$temp->where($get)->find();
+            $state = $temp->where($get)->find();
             
             //只能删除未经审核的领取单
             if ($state['receiveorder_state'] == 0){
@@ -622,7 +631,7 @@
 				$st = array ('status'=>0);
                 $this->ajaxReturn (json_encode($st),'JSON');
 			} 
-        }
+        }*/
         
         
         /**
@@ -636,7 +645,12 @@
          */
         public function showReceiveOrderDetail(){
         
+            $map['receiveorder_id'] = session('id');
             
+            $rOD = D('ReceiveDetailView');
+            $rODInfo = $rOD->where('$map')->field('receiveorder_id',true)->select();
+            
+            $this->ajaxReturn($proInfo);
         }
         
         
@@ -656,13 +670,14 @@
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
         	//每页10个
             $divide = 10;
+            $map['receiveuser_id'] = session('user_id');
             //查询偏移量$page, 页数*每页显示的数量
             $page = (I("page") - 1) * $divide;
             //表格
             $receive = M('receiveorder');
-			$rCount = $receive->count();
+			$rCount = $receive->where($map)->count();
 			$rData['page'] = I('page');
-			$rData['list'] = $receive->Field('receiveorder_id,receiveorder_number,receiveorder_date,receiveorder_state')->limit($page, $divide)->order("receiveorder_id asc")->select();
+			$rData['list'] = $receive->where($map)->Field('receiveorder_id,receiveorder_number,receiveorder_date,receiveorder_state')->limit($page, $divide)->order("receiveorder_id asc")->select();
 			$rData['total'] = $rCount;
             $this->ajaxReturn($rData);
         }

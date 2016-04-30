@@ -2,7 +2,7 @@
     namespace Home\Model;
     use Think\Model\ViewModel;
     /**
-     * 普通员工查看可领取的商品列表
+     * 添加商品到领取单
      * shli 4.24
      */
     class ReceiveViewModel extends ViewModel{
