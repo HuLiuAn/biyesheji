@@ -16,27 +16,33 @@
     
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-                  
+            header('Content-Type:text/html; charset=utf-8');
+            
+            $supplier = M('supplier');
+            $data = array(
+                
+                'supplier_name'     => I('name'),
+                'supplier_contact'  => I('contact'),
+                'supplier_phone'    => I('phone'),
+                'supplier_address'  => I('address'),
+            );     
+            
+            if ($supplier->data($data)->add()){
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }else {
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
            
         }
     
-    
+       
+
         /**
-         * 编辑供应商信息
-         * @access public
-         * @param void
-         * @return void
-         *
-         * author: shli
-         * date: 2016.04.12
-         */
-        public function editSupplier(){
-    
-        }
-    
-    
-        /**
-         * 添加商品
+         * 向tb_product表添加商品信息
          * @access public
          * @param void
          * @return void
@@ -45,26 +51,27 @@
          * date: 2016.04.12
          */
         public function addProduct(){
-    
+        
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-            
+        
             //调用Application/Home/Common/function.php中自定义方法imgUpload()获取图片名称
-            $product_add = imgUpload();
+            //$imgupload = imgUpload();
             $data = array(
                 'product_name'        => I('product_name'),
                 'product_barcode'     => I('product_barcode'),
-                //TODO 如何获取商品组图？
                 'product_photogroup'  => I('product_photogroup'),
-                'product_photo'       => $product_add,
-                //TODO 获取商品属性信息
+                'product_photo'       => I('product_photo'),
+                'properties'          => I('product_properties'),
+                
             );
+        
+            $product = M('product');
             
-            $product = D('productView');
-            
+        
             //添加商品成功
             if ($product->add($data)){
-                
+        
                 $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
             }else {
@@ -72,12 +79,13 @@
                 $st = array ('status'=>0);
                 $this->ajaxReturn (json_encode($st),'JSON');
             }
-            
+        
         }
+      
     
     
         /**
-         * 搜索商品
+         * 显示商品列表 and 搜索商品
          * @access public
          * @param void
          * @return void
@@ -101,7 +109,7 @@
                     $condition = $content;
                     break;
                 case (''):
-                    $condition = $sP;
+                    $condition['product_id'] = $sP['product_id'];
                     break;
             }
             
@@ -120,9 +128,8 @@
             //表格
             
             
-            $sPData['page']=I('page');
-            //TODO 需要向前台返回商品属性 使用D方法实例化模型类
-            $sPData['list'] = $sPresult->Field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+            $sPData['page']=I('page'); 
+            $sPData['list'] = $sPresult->Field('product_id','product_name','product_photo','properties')->limit($page, $divide)->order("product_id asc")->select();
             $sPData["total"] = $sPCount;
             $this->ajaxReturn($sPData);
         }
@@ -140,11 +147,33 @@
          */
         public function addProToSupplier(){
     
+
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $get['supplier_id']             = session('supplier_id');
+            $get['product_id']              = session('product_id');
+            $get['supplierproduct_price']   = I('price');
+
+            $sP = M('supplierproduct');
+            $result = $sP->data($get)->add();
+            if ($result){
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+                
+            }else {
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+                
+            }
         }
     
     
         /**
          * 编辑商品价格
+         * 
          * @access public
          * @param void
          * @return void
@@ -152,9 +181,9 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function editProPrices(){
+        /*public function editProPrices(){
     
-        }
+        }*/
     
     
         /**
@@ -168,6 +197,25 @@
          */
         public function delProFromSupplier(){
     
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $get['supplier_id']             = session('supplier_id');
+            $get['product_id']              = session('product_id');
+            
+            $sP = M('supplierproduct');
+            $result = $sP->where($get)->delete();
+            if ($result){
+            
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            
+            }else {
+            
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            
+            }
         }
     
     
@@ -182,10 +230,241 @@
          */
         public function searchSupplier(){
     
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            //$page = I('page');
+            
+            $search = I('search');
+            $content = I('content');
+            
+            $sP = M('supplier');
+            
+            switch ($search){
+                
+                case ('name'):  //按名字搜索
+                    $condition['supplier_name'] = array('like',"%{$content}%");
+                    break;
+                case ('contact'):  //按联系人搜索
+                    $condition['supplier_contact'] = array('like',"%{$content}%");
+                    break;
+                case ('phone'):  //按联系人电话搜索
+                    $condition['supplier_phone'] = array('like',"%{$content}%");
+                    break;
+                case (''):  //匹配所有供应商信息
+                    $condition['supplier_id'] = $sP['supplier_id'];
+                    break;
+             }
+             
+             $sPresult = $sP->where($condition)->select();
+             $sPcount = $sPresult->count();
+             if ($sPcount == 0){
+                  
+                 $this->error('您所查询的供应商不存在，请重试....');
+             }
+              
+             //每页10个
+             $divide = 10;
+             //查询偏移量$page, 页数*每页显示的数量
+             $page = (I("page") - 1) * $divide;
+             //表格
+             
+             
+             $sPData['page']=I('page');
+             $sPData['list'] = $sPresult->field('*')->limit($page, $divide)->order("product_id asc")->select();
+             $sPData["total"] = $sPCount;
+             $this->ajaxReturn($sPData);
+            
         }
     
     
-    
+        /**
+         * 显示供应商详情
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function editSupplier(){
+        
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+                  
+            $map = session('supplier_id');
+            $sP = D('SupplierProductView');
+
+            $sPresult = $sP->where($map)->select();
+            
+            $sPcount = $sPresult->count();
+             
+            //每页10个
+            $divide = 10;
+            //查询偏移量$page, 页数*每页显示的数量
+            $page = (I("page") - 1) * $divide;
+            //表格
+            
+            
+            $sPData['page']=I('page');
+            $sPData['list'] = $sPresult->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+            $sPData["total"] = $sPCount;
+            $this->ajaxReturn($sPData);
+        }
+
+        /**
+         * 编辑供应商信息
+         * 修改基本信息和商品价格
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function editSupplier(){
+        
+            // if(!IS_POST)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            
+            $data = array(
+                
+                'supplier_name'         => I('supplier_name'),
+                'supplier_contact'      => I('supplier_contact'),
+                'supplier_phone'        => I('supplier_phone'),
+                'supplier_address'      => I('supplier_address')
+            );
+            
+            $map['supplier_id'] = session('supplier_id');
+            $map['product_id'] = session('product_id');
+            
+            $sD = D('SupplierDetailView');
+            $sDedit = $sD->where($map)->find();
+            
+            $result = $sDedit->save($data);
+            if ($result == $sDedit->save($data)){
+                
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }else {
+                
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+           
+        }
+        
+        
+        /**
+         * 在订单界面返回供应商ID和名字，用于为订单选择唯一供应商
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showSupplierList(){
+        
+            // if(!IS_AJAX)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $search = I('search');
+            $content =I('content');
+            
+            $sL = M('supplier');
+            
+            switch ($map){
+                
+                case('supplier_name'):   //按供应商名字搜索
+                    $condition['supplier_name'] = array('like',"%{$content}%");
+                    break;
+                case(''):  //获取全部供应商
+                    $condition['supplier_id'] = $sL['supplier_id'];
+                    break; 
+                    
+            }
+            
+            $sLresult = $sL->where($condition)->select();
+            $sLcount = $sLresult->count();
+            if ($sLcount == 0){
+                 
+                $this->error('您所查询的供应商不存在，请重试....');
+            }
+            
+            //每页10个
+            $divide = 10;
+            
+            //偏移量$page ,页数*每页显示的记录条数
+            $page = (I('page')-1) * $divide;
+            
+            $sData['page'] = I('page');
+            $sData['total'] = $sLcount;
+            $sData['list'] = $sLresult->field('supplier_id,supplier_name')->limit($page,$divide)->order('supplier_id asc')->select();
+            
+            $this->ajaxReturn($sData);
+     
+        }
+
+        
+        
+        /**
+         * 在订单界面，确定供应商之后，列表显示该供应商可供采购的商品信息
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showSupplierProList(){
+        
+            // if(!IS_AJAX)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $map['supplier_id'] = session('supplier_id');
+            $search = I('search');
+            $content =I('content');
+        
+            $sL = D('SupplierProductView')->where($map)->select();
+        
+            switch ($search){
+        
+                case('product_name'):   //按商品名字搜索
+                    $condition['product_name'] = array('like',"%{$content}%");
+                    break;
+                case(''):  //获取全部供应商
+                    $condition['supplier_id'] = $sL['supplier_id'];
+                    break;
+        
+            }
+        
+            $sLresult = $sL->where($condition)->select();
+            $sLcount = $sLresult->count();
+            if ($sLcount == 0){
+                 
+                $this->error('您所查询的商品不存在，请重试....');
+            }
+        
+            //每页10个
+            $divide = 10;
+        
+            //偏移量$page ,页数*每页显示的记录条数
+            $page = (I('page')-1) * $divide;
+        
+            $sData['page'] = I('page');
+            $sData['total'] = $sLcount;
+            $sData['list'] = $sLresult->field('supplier_id',true)->limit($page,$divide)->order('product_id asc')->select();
+        
+            $this->ajaxReturn($sData);
+             
+        }
+        
+        
+        
+        
+        
+        
         /**
          * 显示订单列表
          * @access public
@@ -239,6 +518,7 @@
          */
         public function addOrder(){
     
+            
         }
     
     
@@ -251,9 +531,9 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function editOrder(){
+       /* public function editOrder(){
     
-        }
+        }*/
     
     
         /**
@@ -265,9 +545,9 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function deleteOrder(){
+       /* public function deleteOrder(){
     
-        }
+        }*/
     }
 
 ?>

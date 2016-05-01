@@ -365,7 +365,7 @@
         * author: shli
         * date: 2016.04.12
         */
-        public function showProductList(){
+       /* public function showProductList(){
             //TODO 这里是一个服务端分页的例子
 
      //   $divide = 6;
@@ -393,7 +393,7 @@
         $gData['list'] = $gM->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
-        }
+        }*/
         
         
         /**
@@ -421,6 +421,9 @@
                    break;
                case ('barcode'): //按商品条形码进行查询
                    $condition['product_barcode'] = $content;
+                   break;
+               case (''):  //显示商品列表
+                   $condition['product_id'] = $sP['product_id'];
                    break;
            }
            $sPresult = $sP->where($condition)->select();
@@ -538,12 +541,14 @@
             // if(!IS_AJAX)
              //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
+     
            
-           $qR = M('receiveorder');
            $map ('receiveuser_id') = session('user_id');
            $search = I('search');
            $content = I('content');
-           $condition = $qR->where($map)->select();
+           
+           $qR = M('receiveorder')->where($map)->select();
+ 
            switch ($search){
                
                case ('date'): //按领取单生成日期搜索
@@ -554,6 +559,9 @@
                    break;
 			   case ('state'): //按领取单状态搜索
                    $condition['receiveorder_state'] = $content;
+                   break;
+               case (''):  //显示商品列表
+                   $condition['receiveorder_id'] = $qR['receiveorder_id'];
                    break;
            }
            $qRresult = $qR->where($condition)->select();
