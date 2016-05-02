@@ -548,7 +548,8 @@
            $content = I('content');
            
            $qR = M('receiveorder')->where($map)->select();
- 
+           //$qR = M('receiveorder')->select();
+           
            switch ($search){
                
                case ('date'): //按领取单生成日期搜索

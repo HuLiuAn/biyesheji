@@ -508,6 +508,59 @@
     
     
         /**
+         * 在订单中，为某一个商品选择入库仓库
+         * @access public
+         * @param void
+         * @return void
+         *
+         * author: shli
+         * date: 2016.04.12
+         */
+        public function showWareHouse(){
+
+            // if(!IS_AJAX)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $search = I('search');
+            $content =I('content');
+            
+            $aO = M('warehouse');
+            
+            switch ($search){
+            
+                case('warehouse_number'):   //按仓库名字搜索
+                    $condition['warehouse_number'] = array('like',"%{$content}%");
+                    break;
+                case(''):  //获取全部仓库名字
+                    $condition['warehouse_id'] = $aO['warehouse_id'];
+                    break;
+            
+            }
+            
+            $aOresult = $aO->where($condition)->select();
+            $aOcount = $aOresult->count();
+            if ($aOcount == 0){
+                 
+                $this->error('您所查询的仓库不存在，请重试....');
+            }
+            
+            //每页10个
+            $divide = 10;
+            
+            //偏移量$page ,页数*每页显示的记录条数
+            $page = (I('page')-1) * $divide;
+            
+            $aData['page'] = I('page');
+            $aData['total'] = $aOcount;
+            $aData['list'] = $aOresult->field('warehouse_id,warehouse_nUMBER')->limit($page,$divide)->order('warehouse_id asc')->select();
+            
+            $this->ajaxReturn($aData);
+            
+                    
+        }
+    
+    
+        /**
          * 新增订单
          * @access public
          * @param void
@@ -520,20 +573,6 @@
     
             
         }
-    
-    
-        /**
-         * 编辑订单
-         * @access public
-         * @param void
-         * @return void
-         *
-         * author: shli
-         * date: 2016.04.12
-         */
-       /* public function editOrder(){
-    
-        }*/
     
     
         /**
