@@ -536,22 +536,23 @@
          * author: shli
          * date: 2016.04.26
          */
+            /**
         public function queryReceiveOrder(){
-        
+
             // if(!IS_AJAX)
              //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
-     
-           
+
+
            $map ('receiveuser_id') = session('user_id');
            $search = I('search');
            $content = I('content');
-           
+
            $qR = M('receiveorder')->where($map)->select();
            //$qR = M('receiveorder')->select();
-           
+
            switch ($search){
-               
+
                case ('date'): //按领取单生成日期搜索
                    $condition['receiveorder_date'] = $content;
                    break;
@@ -568,25 +569,25 @@
            $qRresult = $qR->where($condition)->select();
            $qRcount = $qRresult->count();
            if ($qRcount == 0){
-               
+
                $this->error('您所查询的领取单不存在，请重试....');
            }
-           
+
            //每页10个
            $divide = 10;
            //查询偏移量$page, 页数*每页显示的数量
            $page = (I("page") - 1) * $divide;
            //表格
-          
-          
+
+
            $qRData['page']=I('page');
            $qRData['list'] = $qRresult->Field('receiveuser_id，admituser_id,receiveorderdetail_id',true)->limit($page, $divide)->order("receiveorder_id asc")->select();
            $qRData["total"] = $qRCount;
            $this->ajaxReturn($qRData);
-           
+
         }
-        
-        
+ */
+
         /**
          * 编辑领取单：只能编辑未经审核的领取单
          * 暂时不实现
