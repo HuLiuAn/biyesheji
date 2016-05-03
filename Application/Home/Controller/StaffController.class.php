@@ -111,9 +111,11 @@
             $result = $user->where($map)->find();
             if (($result['user_number'] and $result['user_password']) == 0){
                 
-                $st = array ('status'=>0);
-                $this->ajaxReturn (json_encode($st),'JSON');
+                //$st = array ('status'=>0);
+                //$this->ajaxReturn (json_encode($st),'JSON');
                
+                $st['status'] = 1;
+                $this->ajaxReturn (json_encode($st));
             }
             
             /*if ($result1['user_number'] != $map1['user_number']){
@@ -153,16 +155,17 @@
             if($result){
                     
                 $time = date("Y-m-d H:i:s",time());
-                    session('user_id',             $result['user_id']);
-                    session('user_name',           $result['user_name']);
-                    session('user_department',     $result['user_department']);
-                    session('user_lastlogintime',  $result['user_lastlogintime']);
-
+                    $st['user_id'] = $result['user_id'];
+                    $st['user_name'] = $result['user_name'];
+                    $st['user_department'] = $result['user_department'];
+                    $user['user_lastlogintime'] = $result['user_lastlogintime'];
+                    $user['user_role'] = $result['user_role'];
                  
+                   
                     $user->where($map)->setField('user_lastlogintime',$time);
                 
-                $st = array ('status'=>1);
-                $this->ajaxReturn (json_encode($st),'JSON');
+                $st['status'] = 1;
+                $this->ajaxReturn (json_encode($st));
                     //$st['status'] = '1';
                     //$this->ajaxReturn($st);
              }
