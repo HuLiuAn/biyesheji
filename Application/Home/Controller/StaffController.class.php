@@ -128,10 +128,7 @@ class StaffController extends Controller
         $result = $user->where($map)->find();
         if (($result['user_number'] and $result['user_password']) == 0) {
 
-            //$st = array ('status'=>0);
-            //$this->ajaxReturn (json_encode($st),'JSON');
-
-            $st['status'] = 1;
+            $st['status'] = 0;
             $this->ajaxReturn(json_encode($st));
         }
 
@@ -170,6 +167,7 @@ class StaffController extends Controller
 
         //$result = $user->where($map1 AND $map2)->find();
 
+
         if ($result) {
 
             $time = date("Y-m-d H:i:s", time());
@@ -184,7 +182,7 @@ class StaffController extends Controller
             $st['user_department'] = $result['user_department'];
             //  $user['user_lastlogintime'] = $result['user_lastlogintime'];//$user变量已经用过
             // $user['user_role'] = $result['user_role'];
-            
+
             $user->where($map)->setField('user_lastlogintime', $time);
 
             $st['status'] = 1;
@@ -416,7 +414,7 @@ class StaffController extends Controller
         //         unset($vi["icon_01"]);
 //            $vi["total_page"] = $gCount / 3;
         //  }
-        $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
+        //    $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
         //    $this->ajaxReturn($gData);
 
         //每页10个
@@ -424,66 +422,14 @@ class StaffController extends Controller
         //查询偏移量$page, 页数*每页显示的数量
         $page = (I("page") - 1) * $divide;
         //表格
-        $gCount = $gM->where("is_hot = 1")->count();
+        //   $gCount = $gM->where("is_hot = 1")->count();
         $gM = D("ProductListView");
-        // $gCount = $gM->count();
+        $gCount = $gM->count();
         $gData['page'] = I('page');
         $gData['list'] = $gM->where("is_hot = 1")->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
     }
-
-
-    /**
-     * 搜索商品
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.26
-     */
-    /* public function searchProduct(){
-
-        // if(!IS_AJAX)
-          //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-        header('Content-Type:text/html; charset=utf-8');//防止出现乱码
-
-        $sP = D('ProductListView');
-        $search = I('search');
-        $content = I('content');
-        switch ($search){
-
-            case ('name'): //按商品名称进行查询
-                $condition['product_name'] = array('like',"%{$content}%");
-                break;
-            case ('barcode'): //按商品条形码进行查询
-                $condition['product_barcode'] = $content;
-                break;
-            case (''):  //显示商品列表
-                $condition['product_id'] = $sP['product_id'];
-                break;
-        }
-        $sPresult = $sP->where($condition)->select();
-        $sPcount = $sPresult->count();
-        if ($sPcount == 0){
-
-            $this->error('您所查询的商品不存在，请重试....');
-        }
-
-        //每页10个
-        $divide = 10;
-        //查询偏移量$page, 页数*每页显示的数量
-        $page = (I("page") - 1) * $divide;
-        //表格
-
-
-        $sPData['page']=I('page');
-        $sPData['list'] = $sPresult->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
-        $sPData["total"] = $sPCount;
-        $this->ajaxReturn($sPData);
-
-     }*/
 
 
     /**
@@ -561,10 +507,6 @@ class StaffController extends Controller
         }
 
     }
-
-
-
-
 
 
     /**
@@ -662,7 +604,9 @@ class StaffController extends Controller
      * author: shli
      * date: 2016.04.12
      */
-    /*public function deleteReceiveOrder(){
+
+    public function deleteReceiveOrder()
+    {
 
         $get['receiveorder_id'] = session('receiveorder_id');
 
@@ -671,19 +615,14 @@ class StaffController extends Controller
         $state = $temp->where($get)->find();
 
         //只能删除未经审核的领取单
-        if ($state['receiveorder_state'] == 0){
+        if ($state['receiveorder_state'] == 0) {
 
             $temp->where($get)->delete();
-            $st = array ('status'=>1);
-            $this->ajaxReturn (json_encode($st),'JSON');
+            $st = array('status' => 1);
+            $this->ajaxReturn(json_encode($st), 'JSON');
 
         }
-        else {
-
-            $st = array ('status'=>0);
-            $this->ajaxReturn (json_encode($st),'JSON');
-        }
-    }*/
+    }
 
 
     /**
@@ -703,7 +642,7 @@ class StaffController extends Controller
         $rOD = D('ReceiveDetailView');
         $rODInfo = $rOD->where('$map')->field('receiveorder_id', true)->select();
 
-        $this->ajaxReturn($proInfo);
+        $this->ajaxReturn($rODInfo);
     }
 
 
