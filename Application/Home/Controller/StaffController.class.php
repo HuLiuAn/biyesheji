@@ -71,13 +71,19 @@
             if(session('?user_id')){
                 //返回信息
                  $st =session();
-                 $st['status']=1;
-                 $this->ajaxReturn (json_encode($st),'JSON');
+                 $st['status'] = 0;
+                 $this->ajaxReturn (json_encode($st));
+                  //$st = array ('status'=>1);
+                 //$this->ajaxReturn (json_encode($st),'JSON');
             }
             else {
                 //提示错误
-              $st = array ('status'=>0);
-              $this->ajaxReturn (json_encode($st),'JSON');
+              //$st = array ('status'=>0);
+              //$this->ajaxReturn (json_encode($st),'JSON');
+                $st['status'] = 0;
+                $this->ajaxReturn($login);
+                //$this->ajaxReturn (json_encode($st));
+                
             }
         }  
 
@@ -114,7 +120,7 @@
                 //$st = array ('status'=>0);
                 //$this->ajaxReturn (json_encode($st),'JSON');
                
-                $st['status'] = 1;
+                $st['status'] = 0;
                 $this->ajaxReturn (json_encode($st));
             }
             
@@ -158,8 +164,8 @@
                     $st['user_id'] = $result['user_id'];
                     $st['user_name'] = $result['user_name'];
                     $st['user_department'] = $result['user_department'];
-                    $user['user_lastlogintime'] = $result['user_lastlogintime'];
-                    $user['user_role'] = $result['user_role'];
+                    $st['user_lastlogintime'] = $result['user_lastlogintime'];
+                    $st['user_role'] = $result['user_role'];
                  
                    
                     $user->where($map)->setField('user_lastlogintime',$time);
@@ -547,7 +553,7 @@
          * author: shli
          * date: 2016.04.26
          */
-<<<<<<< HEAD
+
         public function queryReceiveOrder(){
         
             // if(!IS_AJAX)
@@ -599,7 +605,7 @@
         }
         
         
-=======
+
 //            /**
 //        public function queryReceiveOrder(){
 //
@@ -652,7 +658,7 @@
 //        }
 // */
 
->>>>>>> 3a903d9c5c3e70843f38e6a85b47ed2a394e5760
+
         /**
          * 编辑领取单：只能编辑未经审核的领取单
          * 暂时不实现
