@@ -14,7 +14,7 @@ class StaffController extends Controller
      * author：JJJJJJJJJJJ
      * date:2016.4.8
      */
-    private function getUserID()
+    private function getUserID($session_id)
     {
 
 
@@ -184,7 +184,7 @@ class StaffController extends Controller
             // $user['user_role'] = $result['user_role'];
 
             $user->where($map)->setField('user_lastlogintime', $time);
-
+            $st['session_id'] = session_id();
             $st['status'] = 1;
             $this->ajaxReturn(json_encode($st));
         } else {
