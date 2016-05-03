@@ -222,7 +222,7 @@ class StaffController extends Controller
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return ;
+            return;
         }
         $map['user_id'] = session('user_id');
         //$userInfo=M('User')->where($map)->find();
@@ -248,36 +248,36 @@ class StaffController extends Controller
     public function modifyPassword()
     {
 
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        $user = M('user');
         // if(!IS_AJAX)
         //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
         $map['user_id'] = session('user_id');
-        $map['user_password'] = I('oldPassword', '', 'md5');
+        $map['user_password'] = $arr->old;
+        $data['user_password']= $arr->new;
         //$new['user_password'] = I('newpassword','','md5');
 
-        $user = M('user');
-        $result = $user->where($map)->find();
-
-        //如果原密码和数据库信息不匹配，则返回错误信息
-        if ($result['user_password'] != $map['user_password']) {
-
-            $st = array('status' => 0);
+        $final = $user->where($map)->save($data);
+        $st['status'] = "1";
+        if (empty($final)) {
+            $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
-        //如果原密码和数据库信息不匹配，则返回错误信息
-        // if(!$result['user_password']){
-
-        //$st = array('status'=>0);
-        //$this->ajaxReturn (json_encode($st),'JSON');
-        //}
-
-
-        else {
-
-            $user->where($map)->setField('user_password', I('newPassword', '', 'md5'));
-            $st = array('status' => 1);
-            $this->ajaxReturn(json_encode($st), 'JSON');
-        }
+        $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
@@ -343,14 +343,20 @@ class StaffController extends Controller
     public function modifyUserInfo()
     {
         //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
-        // if(!IS_POST)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-        //定义自动验证规则
-        //$rules = array(
-        // array('user_phone','/^(13|15|18)(\d{9})|^6(\d{4,5})$/','请输入正确的手机号码',
-        //    0,'regex',1),
-        //);
 
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
         $user = M('user');
 
         //使用ThinkPHP的自动验证方法
@@ -361,24 +367,15 @@ class StaffController extends Controller
         //}
 
 
-        $map['user_id'] = session('id');
-        $data['user_phone'] = I('user_phone');
-
-        $user->where($map)->save($data);
-
-        //$this->redirect('Staff/showUserDetail');
-
-        if ($user['user_phone'] != $data['user_phone']) {
-
-            $st = array('status' => 0);
+        $map['user_id'] = session('user_id');
+        $data['user_phone'] = $arr->user_phone;
+        $final = $user->where($map)->save($data);
+        $st['status'] = "1";
+        if (empty($final)) {
+            $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
-
-        } else {
-
-            $st = array('status' => 1);
-            $this->ajaxReturn(json_encode($st), 'JSON');
-
         }
+        $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
