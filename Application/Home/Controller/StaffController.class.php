@@ -111,8 +111,10 @@
             $result = $user->where($map)->find();
             if (($result['user_number'] and $result['user_password']) == 0){
                 
-                $st = array ('status'=>0);
-                $this->ajaxReturn (json_encode($st),'JSON');
+                //$st = array ('status'=>0);
+                //$this->ajaxReturn (json_encode($st),'JSON');
+                $st['status'] = 0;
+                $this->ajaxReturn($st);
             }
             
             /*if ($result1['user_number'] != $map1['user_number']){
@@ -152,14 +154,18 @@
             if($result){
                     
                 $time = date("Y-m-d H:i:s",time());
-                session('user_id',             $result['user_id']);
-                session('user_name',           $result['user_name']);
-                session('user_department',     $result['user_department']);
-                //session('user_lastlogintime',  $result['user_lastlogintime']);
-                $user->where($map)->setField('user_lastlogintime',$time);
+                    session('user_id',             $result['user_id']);
+                    session('user_name',           $result['user_name']);
+                    session('user_department',     $result['user_department']);
+                    session('user_lastlogintime',  $result['user_lastlogintime']);
+
+                 
+                    $user->where($map)->setField('user_lastlogintime',$time);
                 
                 $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
+                    //$st['status'] = '1';
+                    //$this->ajaxReturn($st);
              }
             
         }
@@ -200,7 +206,7 @@
             if(!session('?user_id'))
                 $this->error('你还没有登录，赶快去登录吧',U('checkLogin'),1);
             
-            $map['user_id'] =  session('id');
+            $map['user_id'] =  session('user_id');
             //$userInfo=M('User')->where($map)->find();
             //TODO password要去掉，再返回给用户
              $userInfo = M('user')->where($map)->field('user_id,user_password',true)->select();
@@ -226,7 +232,7 @@
            // if(!IS_AJAX)
                 //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
-            $map['user_id'] = session('id');
+            $map['user_id'] = session('user_id');
             $map['user_password'] = I('oldPassword','','md5');
             //$new['user_password'] = I('newpassword','','md5');
             
@@ -346,12 +352,14 @@
                 
                 $st = array ('status'=>0);
                 $this->ajaxReturn (json_encode($st),'JSON');
+               
             }
             
             else {
                 
                 $st = array ('status'=>1);
                 $this->ajaxReturn (json_encode($st),'JSON');
+                
             }
         }
         
@@ -365,7 +373,7 @@
         * author: shli
         * date: 2016.04.12
         */
-       /* public function showProductList(){
+        public function showProductList(){
             //TODO 这里是一个服务端分页的例子
 
      //   $divide = 6;
@@ -381,19 +389,20 @@
       //  }
         $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
     //    $this->ajaxReturn($gData);
-
+        
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
         $page = (I("page") - 1) * $divide;
         //表格
+       $gCount = $gM->where("is_hot = 1")->count();
         $gM = D("ProductListView");
-        $gCount = $gM->count();
+       // $gCount = $gM->count();
         $gData['page']=I('page');
-        $gData['list'] = $gM->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
+        $gData['list'] = $gM->where("is_hot = 1")->field('product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
-        }*/
+        }
         
         
         /**
@@ -405,7 +414,7 @@
          * author: shli
          * date: 2016.04.26
          */
-        public function searchProduct(){
+       /* public function searchProduct(){
         
            // if(!IS_AJAX)
              //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
@@ -445,7 +454,7 @@
            $sPData["total"] = $sPCount;
            $this->ajaxReturn($sPData);
            
-        }
+        }*/
         
         
         /**
@@ -494,12 +503,12 @@
             
             $rCInfo['receiveuser_id']      = session('user_id');
             $rCInfo['product_id']          = session('product_id');
-            $rCInfoTemp['warehouse_number']  = session('warehouse_name');
+            $rCInfo['warehouse_number']    = session('warehouse_name');
             $rCInfo['count']               = session('count');
             
-            $wH = M('warehouse');
-            $wHInfo = $wH->where($rCInfoTemp)->select();
-            $rCInfo['warehouse_id'] = $wHInfo['warehouse_id'];
+            //$wH = M('warehouse');
+            //$wHInfo = $wH->where($rCInfoTemp)->select();
+            //$rCInfo['warehouse_id'] = $wHInfo['warehouse_id'];
             
             
             /* 选择一个随机的方案 */
@@ -507,7 +516,7 @@
             //生成订单号
             $rCInfo['receiveorder_number'] =  'TROL'.date('Ymd').str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
             $rCInfo['receiveorder_date'] = date('Y-m-d',time());
-            
+            $rCInfo['receiveorder_state'] = 0;
             $rC-> add($rCInfo);
             
             if ($rC->where($rCInfo)->find()){
@@ -543,12 +552,12 @@
            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
      
            
-           $map ('receiveuser_id') = session('user_id');
+           //$map ('receiveuser_id') = session('user_id');
            $search = I('search');
            $content = I('content');
            
-           $qR = M('receiveorder')->where($map)->select();
-           //$qR = M('receiveorder')->select();
+           //$qR = M('receiveorder')->where($map)->select();
+           $qR = M('receiveorder')->select();
            
            switch ($search){
                
@@ -561,9 +570,9 @@
 			   case ('state'): //按领取单状态搜索
                    $condition['receiveorder_state'] = $content;
                    break;
-               case (''):  //显示商品列表
-                   $condition['receiveorder_id'] = $qR['receiveorder_id'];
-                   break;
+               //case (''):  //显示商品列表
+                //   $condition['receiveorder_id'] = $qR['receiveorder_id'];
+                  // break;
            }
            $qRresult = $qR->where($condition)->select();
            $qRcount = $qRresult->count();

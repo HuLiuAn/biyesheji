@@ -466,7 +466,7 @@
         
         
         /**
-         * 显示订单列表
+         * 为采购订单选择入库仓库
          * @access public
          * @param void
          * @return void
@@ -474,8 +474,46 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function showOrderList(){
+        public function showWareHouse(){
     
+            // if(!IS_AJAX)
+            //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            
+            $search = I('search');
+            $content =I('content');
+            
+            $sL = M('warehouse');
+            
+            switch ($search){
+            
+                case('warehouse_number'):   //按仓库名字搜索
+                    $condition['warehouse_number'] = array('like',"%{$content}%");
+                    break;
+                case(''):  //获取全部仓库
+                    $condition['warehouse_id'] = $sL['warehouse_id'];
+                    break;
+            
+            }
+            
+            $sLresult = $sL->where($condition)->select();
+            $sLcount = $sLresult->count();
+            if ($sLcount == 0){
+                 
+                $this->error('您所查询的供应商不存在，请重试....');
+            }
+            
+            //每页10个
+            $divide = 10;
+            
+            //偏移量$page ,页数*每页显示的记录条数
+            $page = (I('page')-1) * $divide;
+            
+            $sData['page'] = I('page');
+            $sData['total'] = $sLcount;
+            $sData['list'] = $sLresult->field('warehouse_address',true)->limit($page,$divide)->order('product_id asc')->select();
+            
+            $this->ajaxReturn($sData);
         }
     
     
@@ -503,7 +541,18 @@
          * date: 2016.04.12
          */
         public function showOrderDetail(){
-    
+            
+            $map[order_id] = session('order_id');
+            $sOD = D('DealOrderView');
+            
+            $divide = 15;
+            $page = (I('page')-1) * $divide;
+            
+            $sData['page'] = I('page');
+            $sData['tatal'] = $sOD->count();
+            $sData['list'] = $sOD->where($map)->field('*')->limit($page,$divide)->order('orderdetail_id asc')->select();
+            
+            $this->ajaxReturn($sData);
         }
     
     
@@ -516,7 +565,7 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function showWareHouse(){
+       /* public function showWareHouse(){
 
             // if(!IS_AJAX)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
@@ -557,7 +606,7 @@
             $this->ajaxReturn($aData);
             
                     
-        }
+        }*/
     
     
         /**
@@ -571,6 +620,47 @@
          */
         public function addOrder(){
     
+            $aO = D('AddOrderView');
+            
+            $sP = M('supplierproduct');
+            $map['supplier_id'] = session('supplier_id');
+            $map['product_id'] = session('product_id');
+            $sPtemp = $sP->where($map)->select();
+            
+            
+            $aData = array(
+
+                'product_id'        => session('product_id'),
+                'warehouse_id'      => session('warehouse_id'),
+                //TODO 将一个变量的值付给另一个变量的方法是否正确？
+                'supplierproduct_id'=> $sPtemp('supplierproduct_id'),
+                
+                'count'             => session('count'),
+                'purchaser_id'       => session('orderuser_id'),
+                'value'             => session('value'),
+                'sumvalue'          => session('sumvalue'),
+                
+            );
+            
+            /* 选择一个随机的方案 */
+            mt_srand((double) microtime() * 1000000);
+            //生成订单号
+            $rCInfo['order_number'] =  'TOAL'.date('Ymd').str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
+            $rCInfo['order_date'] = date('Y-m-d',time());
+            $rCInfo['order_state'] = 0;
+            $rC-> add($rCInfo);
+            
+            if ($rC->where($rCInfo)->find()){
+            
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }else {
+            
+                $st = array ('status'=>0);
+                $this->ajaxReturn (json_encode($st),'JSON');
+            }
+            
+            }
             
         }
     
