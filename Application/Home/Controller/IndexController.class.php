@@ -13,9 +13,9 @@ class IndexController extends Controller {
      *date:2016.4.8
      */
     public function index(){
+        echo 'hello';
+        //$this->display(T('static://login'));   //先进入首页
         
-        $this->display(T('static://index'));   //先进入首页
-
     }
     
     

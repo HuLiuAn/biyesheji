@@ -12,14 +12,14 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
     };
     var API = {
         logout: "sds",//退出
-        change_key: "dfs",//修改密码
+        change_key: "../index.php/Home/Staff/modifyPassword",//修改密码
         change_info: "../index.php/Home/Staff/modifyUserInfo",//修改信息
         get_info: "../index.php/Home/Staff/showUserDetail",//获取个人信息,
         receive_product_list: "../index.php/Home/Staff/showProductList",
-        receive_product_detail: "serv/product.json",
-        add_to_cart: "serv",
-        receive_list: 'serv/receivelist.json',
-        receive_detail: "serv/receive.json",
+        receive_product_detail: "../index.php/Home/Staff/showProductDetail",
+        add_to_cart: "../index.php/Home/Staff/addProToReceiveOrder",
+        receive_list: '../index.php/Home/Staff/queryReceiveOrder',
+        receive_detail: "../index.php/Home/Staff/showReceiveOrderDetail",
         "product-manage-list": "serv/baseproductlist.json",
         new_product: "serv",
         product_detail: "serv/baseproduct.json",
@@ -83,14 +83,23 @@ var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 //检查登陆信息
 app.run(function ($rootScope, $location, $http) {
     $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
-        //console.log(data);
-        var user = JSON.parse(data);
-        if (user && user.status == 1) {
-            $rootScope.USERLOGIN = JSON.parse(data);
-        } else {
-            alert('尚未登陆，请重新登陆！');
+        console.log(data);
+        try
+        {
+            var user = JSON.parse(data);
+            if (user && user.status == 1) {
+                $rootScope.USERLOGIN = JSON.parse(data);
+            } else {
+                alert('尚未登陆，请重新登陆！');
+                window.location = 'login.html';
+            }
+        }
+        catch (e)
+        {
+            alert('抱歉，目前系统维护中！');
             window.location = 'login.html';
         }
+
     }).error(function () {
         alert('网络错误，请重新登陆！');
         window.location = 'login.html';
