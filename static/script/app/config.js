@@ -84,13 +84,22 @@ var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 app.run(function ($rootScope, $location, $http) {
     $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
         console.log(data);
-        var user = JSON.parse(data);
-        if (user && user.status == 1) {
-            $rootScope.USERLOGIN = JSON.parse(data);
-        } else {
-            alert('尚未登陆，请重新登陆！');
+        try
+        {
+            var user = JSON.parse(data);
+            if (user && user.status == 1) {
+                $rootScope.USERLOGIN = JSON.parse(data);
+            } else {
+                alert('尚未登陆，请重新登陆！');
+                window.location = 'login.html';
+            }
+        }
+        catch (e)
+        {
+            alert('抱歉，目前系统维护中！');
             window.location = 'login.html';
         }
+
     }).error(function () {
         alert('网络错误，请重新登陆！');
         window.location = 'login.html';
