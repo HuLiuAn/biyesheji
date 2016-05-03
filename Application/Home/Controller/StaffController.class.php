@@ -5,20 +5,6 @@ use Think\Controller;
 
 class StaffController extends Controller
 {
-    /**
-     * 专门用户检验用户的session
-     * @access public
-     * @param  session_id
-     * @return user_id
-     *
-     * author：JJJJJJJJJJJ
-     * date:2016.4.8
-     */
-    private function getUserID($session_id)
-    {
-
-
-    }
 
     /**
      * 验证码图片生成函数
@@ -89,11 +75,11 @@ class StaffController extends Controller
         if (session('?user_id')) {
             //返回信息
             $st = session();
-            $st['status'] = 1;
+            $st['status'] = "1";
             $this->ajaxReturn(json_encode($st), 'JSON');
         } else {
             //提示错误
-            $st = array('status' => 0);
+            $st = array('status' => "0");
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
     }
@@ -127,8 +113,8 @@ class StaffController extends Controller
 
         $result = $user->where($map)->find();
         if (($result['user_number'] and $result['user_password']) == 0) {
-
-            $st['status'] = 0;
+            $st['session_id'] = "0";;
+            $st['status'] = "0";
             $this->ajaxReturn(json_encode($st));
         }
 
@@ -185,12 +171,11 @@ class StaffController extends Controller
 
             $user->where($map)->setField('user_lastlogintime', $time);
             $st['session_id'] = session_id();
-            $st['status'] = 1;
+            $st['status'] = "1";
             $this->ajaxReturn(json_encode($st));
         } else {
-
-            $st['status'] = 0;
-            $st['session_id'] = 0;
+            $st['status'] = "0";
+            $st['session_id'] = "0";;
             $this->ajaxReturn(json_encode($st));
         }
 
@@ -229,13 +214,20 @@ class StaffController extends Controller
     public function showUserDetail()
     {
 
-        if (!session('?user_id'))
-            $this->error('你还没有登录，赶快去登录吧', U('checkLogin'), 1);
-
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return ;
+        }
         $map['user_id'] = session('user_id');
         //$userInfo=M('User')->where($map)->find();
-        //TODO password要去掉，再返回给用户
-        $userInfo = M('user')->where($map)->field('user_id,user_password', true)->select();
+        //TODO password要去掉，再返回给用户,不要用select，select返回的是多条数据，相当于数组。find是返回一条数据。
+        $userInfo = M('user')->where($map)->field('user_id,user_password', true)->find();
         $this->ajaxReturn(json_encode($userInfo), 'JSON');
         //$this->assign('userInfo',$userInfo);
         //$this->display('userDetail');
