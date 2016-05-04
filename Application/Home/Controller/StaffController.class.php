@@ -70,6 +70,16 @@ class StaffController extends Controller
      */
     public function checkLogin()
     {
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return ;
+        }
 
         //检查用户是否登录
         if (session('?user_id')) {
@@ -79,7 +89,7 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($st), 'JSON');
         } else {
             //提示错误
-            $st = array('status' => "0");
+            $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
     }
@@ -97,6 +107,17 @@ class StaffController extends Controller
     public function login()
     {
 
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return ;
+        }
+        
         //if(!IS_AJAX)
         //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
@@ -194,6 +215,17 @@ class StaffController extends Controller
     public function logout()
     {
 
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return ;
+        }
+        
         session_unset();
         session_destroy();
         //$this->success("您已退出登录",T('static://login'));    //退出后跳转至登录页
@@ -224,6 +256,7 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
+        
         $map['user_id'] = session('user_id');
         //$userInfo=M('User')->where($map)->find();
         //TODO password要去掉，再返回给用户,不要用select，select返回的是多条数据，相当于数组。find是返回一条数据。
@@ -247,6 +280,17 @@ class StaffController extends Controller
 
     public function modifyPassword()
     {
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+        
 
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
@@ -319,6 +363,17 @@ class StaffController extends Controller
         //   if(!IS_AJAX)
         //  E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+        
         $map['user_id'] = session('user_id');
         $user = M('user');
         $userInfoTemp = $user->where($map)->find();
@@ -330,6 +385,7 @@ class StaffController extends Controller
     }
 
 
+
     /**
      * 修改个人用户信息
      * @access public
@@ -339,11 +395,22 @@ class StaffController extends Controller
      * author: shli
      * date: 2016.04.12
      */
-
+    
     public function modifyUserInfo()
     {
+        if (I('session_id')) {
+            session_id(I('session_id'));
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+        
         //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
-
+    
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
         //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
@@ -358,18 +425,19 @@ class StaffController extends Controller
             return;
         }
         $user = M('user');
-
+    
         //使用ThinkPHP的自动验证方法
         //if(!$user->validate($rules)>create()){
-
+    
         //  $st = array ('status'=>0);
         //$this->ajaxReturn (json_encode($st),'JSON');
         //}
-
-
+    
+    
         $map['user_id'] = session('user_id');
         $data['user_phone'] = $arr->user_phone;
-        $final = $user->where($map)->save($data);
+        $final = $user->where('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->user_phone)->create();
+        //$final = $user->where($map)->save($data);
         $st['status'] = "1";
         if (empty($final)) {
             $st['status'] = "0";
@@ -377,6 +445,7 @@ class StaffController extends Controller
         }
         $this->ajaxReturn(json_encode($st), 'JSON');
     }
+   
 
 
     /**
@@ -415,7 +484,7 @@ class StaffController extends Controller
         $gM = D("ProductListView");
         $gCount = $gM->count();
         $gData['page'] = I('page');
-        $gData['list'] = $gM->where("is_hot = 1")->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
+        $gData['list'] = $gM->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
     }
