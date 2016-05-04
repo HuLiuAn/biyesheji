@@ -92,7 +92,7 @@ class PurchaseController extends Controller
 
         $data['product_name'] = $arr->product_name;
         $data['product_barcode'] = $arr->product_barcode;
-        $data['product_photogroup'] = json_encode($data['product_photogroup']);
+        $data['product_photogroup'] = json_encode($arr->product_photogroup);
         $data['product_photo'] = $arr->product_photo;
         $data['properties'] = $arr->product_properties;
         $product = M('product');
@@ -142,7 +142,7 @@ class PurchaseController extends Controller
             return;
         }
 
-        if(empty($arr->product_id)){
+        if (empty($arr->product_id)) {
             //没有ID直接返回失败
             $result['status'] = "0";
             $this->ajaxReturn(json_encode($result), 'JSON');
@@ -151,7 +151,7 @@ class PurchaseController extends Controller
         $map['product_id'] = $arr->product_id;
         $product = M('product');
         //添加商品成功
-        $result=$product->where($map)->find();
+        $result = $product->where($map)->find();
         if ($result) {
             $result['status'] = "1";
             $this->ajaxReturn(json_encode($result), 'JSON');
