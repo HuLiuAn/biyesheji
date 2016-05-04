@@ -10,20 +10,30 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         }
 
     };
+    var base="../index.php/Home/";
     var API = {
         logout: "sds",//退出
-        change_key: "../index.php/Home/Staff/modifyPassword",//修改密码
-        change_info: "../index.php/Home/Staff/modifyUserInfo",//修改信息
-        get_info: "../index.php/Home/Staff/showUserDetail",//获取个人信息,
-        receive_product_list: "../index.php/Home/Staff/showProductList",
-        receive_product_detail: "../index.php/Home/Staff/showProductDetail",
-        add_to_cart: "../index.php/Home/Staff/addProToReceiveOrder",
-        receive_list: '../index.php/Home/Staff/queryReceiveOrder',
-        receive_detail: "../index.php/Home/Staff/showReceiveOrderDetail",
-        "product-manage-list": "serv/baseproductlist.json",
-        new_product: "serv",
+        change_key: base+"Staff/modifyPassword",//修改密码
+        change_info: base+"Staff/modifyUserInfo",//修改信息
+        get_info: base+"Staff/showUserDetail",//获取个人信息,
+        receive_product_list: base+"Staff/showProductList",
+        receive_product_detail: base+"Staff/showProductDetail",
+        add_to_cart: base+"Staff/addProToReceiveOrder",
+        receive_list: base+'Staff/queryReceiveOrder',
+        receive_detail: base+"Staff/showReceiveOrderDetail",
+        "product-manage-list": base+"Home/Purchase/searchProduct",
+        new_product: base+"Purchase/addProduct",
         product_detail: "serv/baseproduct.json",
-        upload_picture: "../index.php/Home/Upload/picture"
+        upload_picture: base+"Upload/picture",
+        new_supplier: base+"Purchase/addSupplier",
+        supplier_list:base+"Purchase/searchSupplier",
+        edit_supplier:base+"Purchase/editSupplier",
+        order_supplier_list:base+"Purchase/showSupplierList",
+        order_product_list:base+"Purchase/showSupplierProList",
+        order_hub_list:base+"Purchase/showWareHouse",
+        order_list:base+"Purchase/queryOrder",
+        order_detail:base+"Purchase/showOrderDetail",
+        new_order:base+"Purchase/addOrder"
     };
     var _$Bs_API = {
         getUrl: function (index) {
