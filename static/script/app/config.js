@@ -10,20 +10,30 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         }
 
     };
+    var base="../index.php/Home/";
     var API = {
         logout: "sds",//退出
-        change_key: "dfs",//修改密码
-        change_info: "../index.php/Home/Staff/modifyUserInfo",//修改信息
-        get_info: "../index.php/Home/Staff/showUserDetail",//获取个人信息,
-        receive_product_list: "../index.php/Home/Staff/showProductList",
-        receive_product_detail: "serv/product.json",
-        add_to_cart: "serv",
-        receive_list: 'serv/receivelist.json',
-        receive_detail: "serv/receive.json",
-        "product-manage-list": "serv/baseproductlist.json",
-        new_product: "serv",
+        change_key: base+"Staff/modifyPassword",//修改密码
+        change_info: base+"Staff/modifyUserInfo",//修改信息
+        get_info: base+"Staff/showUserDetail",//获取个人信息,
+        receive_product_list: base+"Staff/showProductList",
+        receive_product_detail: base+"Staff/showProductDetail",
+        add_to_cart: base+"Staff/addProToReceiveOrder",
+        receive_list: base+'Staff/queryReceiveOrder',
+        receive_detail: base+"Staff/showReceiveOrderDetail",
+        "product-manage-list": base+"Home/Purchase/searchProduct",
+        new_product: base+"Purchase/addProduct",
         product_detail: "serv/baseproduct.json",
-        upload_picture:"../index.php/Home/Upload/picture"
+        upload_picture: base+"Upload/picture",
+        new_supplier: base+"Purchase/addSupplier",
+        supplier_list:base+"Purchase/searchSupplier",
+        edit_supplier:base+"Purchase/editSupplier",
+        order_supplier_list:base+"Purchase/showSupplierList",
+        order_product_list:base+"Purchase/showSupplierProList",
+        order_hub_list:base+"Purchase/showWareHouse",
+        order_list:base+"Purchase/queryOrder",
+        order_detail:base+"Purchase/showOrderDetail",
+        new_order:base+"Purchase/addOrder"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -83,14 +93,21 @@ var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 //检查登陆信息
 app.run(function ($rootScope, $location, $http) {
     $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
-        //console.log(data);
-        var user = JSON.parse(data);
-        if (user && user.status == 1) {
-            $rootScope.USERLOGIN = JSON.parse(data);
-        } else {
-            alert('尚未登陆，请重新登陆！');
+        console.log(data);
+        try {
+            var user = JSON.parse(data);
+            if (user && user.status == 1) {
+                $rootScope.USERLOGIN = JSON.parse(data);
+            } else {
+                alert('尚未登陆，请重新登陆！');
+                window.location = 'login.html';
+            }
+        }
+        catch (e) {
+            alert('抱歉，目前系统维护中！');
             window.location = 'login.html';
         }
+
     }).error(function () {
         alert('网络错误，请重新登陆！');
         window.location = 'login.html';
@@ -100,10 +117,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     //配置网址
 
     $stateProvider.state('login', {
-        url: '/login',
-        templateUrl: '/views/login.html',
-        controller: 'loginCtrl'
-    })
+            url: '/login',
+            templateUrl: '/views/login.html',
+            controller: 'loginCtrl'
+        })
         .state('main', {
             url: '/',
             templateUrl: 'views/main.html',
@@ -114,199 +131,233 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: 'views/orderApply.html'
             //controller:'menuCtrl'
         }).state('main.user-info', {
-            url: 'user/info',
-            templateUrl: 'views/user/info.html',
-            controller: function ($scope, $http, $Bs_API, $rootScope) {
-                //获取用户信息
-                $scope.user = {
-                    user_id: $rootScope.USERLOGIN.user_id,
-                    user_name: $rootScope.USERLOGIN.user_name
-                };
-                $scope.role = [
-                    '超级管理员', '管理员', '采购员', '员工'
-                ];
-                $http.get($Bs_API.getApi('get_info')).success(function (data) {
-                    //var use
-                    $scope.user = JSON.parse(data)
+        url: 'user/info',
+        templateUrl: 'views/user/info.html',
+        controller: function ($scope, $http, $Bs_API, $rootScope, $state) {
+            //获取用户信息
+            $scope.user = {
+                user_id: $rootScope.USERLOGIN.user_id,
+                user_name: $rootScope.USERLOGIN.user_name
+            };
+            $scope.role = [
+                '超级管理员', '管理员', '采购员', '员工'
+            ];
+            $http.get($Bs_API.getApi('get_info')).success(function (data) {
+                //var use
+
+                try {
+                    $scope.user = JSON.parse(data);
                     $scope.info = JSON.parse(data);
+
+
+                } catch (e) {
+                    $Bs_API.loading('抱歉，目前系统维护中！', 1);
+                }
+            }).error(function (data) {
+                $Bs_API.loading('网络错误，信息获取失败！', 1);
+            });
+            $scope.editToggle = function () {
+                $scope.edit = !$scope.edit;
+                if ($scope.edit) {
+                    $scope.info = extend($scope.user);
+                }
+
+            };
+
+            $scope.save = function () {
+                $http.post($Bs_API.getApi('change_info'), $scope.info).success(function (data) {
+                    //var use
+                    try {
+                        var final = JSON.parse(data);
+                        if (final && final.status == 1) {
+                            $Bs_API.loading('修改成功');
+                            $state.go('main.user-info');
+                            $scope.user = extend($scope.info);
+                        } else {
+                            $Bs_API.loading('修改失败！', 1);
+                        }
+
+                    }
+                    catch (e) {
+                        $Bs_API.loading('抱歉，目前系统维护中！', 1);
+                    }
+
                 }).error(function (data) {
                     $Bs_API.loading('网络错误，信息获取失败！', 1);
                 });
-                $scope.editToggle = function () {
-                    $scope.edit = !$scope.edit;
-                    if ($scope.edit) {
-                        $scope.info = extend($scope.user);
-                    }
+            };
 
-                };
-
-                $scope.save = function () {
-                    $http.post($Bs_API.getApi('change_info'), $scope.info).success(function (data) {
-                        //var use
-                        $scope.user = extend($scope.info);
-                    }).error(function (data) {
-
-                    });
-                };
-
-                function extend(data) {
-                    var cp = {};
-                    for (var i in data) {
-                        cp[i] = data[i];
-                    }
-                    return cp;
+            function extend(data) {
+                var cp = {};
+                for (var i in data) {
+                    cp[i] = data[i];
                 }
+                return cp;
             }
-        }).state('main.user-change', {
-            url: 'user/change',
-            templateUrl: 'views/user/change.html',
-            controller: function ($scope, $http, $Bs_API) {
-                //获取用户信息
-                $scope.key = {};
+        }
+    }).state('main.user-change', {
+        url: 'user/change',
+        templateUrl: 'views/user/change.html',
+        controller: function ($scope, $http, $Bs_API, $state) {
+            //获取用户信息
+            $scope.key = {};
 
-                $scope.changeKey = function () {
+            $scope.changeKey = function () {
 
-                    if (!validation()) {
-                        console.log('密码不一致')
-                        return;
+                if (!validation()) {
+                    console.log('密码不一致');
+                    return;
+                }
+
+                $http.post($Bs_API.getApi('change_key'), {
+                    old: $scope.key.old,
+                    new: $scope.key.new1
+                }).success(function (data) {
+                    try {
+                        var final = JSON.parse(data);
+                        if (final && final.status == 1) {
+                            $Bs_API.loading('修改成功');
+                            $state.go('main.user-info');
+                        } else {
+                            $Bs_API.loading('修改失败！', 1);
+                        }
+
+                    }
+                    catch (e) {
+                        $Bs_API.loading('抱歉，目前系统维护中！', 1);
                     }
 
-                    $http.post($Bs_API.getApi('change_key'), {
-                        old: 'XX',
-                        new: "ddd"
-                    }).success(function (data) {
-
-                    }).error(function (data) {
-
-                    });
-                };
+                }).error(function (data) {
+                    $Bs_API.loading('修改失败');
+                });
+            };
 
 
-                function validation() {
-                    return ($scope.key.new1 && $scope.key.new2 && $scope.key.new1 == $scope.key.new2);
-                }
+            function validation() {
+                return ($scope.key.new1 && $scope.key.new2 && $scope.key.new1 == $scope.key.new2);
             }
-        }).state('main.home', {
-            url: 'home',
-            templateUrl: 'views/home.html',
-            controller: 'homeCtrl'
-        }).
-        //商品领取
-        state('main.re-product-list', {
-            url: 'good/list/:page?barcode&name',
-            templateUrl: 'views/good/list.html',
-            controller: 'goodListCtrl',
-            Handler: "receive_product_list"
-        }).state('main.good-cart', {
-            url: 'good/cart',
-            templateUrl: 'views/good/cart.html',
-            controller: 'goodCartCtrl'
-        }).state('main.good-his', {
-            url: 'good/history/:page?state',
-            templateUrl: 'views/good/history.html',
-            controller: 'goodHistoryCtrl',
-            Handler: "receive_list"
-        }).state('main.good-detail', {
-            url: 'good/detail/:id',
-            templateUrl: 'views/good/detail.html',
-            controller: 'goodDetailCtrl'
-        }).state('main.good-his-detail', {
-            url: 'good/history/detail/:id',
-            templateUrl: 'views/good/history-detail.html',
-            controller: 'goodHisDetailCtrl'
-        }).
-        //商品管理
-        state('main.good-manage-list', {
-            url: 'good-manage/list/:page?barcode&name',
-            templateUrl: 'views/goodmanage/list.html',
-            controller: 'goodManageListCtrl',
-            Handler: "product-manage-list"
-        }).state('main.good-manage-detail', {
-            url: 'good-manage/detail/:id',
-            templateUrl: 'views/goodmanage/detail.html',
-            controller: 'goodManageDetailCtrl'
-        }).state('main.good-manage-new', {
-            url: 'good-manage/new',
-            templateUrl: 'views/goodmanage/new.html',
-            controller: 'goodManageNewCtrl'
-        }).
-        //供应商管理
-        state('main.provider-list', {
-            url: 'provider/list/:page?search',
-            templateUrl: 'views/provider/list.html',
-            controller: 'goodProviderListCtrl',
-            Handler: "receive_list"
-        }).state('main.provider-detail', {
-            url: 'provider/detail/:id',
-            templateUrl: 'views/provider/detail.html',
-            controller: 'goodProviderDetailCtrl'
-        }).state('main.provider-new', {
-            url: 'provider/new',
-            templateUrl: 'views/provider/new.html',
-            controller: 'goodProviderNewCtrl'
-        }).
-        //订单管理
-        state('main.order-list', {
-            url: 'order/list/:page?search',
-            templateUrl: 'views/order/list.html',
-            controller: 'goodOrderListCtrl',
-            Handler: "receive_list"
-        }).state('main.order-detail', {
-            url: 'order/detail/:id',
-            templateUrl: 'views/order/detail.html',
-            controller: 'goodOrderDetailCtrl'
-        }).state('main.order-new', {
-            url: 'order/new',
-            templateUrl: 'views/order/new.html',
-            controller: 'goodOrderNewCtrl'
-        }). //仓库管理
-        state('main.hub-list', {
-            url: 'hub/list/:page?search',
-            templateUrl: 'views/hub/list.html',
-            controller: 'goodHubListCtrl',
-            Handler: "receive_list"
-        }).state('main.hub-detail', {
-            url: 'hub/detail/:id',
-            templateUrl: 'views/hub/detail.html',
-            controller: 'goodHubDetailCtrl'
-        }).state('main.hub-new', {
-            url: 'hub/new',
-            templateUrl: 'views/hub/new.html',
-            controller: 'goodHubNewCtrl'
-        }). //挑拨管理
-        state('main.inout-list', {
-            url: 'inout/list/:page?search',
-            templateUrl: 'views/inout/list.html',
-            controller: 'goodInoutListCtrl',
-            Handler: "receive_list"
-        }).state('main.inout-detail', {
-            url: 'inout/detail/:id',
-            templateUrl: 'views/inout/detail.html',
-            controller: 'goodInoutDetailCtrl'
-        }).state('main.inout-new', {
-            url: 'inout/new',
-            templateUrl: 'views/inout/new.html',
-            controller: 'goodInoutNewCtrl'
-        }). //审核管理
-        state('main.check-order', {
-            url: 'check/order/:page?search',
-            templateUrl: 'views/check/order.html',
-            controller: 'goodCheckOrderListCtrl',
-            Handler: "receive_list"
-        }).state('main.check-good', {
-            url: 'check/good/:page?search',
-            templateUrl: 'views/check/good.html',
-            controller: 'goodCheckGoodListCtrl',
-            Handler: "receive_list"
-        }).state('main.check-order-detail', {
-            url: 'check/order-detail/:id',
-            templateUrl: 'views/check/order-detail.html',
-            controller: 'goodCheckOrderDetailCtrl'
-        }).state('main.check-good-detail', {
-            url: 'check/good-detail/:id',
-            templateUrl: 'views/check/good.html',
-            controller: 'goodCheckGoodDetailCtrl'
-        });
+        }
+    }).state('main.home', {
+        url: 'home',
+        templateUrl: 'views/home.html',
+        controller: 'homeCtrl'
+    }).
+    //商品领取
+    state('main.re-product-list', {
+        url: 'good/list/:page?barcode&name',
+        templateUrl: 'views/good/list.html',
+        controller: 'goodListCtrl',
+        Handler: "receive_product_list"
+    }).state('main.good-cart', {
+        url: 'good/cart',
+        templateUrl: 'views/good/cart.html',
+        controller: 'goodCartCtrl'
+    }).state('main.good-his', {
+        url: 'good/history/:page?state',
+        templateUrl: 'views/good/history.html',
+        controller: 'goodHistoryCtrl',
+        Handler: "receive_list"
+    }).state('main.good-detail', {
+        url: 'good/detail/:id',
+        templateUrl: 'views/good/detail.html',
+        controller: 'goodDetailCtrl'
+    }).state('main.good-his-detail', {
+        url: 'good/history/detail/:id',
+        templateUrl: 'views/good/history-detail.html',
+        controller: 'goodHisDetailCtrl'
+    }).
+    //商品管理
+    state('main.good-manage-list', {
+        url: 'good-manage/list/:page?barcode&name',
+        templateUrl: 'views/goodmanage/list.html',
+        controller: 'goodManageListCtrl',
+        Handler: "product-manage-list"
+    }).state('main.good-manage-detail', {
+        url: 'good-manage/detail/:id',
+        templateUrl: 'views/goodmanage/detail.html',
+        controller: 'goodManageDetailCtrl'
+    }).state('main.good-manage-new', {
+        url: 'good-manage/new',
+        templateUrl: 'views/goodmanage/new.html',
+        controller: 'goodManageNewCtrl'
+    }).
+    //供应商管理
+    state('main.provider-list', {
+        url: 'provider/list/:page?search',
+        templateUrl: 'views/provider/list.html',
+        controller: 'goodProviderListCtrl',
+        Handler: "receive_list"
+    }).state('main.provider-detail', {
+        url: 'provider/detail/:id',
+        templateUrl: 'views/provider/detail.html',
+        controller: 'goodProviderDetailCtrl'
+    }).state('main.provider-new', {
+        url: 'provider/new',
+        templateUrl: 'views/provider/new.html',
+        controller: 'goodProviderNewCtrl'
+    }).
+    //订单管理
+    state('main.order-list', {
+        url: 'order/list/:page?search',
+        templateUrl: 'views/order/list.html',
+        controller: 'goodOrderListCtrl',
+        Handler: "receive_list"
+    }).state('main.order-detail', {
+        url: 'order/detail/:id',
+        templateUrl: 'views/order/detail.html',
+        controller: 'goodOrderDetailCtrl'
+    }).state('main.order-new', {
+        url: 'order/new',
+        templateUrl: 'views/order/new.html',
+        controller: 'goodOrderNewCtrl'
+    }). //仓库管理
+    state('main.hub-list', {
+        url: 'hub/list/:page?search',
+        templateUrl: 'views/hub/list.html',
+        controller: 'goodHubListCtrl',
+        Handler: "receive_list"
+    }).state('main.hub-detail', {
+        url: 'hub/detail/:id',
+        templateUrl: 'views/hub/detail.html',
+        controller: 'goodHubDetailCtrl'
+    }).state('main.hub-new', {
+        url: 'hub/new',
+        templateUrl: 'views/hub/new.html',
+        controller: 'goodHubNewCtrl'
+    }). //挑拨管理
+    state('main.inout-list', {
+        url: 'inout/list/:page?search',
+        templateUrl: 'views/inout/list.html',
+        controller: 'goodInoutListCtrl',
+        Handler: "receive_list"
+    }).state('main.inout-detail', {
+        url: 'inout/detail/:id',
+        templateUrl: 'views/inout/detail.html',
+        controller: 'goodInoutDetailCtrl'
+    }).state('main.inout-new', {
+        url: 'inout/new',
+        templateUrl: 'views/inout/new.html',
+        controller: 'goodInoutNewCtrl'
+    }). //审核管理
+    state('main.check-order', {
+        url: 'check/order/:page?search',
+        templateUrl: 'views/check/order.html',
+        controller: 'goodCheckOrderListCtrl',
+        Handler: "receive_list"
+    }).state('main.check-good', {
+        url: 'check/good/:page?search',
+        templateUrl: 'views/check/good.html',
+        controller: 'goodCheckGoodListCtrl',
+        Handler: "receive_list"
+    }).state('main.check-order-detail', {
+        url: 'check/order-detail/:id',
+        templateUrl: 'views/check/order-detail.html',
+        controller: 'goodCheckOrderDetailCtrl'
+    }).state('main.check-good-detail', {
+        url: 'check/good-detail/:id',
+        templateUrl: 'views/check/good.html',
+        controller: 'goodCheckGoodDetailCtrl'
+    });
     $urlRouterProvider.otherwise('/home')
 }]);
 

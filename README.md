@@ -1,3 +1,3 @@
 ## 简介
 
-这是一个学生项目，一个仓库管理系统
+This is a school project.
