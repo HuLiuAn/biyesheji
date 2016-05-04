@@ -456,21 +456,6 @@ class StaffController extends Controller
      */
     public function showProductList()
     {
-        //TODO 这里是一个服务端分页的例子
-
-        //   $divide = 6;
-        //   $page = (I("page") - 1) * $divide;
-        //   $gM = M("fb_ground");
-        //   $gCount = $gM->where("is_hot = 1")->count();
-        //    $gData['ground'] = $gM->where("is_hot = 1")->limit($page, $divide)->order("order_num asc")->field(" id,ground_name,icon_01,promotion,rate,praise")->select();
-        //     foreach ($gData['ground'] as &$vi) {
-        //       $vi["image"] = get_cover_url($vi["icon_01"]);
-//            $vi['rate']=round( $vi['rate'],1);
-        //         unset($vi["icon_01"]);
-//            $vi["total_page"] = $gCount / 3;
-        //  }
-        //    $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
-        //    $this->ajaxReturn($gData);
 
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
@@ -489,12 +474,12 @@ class StaffController extends Controller
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
-        $page = (I("page") - 1) * $divide;
+        $page = ($arr->page - 1) * $divide;
         //表格
         //   $gCount = $gM->where("is_hot = 1")->count();
         $gM = D("ProductListView");
         $gCount = $gM->count();
-        $gData['page'] = I('page');
+        $gData['page'] = $arr->page;
         $gData['list'] = $gM->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
         $gData["total"] = $gCount;
         $this->ajaxReturn($gData);
