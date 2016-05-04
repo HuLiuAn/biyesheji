@@ -176,7 +176,7 @@
             
             $sPData['page']=I('page'); 
             $sPData['list'] = $sPresult->Field('product_id','product_name','product_photo','properties')->limit($page, $divide)->order("product_id asc")->select();
-            $sPData["total"] = $sPCount;
+            $sPData["total"] = $sPcount;
             $this->ajaxReturn($sPData);
         }
     
@@ -362,7 +362,7 @@
              
              $sPData['page']=I('page');
              $sPData['list'] = $sPresult->field('*')->limit($page, $divide)->order("product_id asc")->select();
-             $sPData["total"] = $sPCount;
+             $sPData["total"] = $sPcount;
              $this->ajaxReturn($sPData);
             
         }
@@ -377,7 +377,7 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function editSupplier(){
+        public function showSupplierDetail(){
         
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
@@ -412,7 +412,7 @@
             
             $sPData['page']=I('page');
             $sPData['list'] = $sPresult->field('product_id,product_barcode',true)->limit($page, $divide)->order("product_id asc")->select();
-            $sPData["total"] = $sPCount;
+            $sPData["total"] = $sPcount;
             $this->ajaxReturn($sPData);
         }
 
@@ -506,7 +506,7 @@
             
             $sL = M('supplier');
             
-            switch ($map){
+            switch ($content){
                 
                 case('supplier_name'):   //按供应商名字搜索
                     $condition['supplier_name'] = array('like',"%{$content}%");
@@ -718,7 +718,7 @@
             }
             
             
-            $map[order_id] = session('order_id');
+            $map['order_id'] = session('order_id');
             $sOD = D('DealOrderView');
             
             $divide = 15;
@@ -824,7 +824,7 @@
                 'product_id'        => session('product_id'),
                 'warehouse_id'      => session('warehouse_id'),
                 //TODO 将一个变量的值付给另一个变量的方法是否正确？
-                'supplierproduct_id'=> $sPtemp('supplierproduct_id'),
+                'supplierproduct_id'=> $sPtemp['supplierproduct_id'],
                 
                 'count'             => session('count'),
                 'purchaser_id'       => session('orderuser_id'),
