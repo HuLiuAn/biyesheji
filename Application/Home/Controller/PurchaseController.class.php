@@ -18,12 +18,27 @@
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             header('Content-Type:text/html; charset=utf-8');
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
+            
             $supplier = M('supplier');
             $data = array(
                 
                 'supplier_name'     => I('name'),
                 'supplier_contact'  => I('contact'),
-                'supplier_phone'    => I('phone'),
+                'supplier_phone'    => I('phone','/^(13|15|18)(\d{9})|^6(\d{4,5})$/',3),
                 'supplier_address'  => I('address'),
             );     
             
@@ -57,6 +72,21 @@
         
             //调用Application/Home/Common/function.php中自定义方法imgUpload()获取图片名称
             //$imgupload = imgUpload();
+            
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $data = array(
                 'product_name'        => I('product_name'),
                 'product_barcode'     => I('product_barcode'),
@@ -68,15 +98,15 @@
         
             $product = M('product');
             
-        
+            
             //添加商品成功
             if ($product->add($data)){
         
-                $st = array ('status'=>1);
+                $st['status'] = "1";
                 $this->ajaxReturn (json_encode($st),'JSON');
             }else {
                 //添加商品失败
-                $st = array ('status'=>0);
+                $st['status'] = "0";
                 $this->ajaxReturn (json_encode($st),'JSON');
             }
         
@@ -94,6 +124,20 @@
          * date: 2016.04.12
          */
         public function searchProduct(){
+            
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
     
             $page = I('page');
             $search = I('search');
@@ -104,17 +148,19 @@
             switch ($search){
                 case ('name'):
                     $condition = array('like',"%{$content}%");
+                    $sPresult = $sP->where($condition)->select();
                     break;
                 case ('barcode'):
                     $condition = $content;
+                    $sPresult = $sP->where($condition)->select();
                     break;
                 case (''):
-                    $condition['product_id'] = $sP['product_id'];
+                    $sPresult = $sP->select();
                     break;
             }
             
            
-           $sPresult = $sP->where($condition)->select();
+           //$sPresult = $sP->where($condition)->select();
            $sPcount = $sPresult->count();
            if ($sPcount == 0){
                
@@ -151,6 +197,20 @@
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $get['supplier_id']             = session('supplier_id');
             $get['product_id']              = session('product_id');
             $get['supplierproduct_price']   = I('price');
@@ -159,12 +219,12 @@
             $result = $sP->data($get)->add();
             if ($result){
                 
-                $st = array ('status'=>1);
+                $st['status'] = "1";
                 $this->ajaxReturn (json_encode($st),'JSON');
                 
             }else {
                 
-                $st = array ('status'=>0);
+                 $st['status'] = "0";
                 $this->ajaxReturn (json_encode($st),'JSON');
                 
             }
@@ -200,21 +260,35 @@
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $get['supplier_id']             = session('supplier_id');
             $get['product_id']              = session('product_id');
             
             $sP = M('supplierproduct');
             $result = $sP->where($get)->delete();
-            if ($result){
-            
-                $st = array ('status'=>0);
+        if ($result){
+                
+                $st['status'] = "1";
                 $this->ajaxReturn (json_encode($st),'JSON');
-            
+                
             }else {
-            
-                $st = array ('status'=>1);
+                
+                 $st['status'] = "0";
                 $this->ajaxReturn (json_encode($st),'JSON');
-            
+                
             }
         }
     
@@ -234,6 +308,20 @@
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             //$page = I('page');
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $search = I('search');
             $content = I('content');
             
@@ -243,19 +331,22 @@
                 
                 case ('name'):  //按名字搜索
                     $condition['supplier_name'] = array('like',"%{$content}%");
+                    $sPresult = $sP->where($condition)->select();
                     break;
                 case ('contact'):  //按联系人搜索
                     $condition['supplier_contact'] = array('like',"%{$content}%");
+                    $sPresult = $sP->where($condition)->select();
                     break;
                 case ('phone'):  //按联系人电话搜索
                     $condition['supplier_phone'] = array('like',"%{$content}%");
+                    $sPresult = $sP->where($condition)->select();
                     break;
                 case (''):  //匹配所有供应商信息
-                    $condition['supplier_id'] = $sP['supplier_id'];
+                    $sPresult = $sP->select();
                     break;
              }
              
-             $sPresult = $sP->where($condition)->select();
+             //$sPresult = $sP->where($condition)->select();
              $sPcount = $sPresult->count();
              if ($sPcount == 0){
                   
@@ -290,7 +381,21 @@
         
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-                  
+
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $map = session('supplier_id');
             $sP = D('SupplierProductView');
 
@@ -326,6 +431,19 @@
             // if(!IS_POST)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
             
             $data = array(
                 
@@ -344,12 +462,12 @@
             $result = $sDedit->save($data);
             if ($result == $sDedit->save($data)){
                 
-                $st = array ('status'=>1);
-                $this->ajaxReturn (json_encode($st),'JSON');
+                $st['status'] = "1";
+                $this->ajaxReturn(json_encode($st), 'JSON');
             }else {
                 
-                $st = array ('status'=>0);
-                $this->ajaxReturn (json_encode($st),'JSON');
+                $st['status'] = "0";
+                $this->ajaxReturn(json_encode($st), 'JSON');
             }
            
         }
@@ -369,6 +487,20 @@
             // if(!IS_AJAX)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             $search = I('search');
             $content =I('content');
             
@@ -378,14 +510,15 @@
                 
                 case('supplier_name'):   //按供应商名字搜索
                     $condition['supplier_name'] = array('like',"%{$content}%");
+                    $sLresult = $sL->where($condition)->select();
                     break;
                 case(''):  //获取全部供应商
-                    $condition['supplier_id'] = $sL['supplier_id'];
+                    $sLresult = $sL->select();
                     break; 
                     
             }
             
-            $sLresult = $sL->where($condition)->select();
+            //$sLresult = $sL->where($condition)->select();
             $sLcount = $sLresult->count();
             if ($sLcount == 0){
                  
@@ -421,6 +554,20 @@
         
             // if(!IS_AJAX)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
             
             $map['supplier_id'] = session('supplier_id');
             $search = I('search');
@@ -474,11 +621,24 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function showWareHouse(){
+        /*public function showWareHouse(){
     
             // if(!IS_AJAX)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
             
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
             
             $search = I('search');
             $content =I('content');
@@ -489,14 +649,15 @@
             
                 case('warehouse_number'):   //按仓库名字搜索
                     $condition['warehouse_number'] = array('like',"%{$content}%");
+                    $sLresult = $sL->where($condition)->select();
                     break;
                 case(''):  //获取全部仓库
-                    $condition['warehouse_id'] = $sL['warehouse_id'];
+                    $sLresult = $sL->select();
                     break;
             
             }
             
-            $sLresult = $sL->where($condition)->select();
+            //$sLresult = $sL->where($condition)->select();
             $sLcount = $sLresult->count();
             if ($sLcount == 0){
                  
@@ -514,7 +675,7 @@
             $sData['list'] = $sLresult->field('warehouse_address',true)->limit($page,$divide)->order('product_id asc')->select();
             
             $this->ajaxReturn($sData);
-        }
+        }*/
     
     
         /**
@@ -541,6 +702,21 @@
          * date: 2016.04.12
          */
         public function showOrderDetail(){
+            
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
             
             $map[order_id] = session('order_id');
             $sOD = D('DealOrderView');
@@ -619,6 +795,21 @@
          * date: 2016.04.12
          */
         public function addOrder(){
+            
+            $json = file_get_contents("php://input");
+            $arr = json_decode($json);
+            //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+            if ($arr->session_id) {
+                session_id($arr->session_id);
+                session_start();
+            }
+            if (!session('?user_id')) {
+                $userInfo['status'] = "0";
+                $userInfo['session_id'] = "0";
+                $this->ajaxReturn(json_encode($userInfo), 'JSON');
+                return;
+            }
+            
     
             $aO = D('AddOrderView');
             
@@ -652,15 +843,15 @@
             
             if ($rC->where($rCInfo)->find()){
             
-                $st = array ('status'=>1);
-                $this->ajaxReturn (json_encode($st),'JSON');
-            }else {
+             $st['status'] = "1";
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }else{
             
-                $st = array ('status'=>0);
-                $this->ajaxReturn (json_encode($st),'JSON');
-            }
+            $st['status'] = "0";
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
             
-            }
+            
             
         }
     
