@@ -568,22 +568,22 @@
                 $this->ajaxReturn(json_encode($userInfo), 'JSON');
                 return;
             }
-            
+
             $map['supplier_id'] = session('supplier_id');
             $search = I('search');
             $content =I('content');
-        
+
             $sL = D('SupplierProductView')->where($map)->select();
-        
+
             switch ($search){
-        
+
                 case('product_name'):   //按商品名字搜索
                     $condition['product_name'] = array('like',"%{$content}%");
                     break;
                 case(''):  //获取全部供应商
                     $condition['supplier_id'] = $sL['supplier_id'];
                     break;
-        
+
             }
         
             $sLresult = $sL->where($condition)->select();
