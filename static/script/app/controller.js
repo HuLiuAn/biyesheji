@@ -282,6 +282,7 @@ app.controller('goodHisDetailCtrl', function ($scope, $http, $Bs_API, $state) {
 app.controller('goodManageListCtrl', function ($scope) {
 
     $scope.$on('PageLoaded', function (e, data) {
+        console.log(data);
         $scope.list = data;
 
     });
@@ -300,12 +301,18 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
     $scope.images = [];
     $scope.image = '';
     $scope.data = {};
-    $http.get($Bs_API.getApi('product_detail')).success(function (data) {
-        $scope.data = data;
-        ////console.log(data);
-        $scope.images = data.product_photogroup;
-        ////console.log($scope.images);
-        $scope.image = data.product_photo;
+    $http.post($Bs_API.getApi('product_detail'),{product_id:$state.params.id||"0"}).success(function (data) {
+        data=JSON.parse(data);
+        data.product_photogroup=JSON.parse(data.product_photogroup)||[];
+        console.log(data);
+        if(!data.status){
+            $Bs_API.loading("获取失败",1);
+        }else{
+            $scope.data = data;
+            $scope.images = data.product_photogroup;
+            $scope.image = data.product_photo;
+        }
+
     }).error(function () {
         $Bs_API.loading('获取失败！请检查网络', 1);
     });

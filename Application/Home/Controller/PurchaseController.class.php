@@ -90,18 +90,12 @@ class PurchaseController extends Controller
             return;
         }
 
-        $data = array(
-            'product_name' => I('product_name'),
-            'product_barcode' => I('product_barcode'),
-            'product_photogroup' => I('product_photogroup'),
-            'product_photo' => I('product_photo'),
-            'properties' => I('product_properties'),
-
-        );
-
+        $data['product_name'] = $arr->product_name;
+        $data['product_barcode'] = $arr->product_barcode;
+        $data['product_photogroup'] = json_encode($data['product_photogroup']);
+        $data['product_photo'] = $arr->product_photo;
+        $data['properties'] = $arr->product_properties;
         $product = M('product');
-
-
         //添加商品成功
         if ($product->add($data)) {
 
@@ -111,6 +105,60 @@ class PurchaseController extends Controller
             //添加商品失败
             $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+
+    }
+
+
+    /**
+     * 向tb_product表添加商品信息
+     * @access public
+     * @param void
+     * @return void
+     *
+     * author: shli
+     * date: 2016.04.12
+     */
+    public function showProductDetail()
+    {
+
+        // if(!IS_POST)
+        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+
+        //调用Application/Home/Common/function.php中自定义方法imgUpload()获取图片名称
+        //$imgupload = imgUpload();
+
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        if(empty($arr->product_id)){
+            //没有ID直接返回失败
+            $result['status'] = "0";
+            $this->ajaxReturn(json_encode($result), 'JSON');
+        }
+
+        $map['product_id'] = $arr->product_id;
+        $product = M('product');
+        //添加商品成功
+        $result=$product->where($map)->find();
+        if ($result) {
+            $result['status'] = "1";
+            $this->ajaxReturn(json_encode($result), 'JSON');
+        } else {
+            //添加商品失败
+            $result['status'] = "0";
+            $this->ajaxReturn(json_encode($result), 'JSON');
         }
 
     }
@@ -157,14 +205,14 @@ class PurchaseController extends Controller
         $sPData['page'] = $arr->page;
         if (!empty($arr->barcode) || !empty($arr->name)) {
             //只要有一个搜索条件，就选择搜索模式
-            $map['product_barcode'] = array('like', "%".$arr->barcode."%");
-            $map['product_name'] = array('like', "%".$arr->name."%");
+            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
+            $map['product_name'] = array('like', "%" . $arr->name . "%");
             $sPData["total"] = $pCount = $sP->where($map)->count();
-            $sPData['list'] = $sP->where($map)->Field('product_id', 'product_name', 'product_photo', 'properties')->limit($page, $divide)->order("product_id asc")->select();
+            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
 
         } else {
             $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->Field('product_id', 'product_name', 'product_photo', 'properties')->limit($page, $divide)->order("product_id asc")->select();
+            $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
 
         }
         $this->ajaxReturn($sPData);
