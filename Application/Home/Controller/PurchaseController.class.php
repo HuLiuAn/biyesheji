@@ -621,7 +621,7 @@
          * author: shli
          * date: 2016.04.12
          */
-        /*public function showWareHouse(){
+        public function showWareHouse(){
     
             // if(!IS_AJAX)
             //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
@@ -672,10 +672,10 @@
             
             $sData['page'] = I('page');
             $sData['total'] = $sLcount;
-            $sData['list'] = $sLresult->field('warehouse_address',true)->limit($page,$divide)->order('product_id asc')->select();
+            $sData['list'] = $sLresult->field('warehouse_address',true)->limit($page,$divide)->order('warehouse_id asc')->select();
             
             $this->ajaxReturn($sData);
-        }*/
+        }
     
     
         /**

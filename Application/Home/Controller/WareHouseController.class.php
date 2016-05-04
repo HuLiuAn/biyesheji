@@ -119,7 +119,41 @@
                 return;
             }
             
+            $search = I('search');
+            $content =I('content');
             
+            $sL = M('warehouse');
+            
+            switch ($search){
+            
+                case('warehouse_number'):   //按仓库名字搜索
+                    $condition['warehouse_number'] = array('like',"%{$content}%");
+                    $sLresult = $sL->where($condition)->select();
+                    break;
+                case(''):  //获取全部仓库
+                    $sLresult = $sL->select();
+                    break;
+            
+            }
+            
+            //$sLresult = $sL->where($condition)->select();
+            $sLcount = $sLresult->count();
+            if ($sLcount == 0){
+                 
+                $this->error('您所查询的供应商不存在，请重试....');
+            }
+            
+            //每页10个
+            $divide = 10;
+            
+            //偏移量$page ,页数*每页显示的记录条数
+            $page = (I('page')-1) * $divide;
+            
+            $sData['page'] = I('page');
+            $sData['total'] = $sLcount;
+            $sData['list'] = $sLresult->field('*')->limit($page,$divide)->order('warehouse_id asc')->select();
+            
+            $this->ajaxReturn($sData);
         }
         
         
@@ -132,7 +166,7 @@
          * author: shli
          * date: 2016.04.12
          */
-        public function queryWareHouse(){
+        public function allocate(){
         
             $json = file_get_contents("php://input");
             $arr = json_decode($json);
@@ -147,6 +181,8 @@
                 $this->ajaxReturn(json_encode($userInfo), 'JSON');
                 return;
             }
+            
+            
         
         
         }
