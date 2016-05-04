@@ -107,22 +107,15 @@ class StaffController extends Controller
     public function login()
     {
 
-        if (I('session_id')) {
-            session_id(I('session_id'));
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return ;
-        }
+        
         
         //if(!IS_AJAX)
         //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
         // $map1['user_number']   = I('usernumber');
         //$map2['user_password'] = I('password');
+        
+        
 
         $map['user_number'] = I('usernumber');
         $map['user_password'] = I('password');
@@ -182,11 +175,13 @@ class StaffController extends Controller
             session('user_id', $result['user_id']);
             session('user_name', $result['user_name']);
             session('user_department', $result['user_department']);
+            session('user_role', $result['user_role']);
             session('user_lastlogintime', $result['user_lastlogintime']);
 
             $st['user_id'] = $result['user_id'];
             $st['user_name'] = $result['user_name'];
             $st['user_department'] = $result['user_department'];
+            $st['user_role'] = $result['user_role'];
             //  $user['user_lastlogintime'] = $result['user_lastlogintime'];//$user变量已经用过
             // $user['user_role'] = $result['user_role'];
 
@@ -315,13 +310,17 @@ class StaffController extends Controller
         $data['user_password']= $arr->new;
         //$new['user_password'] = I('newpassword','','md5');
 
-        $final = $user->where($map)->save($data);
+       
+        $final = preg_match('#[!#$%^&*(){}~`"\';:?+=<>/\[\]]+#', $arr->new) ? 1 : 0;
+        //$final = $user->where($map)->save($data);
         $st['status'] = "1";
-        if (empty($final)) {
+        if ($final == 0) {
             $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
+        }else {
+            $user->where($map)->save($data);
+            $this->ajaxReturn(json_encode($st), 'JSON');
         }
-        $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
@@ -398,16 +397,7 @@ class StaffController extends Controller
     
     public function modifyUserInfo()
     {
-        if (I('session_id')) {
-            session_id(I('session_id'));
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
+      
         
         //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
     
@@ -436,14 +426,19 @@ class StaffController extends Controller
     
         $map['user_id'] = session('user_id');
         $data['user_phone'] = $arr->user_phone;
-        $final = $user->where('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->user_phone)->create();
+        
+        $final = preg_match('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->user_phone) ? 1 : 0;
         //$final = $user->where($map)->save($data);
         $st['status'] = "1";
-        if (empty($final)) {
+        if ($final == 0) {
             $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
+        }else{
+            
+            $user->where($map)->save($data);
+            $this->ajaxReturn(json_encode($st), 'JSON');
         }
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        
     }
    
 
