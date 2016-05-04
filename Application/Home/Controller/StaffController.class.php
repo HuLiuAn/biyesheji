@@ -310,7 +310,7 @@ class StaffController extends Controller
         //$new['user_password'] = I('newpassword','','md5');
 
        
-        $final = preg_match('#[!#$%^&*(){}~`"\';:?+=<>/\[\]]+#', $arr->new) ? 1 : 0;
+        $final = preg_match('#[!#$%^&*(){}~`"\';:?+=<>/\[\]]+#', $arr->new) ? 0 : 1;
         //$final = $user->where($map)->save($data);
         $st['status'] = "1";
         if ($final == 0) {
