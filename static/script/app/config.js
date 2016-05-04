@@ -21,7 +21,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         add_to_cart: base+"Staff/addProToReceiveOrder",
         receive_list: base+'Staff/queryReceiveOrder',
         receive_detail: base+"Staff/showReceiveOrderDetail",
-        "product-manage-list": base+"Home/Purchase/searchProduct",
+        "product-manage-list": base+"Purchase/searchProduct",
         new_product: base+"Purchase/addProduct",
         product_detail: "serv/baseproduct.json",
         upload_picture: base+"Upload/picture",
