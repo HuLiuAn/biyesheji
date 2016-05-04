@@ -70,15 +70,18 @@ class StaffController extends Controller
      */
     public function checkLogin()
     {
-        if (I('session_id')) {
-            session_id(I('session_id'));
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
             session_start();
         }
         if (!session('?user_id')) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return ;
+            return;
         }
 
         //检查用户是否登录
@@ -210,15 +213,18 @@ class StaffController extends Controller
     public function logout()
     {
 
-        if (I('session_id')) {
-            session_id(I('session_id'));
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
             session_start();
         }
         if (!session('?user_id')) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return ;
+            return;
         }
         
         session_unset();
@@ -355,8 +361,11 @@ class StaffController extends Controller
         //   if(!IS_AJAX)
         //  E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
-        if (I('session_id')) {
-            session_id(I('session_id'));
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
             session_start();
         }
         if (!session('?user_id')) {
@@ -463,6 +472,19 @@ class StaffController extends Controller
         //    $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
         //    $this->ajaxReturn($gData);
 
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
         
         //每页10个
         $divide = 10;
@@ -493,6 +515,20 @@ class StaffController extends Controller
 
         header('Content-Type:text/html; charset=utf-8');//防止出现乱码
 
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+        
         // $get['product_name'] = I('product_name');
         //$get['warehouse_number'] = I('warehouse_number');
 
