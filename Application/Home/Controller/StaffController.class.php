@@ -241,8 +241,11 @@ class StaffController extends Controller
     public function showUserDetail()
     {
 
-        if (I('session_id')) {
-            session_id(I('session_id'));
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
             session_start();
         }
         if (!session('?user_id')) {
@@ -275,16 +278,6 @@ class StaffController extends Controller
 
     public function modifyPassword()
     {
-        if (I('session_id')) {
-            session_id(I('session_id'));
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
         
 
         $json = file_get_contents("php://input");
@@ -398,7 +391,7 @@ class StaffController extends Controller
     public function modifyUserInfo()
     {
       
-        
+       
         //TODO 这里要接收用户手机号码，通过session判断是哪个用户，然后更新数据，返回更新状态 {status:0/1}
     
         $json = file_get_contents("php://input");
@@ -470,6 +463,7 @@ class StaffController extends Controller
         //    $gData["total"] = $gCount % $divide > 0 ? ($gCount + ($divide - $gCount % $divide)) / $divide : $gCount / $divide;
         //    $this->ajaxReturn($gData);
 
+        
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
