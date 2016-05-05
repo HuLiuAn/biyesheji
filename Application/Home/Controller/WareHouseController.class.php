@@ -184,38 +184,44 @@
                 $this->ajaxReturn(json_encode($userInfo), 'JSON');
                 return;
             }
+            $map = session('warehouse_id');
+            $search = $arr->search;
+            $content = $arr->content;
 
-            $search = I('search');
-            $content =I('content');
-
-            $sL = D('SupplierProductView')->where($map)->select();
+            $sL = D('AllocateProductView');
 
             switch ($search){
 
                 case('product_name'):   //按商品名字搜索
                     $condition['product_name'] = array('like',"%{$content}%");
+                    $sLresult = $sL->where($condition)->select();
                     break;
-                case(''):  //获取全部供应商
-                    $condition['supplier_id'] = $sL['supplier_id'];
+                case(''):  //获取全部商品
+                    $sLresult = $sL->select();
                     break;
 
             }
 
-            $sLresult = $sL->where($condition)->select();
+            //$sLresult = $sL->where($condition)->select();
             $sLcount = $sLresult->count();
             if ($sLcount == 0){
 
                 $this->error('您所查询的商品不存在，请重试....');
             }
 
+           if($sLresult->where($map)->find())
+               $alocatcount =
+
             //每页10个
             $divide = 10;
 
             //偏移量$page ,页数*每页显示的记录条数
-            $page = (I('page')-1) * $divide;
+            $page = ($arr->page-1) * $divide;
 
-            $sData['page'] = I('page');
+            $sData['page'] = $arr->page;
             $sData['total'] = $sLcount;
+
+            //TODO 此处需要修改
             $sData['list'] = $sLresult->field('supplier_id',true)->limit($page,$divide)->order('product_id asc')->select();
 
             $this->ajaxReturn($sData);

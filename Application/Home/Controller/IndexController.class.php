@@ -13,9 +13,22 @@ class IndexController extends Controller {
      *date:2016.4.8
      */
     public function index(){
-        echo 'hello';
+
         //$this->display(T('static://login'));   //先进入首页
-        
+
+        //$login['status'] = 1;//登陆状态，0为未登录
+
+        if(!session('?user_id')){//已经登陆
+            $this->error("你还没有登录，快去登录吧",U('Staff/Login'),1);
+        }else{
+
+            $this->success("",U('Staff/checkLogin'),1);
+
+        }
+
+        //$this->ajaxReturn($login);
+
+
     }
     
     
