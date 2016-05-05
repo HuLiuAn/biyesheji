@@ -475,7 +475,7 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
         $scope.supplier.product = product;
         $http.post($Bs_API.getApi('new_supplier'), $scope.supplier).success(function () {
             $Bs_API.loading('成功');
-            //$state.go('main.provider-list', {page: 1});
+            $state.go('main.provider-list', {page: 1});
         }).error(function () {
             $Bs_API.loading('添加失败', 1);
         });
