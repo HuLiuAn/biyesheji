@@ -26,6 +26,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         product_detail:base+"Purchase/showProductDetail",
         upload_picture: base+"Upload/picture",
         new_supplier: base+"Purchase/addSupplier",
+        get_product_by_name:base+"Purchase/getAllProductList",
         supplier_list:base+"Purchase/searchSupplier",
         edit_supplier:base+"Purchase/editSupplier",
         order_supplier_list:base+"Purchase/showSupplierList",

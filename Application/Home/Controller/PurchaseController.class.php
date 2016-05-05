@@ -37,20 +37,25 @@ class PurchaseController extends Controller
 
 
         $supplier = M('supplier');
+        $supplier_product = M('supplierproduct');
+        //保存供应商，并获取供应商ID
         $data = array(
-
-            'supplier_name' => I('name'),
-            'supplier_contact' => I('contact'),
-            'supplier_phone' => I('phone', '/^(13|15|18)(\d{9})|^6(\d{4,5})$/', 3),
-            'supplier_address' => I('address'),
+            'supplier_name' => $arr->name,
+            'supplier_contact' => $arr->contact,
+            'supplier_phone' => $arr->phone,
+            'supplier_address' => $arr->address,
         );
-
-        if ($supplier->data($data)->add()) {
-
+        $sp_data['supplier_id'] = $supplier->data($data)->add();
+        // var_dump($s);
+        if ($sp_data['supplier_id']) {
+            foreach ($arr->product as $product) {
+                $sp_data['product_id'] = $product->product_id;
+                $sp_data['supplierproduct_price'] = $product->supplierproduct_price;
+                $supplier_product->data($sp_data)->add();
+            }
             $st = array('status' => 1);
             $this->ajaxReturn(json_encode($st), 'JSON');
         } else {
-
             $st = array('status' => 0);
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
@@ -283,6 +288,34 @@ class PurchaseController extends Controller
 
 
     /**
+     * 显示所有商品，供新增供应商时选择
+     * @access public
+     * @param void
+     * @return void
+     *
+     * author: shli
+     * date: 2016.04.12
+     */
+    public function getAllProductList()
+    {
+
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        $sP = M('product');
+        $map['product_name'] = array('like', "%" . I('name') . "%");
+        $sPData['list'] = $sP->where($map)->order("product_id asc")->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
+    }
+
+
+
+    /**
      * 编辑商品价格
      *
      * @access public
@@ -356,11 +389,6 @@ class PurchaseController extends Controller
      */
     public function searchSupplier()
     {
-
-        // if(!IS_POST)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-        //$page = I('page');
-
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
         //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
@@ -375,49 +403,32 @@ class PurchaseController extends Controller
             return;
         }
 
-        $search = I('search');
-        $content = I('content');
-
-        $sP = M('supplier');
-
-        switch ($search) {
-
-            case ('name'):  //按名字搜索
-                $condition['supplier_name'] = array('like', "%{$content}%");
-                $sPresult = $sP->where($condition)->select();
-                break;
-            case ('contact'):  //按联系人搜索
-                $condition['supplier_contact'] = array('like', "%{$content}%");
-                $sPresult = $sP->where($condition)->select();
-                break;
-            case ('phone'):  //按联系人电话搜索
-                $condition['supplier_phone'] = array('like', "%{$content}%");
-                $sPresult = $sP->where($condition)->select();
-                break;
-            case (''):  //匹配所有供应商信息
-                $sPresult = $sP->select();
-                break;
-        }
-
-        //$sPresult = $sP->where($condition)->select();
-        $sPcount = $sPresult->count();
-        if ($sPcount == 0) {
-
-            $this->error('您所查询的供应商不存在，请重试....');
-        }
 
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
-        $page = (I("page") - 1) * $divide;
+        $page = ($arr->page - 1) * $divide;
         //表格
+        if (empty($page)) {
+            //没有页数，默认显示第一页
+            $page = 0;
+        }
 
+        $sP = M('supplier');
+        $sPData['page'] = $arr->page;
+        if (!empty($arr->contact) || !empty($arr->name) || !empty($arr->phone)) {
+            //只要有一个搜索条件，就选择搜索模式
+            $map['supplier_contact'] = array('like', "%" . $arr->contact . "%");
+            $map['supplier_name'] = array('like', "%" . $arr->name . "%");
+            $map['supplier_phone'] = array('like', "%" . $arr->phone . "%");
+            $sPData["total"] = $pCount = $sP->where($map)->count();
+            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("supplier_id asc")->select();
 
-        $sPData['page'] = I('page');
-        $sPData['list'] = $sPresult->field('*')->limit($page, $divide)->order("product_id asc")->select();
-        $sPData["total"] = $sPcount;
+        } else {
+            $sPData["total"] = $sP->count();
+            $sPData['list'] = $sP->limit($page, $divide)->order("supplier_id asc")->select();
+        }
         $this->ajaxReturn($sPData);
-
     }
 
 
