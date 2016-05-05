@@ -97,6 +97,18 @@ class PurchaseController extends Controller
         $data['properties'] = $arr->product_properties;
         $product = M('product');
         //添加商品成功
+        if ($arr->product_id) {
+            //如果有ID，则存。
+            $map['product_id'] = $arr->product_id;
+            if ($product->where($map)->save($data)) {
+                $st['status'] = "1";
+                $this->ajaxReturn(json_encode($st), 'JSON');
+            } else {
+                //添加商品失败
+                $st['status'] = "0";
+                $this->ajaxReturn(json_encode($st), 'JSON');
+            }
+        }
         if ($product->add($data)) {
 
             $st['status'] = "1";

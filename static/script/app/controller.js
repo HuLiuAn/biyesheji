@@ -301,13 +301,16 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
     $scope.images = [];
     $scope.image = '';
     $scope.data = {};
-    $http.post($Bs_API.getApi('product_detail'),{product_id:$state.params.id||"0"}).success(function (data) {
-        data=JSON.parse(data);
-        data.product_photogroup=JSON.parse(data.product_photogroup)||[];
-        console.log(data);
-        if(!data.status){
-            $Bs_API.loading("获取失败",1);
-        }else{
+    $http.post($Bs_API.getApi('product_detail'), {product_id: $state.params.id || "0"}).success(function (data) {
+        data = JSON.parse(data);
+        data.product_photogroup = JSON.parse(data.product_photogroup) || [];
+        data.product_barcode = parseInt(data.product_barcode);
+        if (!data.status) {
+            $Bs_API.loading("获取失败", 1);
+        } else {
+            for (var i = data.product_photogroup.length; i < 6; i++) {
+                data.product_photogroup[i] = "";
+            }
             $scope.data = data;
             $scope.images = data.product_photogroup;
             $scope.image = data.product_photo;
