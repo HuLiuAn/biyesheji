@@ -398,6 +398,20 @@ app.controller('goodProviderListCtrl', function ($scope) {
         $scope.list = data;
 
     });
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "名称",
+        field: 'name',
+        value: ''
+    }, {
+        flag: "联系人",
+        field: 'contact',
+        value: ''
+    }, {
+        flag: "电话",
+        field: 'phone',
+        value: ''
+    }];
 
 });
 app.controller('goodProviderDetailCtrl', function ($scope) {

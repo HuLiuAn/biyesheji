@@ -283,10 +283,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     }).
     //供应商管理
     state('main.provider-list', {
-        url: 'provider/list/:page?search',
+        url: 'provider/list/:page?name&contact&phone',
         templateUrl: 'views/provider/list.html',
         controller: 'goodProviderListCtrl',
-        Handler: "receive_list"
+        Handler: "supplier_list"
     }).state('main.provider-detail', {
         url: 'provider/detail/:id',
         templateUrl: 'views/provider/detail.html',

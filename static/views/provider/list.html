@@ -3,10 +3,10 @@
     <div class="box-header">
         <h3 class="box-title">供应商列表</h3>
 
-        <a type="submit" name="submit" style="height: 20px;margin:0;margin-left:20px;padding:1px 8px;" href="#/good-manage/new" class="btn btn-success btn-flat">
+        <a type="submit" name="submit" style="height: 20px;margin:0;margin-left:20px;padding:1px 8px;" href="#/provider/new" class="btn btn-success btn-flat">
             <i class="fa fa-plus"></i>新增
         </a>
-        <bs-search class="pull-right"></bs-search>
+        <bs-search class="pull-right" search="field:value"  template="customTemplate.html" ></bs-search>
     </div>
     <!-- /.box-header -->
     <div class="box-body table-responsive no-padding">
@@ -35,3 +35,9 @@
         <bs-pagination></bs-pagination>
     </div>
 </div></div>
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span>{{match.model.flag}}</span>
+        <span ng-bind-html="match.model.value | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>
