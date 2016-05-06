@@ -414,22 +414,75 @@ app.controller('goodProviderListCtrl', function ($scope) {
     }];
 
 });
-app.controller('goodProviderDetailCtrl', function ($scope) {
+app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $http) {
+    var count = 0;
+    $http.post($Bs_API.getApi('detail_supplier'), {
+        supplier_id: $state.params.id || 0
+    }).success(function (data) {
+        data = JSON.parse(data);
+        if (!data.status) {
+            $Bs_API.loading("获取失败", 1);
+        } else {
+            data.supplier_phone = parseInt(data.supplier_phone);
+            $scope.products = {};
+            count=data.products.length;
+            for (var i in data.products) {
+                $scope.products[i] = data.products[i];
+            }
+            delete data.products;
+            $scope.supplier = data;
+        }
 
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
+    }).error(function (data) {
+        $Bs_API.loading('获取失败！请检查网络', 1);
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        ////console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
+    $scope.product = {};
+    $scope.supplier = {};
+    $scope.products = {};
+    $scope.add = function () {
+        var pro = $scope.product;
+        if (!pro.product_name || !pro.supplierproduct_price) {
+            return;
+        }
+        $scope.products[count] = pro;
+        count++;
+        $scope.product = {};
+    };
+    $scope.del = function (key) {
+        delete $scope.products[key];
+    };
+    $scope.getLocation = function (val) {
+        return $http.get($Bs_API.getApi('get_product_by_name'), {
+            params: {
+                name: val
+            }
+        }).then(function (response) {
+            //console.log(response);
+            return response.data['list'].map(function (item) {
+                return item.product_id + "," + item.product_name
+            });
+        });
     };
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+    $scope.selected = function ($item, $model, $label, $event) {
+        var s = $scope.product.product_name.split(',');
+        $scope.product.product_name = s[1];
+        $scope.product.product_id = s[0];
     };
+    $scope.submit = function () {
+        //提取ID
+        var product = [];
+        for (var i in  $scope.products) {
+            product.push($scope.products[i]);
+        }
+        $scope.supplier.product = product;
+        $http.post($Bs_API.getApi('edit_supplier'), $scope.supplier).success(function () {
+            $Bs_API.loading('成功');
+            $state.go('main.provider-list', {page: 1});
+        }).error(function () {
+            $Bs_API.loading('添加失败', 1);
+        });
+    }
 });
 app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.product = {};

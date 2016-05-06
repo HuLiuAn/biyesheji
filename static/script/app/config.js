@@ -10,31 +10,32 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         }
 
     };
-    var base="../index.php/Home/";
+    var base = "../index.php/Home/";
     var API = {
         logout: "sds",//退出
-        change_key: base+"Staff/modifyPassword",//修改密码
-        change_info: base+"Staff/modifyUserInfo",//修改信息
-        get_info: base+"Staff/showUserDetail",//获取个人信息,
-        receive_product_list: base+"Staff/showProductList",
-        receive_product_detail: base+"Staff/showProductDetail",
-        add_to_cart: base+"Staff/addProToReceiveOrder",
-        receive_list: base+'Staff/queryReceiveOrder',
-        receive_detail: base+"Staff/showReceiveOrderDetail",
-        "product-manage-list": base+"Purchase/searchProduct",
-        new_product: base+"Purchase/addProduct",
-        product_detail:base+"Purchase/showProductDetail",
-        upload_picture: base+"Upload/picture",
-        new_supplier: base+"Purchase/addSupplier",
-        get_product_by_name:base+"Purchase/getAllProductList",
-        supplier_list:base+"Purchase/searchSupplier",
-        edit_supplier:base+"Purchase/editSupplier",
-        order_supplier_list:base+"Purchase/showSupplierList",
-        order_product_list:base+"Purchase/showSupplierProList",
-        order_hub_list:base+"Purchase/showWareHouse",
-        order_list:base+"Purchase/queryOrder",
-        order_detail:base+"Purchase/showOrderDetail",
-        new_order:base+"Purchase/addOrder"
+        change_key: base + "Staff/modifyPassword",//修改密码
+        change_info: base + "Staff/modifyUserInfo",//修改信息
+        get_info: base + "Staff/showUserDetail",//获取个人信息,
+        receive_product_list: base + "Staff/showProductList",
+        receive_product_detail: base + "Staff/showProductDetail",
+        add_to_cart: base + "Staff/addProToReceiveOrder",
+        receive_list: base + 'Staff/queryReceiveOrder',
+        receive_detail: base + "Staff/showReceiveOrderDetail",
+        "product-manage-list": base + "Purchase/searchProduct",
+        new_product: base + "Purchase/addProduct",
+        product_detail: base + "Purchase/showProductDetail",
+        upload_picture: base + "Upload/picture",
+        new_supplier: base + "Purchase/addSupplier",
+        get_product_by_name: base + "Purchase/getAllProductList",
+        supplier_list: base + "Purchase/searchSupplier",
+        edit_supplier: base + "Purchase/editSupplier",
+        detail_supplier: base + "Purchase/showSupplierDetail",
+        order_supplier_list: base + "Purchase/showSupplierList",
+        order_product_list: base + "Purchase/showSupplierProList",
+        order_hub_list: base + "Purchase/showWareHouse",
+        order_list: base + "Purchase/queryOrder",
+        order_detail: base + "Purchase/showOrderDetail",
+        new_order: base + "Purchase/addOrder"
     };
     var _$Bs_API = {
         getUrl: function (index) {
