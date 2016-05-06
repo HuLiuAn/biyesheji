@@ -213,7 +213,7 @@ class PurchaseController extends Controller
         //查询偏移量$page, 页数*每页显示的数量
         $page = ($arr->page - 1) * $divide;
         //表格
-        if (empty($page)) {
+        if (empty($arr->page)) {
             //没有页数，默认显示第一页
             $page = 0;
         }
@@ -224,7 +224,7 @@ class PurchaseController extends Controller
             //只要有一个搜索条件，就选择搜索模式
             $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
             $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $sPData["total"] = $pCount = $sP->where($map)->count();
+            $sPData["total"] = $sP->where($map)->count();
             $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
 
         } else {

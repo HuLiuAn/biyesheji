@@ -365,7 +365,7 @@
                 return;
             }
 
-            $map = $arr->id;
+            $map = $arr->number;
 
             $is_order = "TROL";
             $is_receive = "TOAL";
@@ -373,7 +373,15 @@
             $st['status'] = "0";
             if(explode($is_order,$map)){
                 $st['status'] = "1";
-                $result = M('order')->where($map)->save($arr->state);
+                $result = M('order')->where($arr->id)->save($arr->state);
+
+                //如果审核通过，修改入库商品库存
+                if($result == 1){
+
+                    //TODO   修改所有入库商品库存
+                    $rOD['receiveorderdetail_id'] = M('receiveorderdetail')->where($arr->id)->select();
+
+                }
             }
 
             if(explode($is_receive,$map)){

@@ -545,11 +545,11 @@ class StaffController extends Controller
         // $get['product_name'] = I('product_name');
         //$get['warehouse_number'] = I('warehouse_number');
 
-        $get['product_id'] = session('id');
+        $get['product_id'] = $arr->product_id;
         //$pD = D('ProductDetailView');
 
         $pD = M('product');
-        $where = $pD->whrer($get);
+        $where = $pD->where($get);
         $proInfo = $where->field('product_photogroup,product_barcode,properties')->select();
 
         $this->ajaxReturn($proInfo);
@@ -558,6 +558,7 @@ class StaffController extends Controller
 
     /**
      * 查询商品
+     * 返回商品id,名称，属性，组图，仓库，库存数量
      * @access public
      * @param void
      * @return void
@@ -582,47 +583,40 @@ class StaffController extends Controller
             return;
         }
 
-        $search = $arr->search;
-        $content = $arr->content;
-
-        $sL = D("ProductListView");
-
-        switch ($search){
-
-            case('product_name'):   //按商品名字搜索
-                $condition['product_name'] = array('like',"%{$content}%");
-                $sLresult = $sL->where($condition)->select();
-                break;
-            case('product_barcode'):   //按商品名字搜索
-                $condition['product_barcode'] = $content;
-                $sLresult = $sL->where($condition)->select();
-                break;
-            case(''):  //获取全部商品
-                $sLresult = $sL->select();
-                break;
-
-        }
-
-        //$sLresult = $sL->where($condition)->select();
-        $sLcount = $sLresult->count();
-        if ($sLcount == 0){
-
-            $this->error('您所查询的商品不存在，请重试....');
-        }
-
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
         $page = ($arr->page - 1) * $divide;
         //表格
-        //   $gCount = $gM->where("is_hot = 1")->count();
-        $gM = D("ProductListView");
-        $gCount = $gM->count();
-        $gData['page'] = $arr->page;
-        $gData['list'] = $gM->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
-        $gData["total"] = $gCount;
+        if (empty($arr->page)) {
+            //没有页数，默认显示第一页
+            $page = 0;
+        }
+
+        $sL = D("ProductListView");
+
+        $sPData['page'] = $arr->page;
+
+        if (!empty($arr->barcode) || !empty($arr->name)){
+
+            $map['product_name'] = array('like',"%" . $arr->name . "%");
+            $map['product_barcode'] = array('like',"%" . $arr->barcode . "%");
+            $gData['total'] = $sL->where($map)->count();
+            $gData['list'] = $sL->where($map)->field('product_barcode',true)->limit($page,$divide)->order("product_id asc")->select();
+
+        }else{
+
+            $gData['total'] = $sL->count();
+            $gData['list'] = $sL->field('product_barcode',true)->limit($page,$divide)->order("product_id asc")->select();
+        }
+        if($gData['total'] == 0){
+
+            $this->error('您所查询的商品不存在，请重试....');
+        }
         $this->ajaxReturn($gData);
+
     }
+
 
 
     /**
@@ -654,17 +648,19 @@ class StaffController extends Controller
             return;
         }
 
-        $rC = D('ReceiveView');
+        $aAO = M('allocationorder');
+        $aAD = M('allcationorderdetail');
+        $inventory = M('inventory');
 
+        //$i['inwarehouse_id'] = $arr->inwarehouse_id;
+        //$i['product_id'] = $arr->product_id;
+        // $o['outwarehouse_id'] = $arr->outwarehouse_id;
+        //$o['product_id'] = $arr->product_id;
 
-        $rCInfo['receiveuser_id'] = session('user_id');
-        $rCInfo['product_id'] = session('product_id');
-        $rCInfo['warehouse_number'] = session('warehouse_name');
-        $rCInfo['count'] = session('count');
+        $st['status'] = "0";
 
-        //$wH = M('warehouse');
-        //$wHInfo = $wH->where($rCInfoTemp)->select();
-        //$rCInfo['warehouse_id'] = $wHInfo['warehouse_id'];
+        $rO = M('receiveorder');
+        $rOD = M('receiveorderdetail');
 
 
         /* 选择一个随机的方案 */
@@ -673,17 +669,27 @@ class StaffController extends Controller
         $rCInfo['receiveorder_number'] = 'TROL' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $rCInfo['receiveorder_date'] = date('Y-m-d', time());
         $rCInfo['receiveorder_state'] = 0;
-        $rC->add($rCInfo);
+        $rCInfo['receiveuser_id'] = $arr->user_id;
 
-        if ($rC->where($rCInfo)->find()) {
 
-            $st ['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
+        $temp['receiveorder_id'] = $rO->data($rCInfo)->add();
+        if($temp['receiveorder_id']){
 
-            $st ['status'] ="0";
+            //如果领取单生成成功，则向领取单详情表插入领取商品记录
+            foreach($arr->product as $product){
+
+                $rCDInfo['product_id'] = $product->product_id;
+                $rCDInfo['warehouse_id'] = $product->warehouse_id;
+                $rCDInfo['count'] = $product->count;
+
+                $rOD->data($rCDInfo)->add();
+
+            }
+            $st['status'] = "1";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
+        $this->ajaxReturn(json_encode($st), 'JSON');
+
 
     }
 
@@ -700,9 +706,9 @@ class StaffController extends Controller
 
         public function queryReceiveOrder(){
 
-           // if(!IS_AJAX)
-             //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-           header('Content-Type:text/html; charset=utf-8');//防止出现乱码
+            // if(!IS_AJAX)
+            //      E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+            header('Content-Type:text/html; charset=utf-8');//防止出现乱码
 
             $json = file_get_contents("php://input");
             $arr = json_decode($json);
@@ -718,50 +724,43 @@ class StaffController extends Controller
                 return;
             }
 
-           $map['receiveuser_id'] = session('user_id');
+            //每页10个
+            $divide = 10;
+            //查询偏移量$page, 页数*每页显示的数量
+            $page = ($arr->page - 1) * $divide;
+            //表格
+            if (empty($page)) {
+                //没有页数，默认显示第一页
+                $page = 0;
+            }
 
-            $search = $arr->search;
-            $content = $arr->content;;
+            $sP = M('receiveorder');
+            $sPData['page'] = $arr->page;
 
-           $qR = M('receiveorder')->where($map)->select();
-           //$qR = M('receiveorder')->select();
+            $sPData['status'] = "0";
 
-           switch ($search){
+            $map['receiveuser_id'] = $arr->user_id;
 
-               case ('date'): //按领取单生成日期搜索
-                   $condition['receiveorder_date'] = $content;
-                   $qRresult = $qR->where($condition)->select();
-                   break;
-               case ('number'): //按领取单号搜索
-                   $condition['receiveorder_number'] = $content;
-                   $qRresult = $qR->where($condition)->select();
-                   break;
-			   case ('state'): //按领取单状态搜索
-                   $condition['receiveorder_state'] = $content;
-                   $qRresult = $qR->where($condition)->select();
-                   break;
-               case (''):  //显示商品列表
-                   $qRresult = $qR->select();
-                   break;
-           }
-           //$qRresult = $qR->where($condition)->select();
-           $qRcount = $qRresult->count();
-           if ($qRcount == 0){
+            //TODO 查询条件太多，有点乱
+            if (!empty($arr->receiveorder_number) || !empty($arr->date) || !empty($arr->receiveuser_number)|| !empty($arr->receiveorder_state)) {
 
-               $this->error('您所查询的领取单不存在，请重试....');
-           }
+                $aN['user_number'] = array('like', "%" . $arr->receiveuser_number . "%");
 
-           //每页10个
-           $divide = 10;
-           //查询偏移量$page, 页数*每页显示的数量
-           $page = (I("page") - 1) * $divide;
-           //表格
+                //只要有一个搜索条件，就选择搜索模式
+                $map['receiveorder_number'] = array('like', "%" . $arr->receiveorder_number . "%");
+                //TODO 按照日期范围查询应该怎么匹配？
+                $map['receiveorder_date'] = array('like', "%" . $arr->date . "%");
+                $map['admituser_id'] = M('user')->where($aN)->find();
+                $map['receiveorder_state'] = $arr->receiveorder_state;
+                $sPData["total"] = $sP->where($map)->count();
+                $sPData['status'] = "1";
+                $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
 
-
-           $qRData['page']=I('page');
-           $qRData['list'] = $qRresult->field('receiveuser_id，admituser_id,receiveorderdetail_id',true)->limit($page, $divide)->order("receiveorder_id asc")->select();
-           $qRData["total"] = $qRCount;
-           $this->ajaxReturn($qRData);
+            } else {
+                $sPData["total"] = $sP->count();
+                $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
+            }
+            $this->ajaxReturn($sPData);
 
         }
 
@@ -777,11 +776,11 @@ class StaffController extends Controller
      * author: shli
      * date: 2016.04.12
      */
-    public function editReceiveOrder()
+    /*public function editReceiveOrder()
     {
 
 
-    }
+
 
 
     /**
@@ -801,7 +800,8 @@ class StaffController extends Controller
      * date: 2016.04.12
      */
 
-    public function deleteReceiveOrder()
+
+     /* public function deleteReceiveOrder()
     {
 
         $get['receiveorder_id'] = session('receiveorder_id');
@@ -818,7 +818,7 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($st), 'JSON');
 
         }
-    }
+    }*/
 
 
     /**
@@ -833,45 +833,36 @@ class StaffController extends Controller
     public function showReceiveOrderDetail()
     {
 
-        $map['receiveorder_id'] = session('id');
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
 
+
+        $map['receiveorder_id'] = $arr->receiveorder_id;
         $rOD = D('ReceiveDetailView');
-        $rODInfo = $rOD->where('$map')->field('receiveorder_id', true)->select();
 
-        $this->ajaxReturn($rODInfo);
+        $divide = 15;
+        $page = ($arr->page - 1) * $divide;
+
+        $sData['page'] = $arr->page;
+        $sData['total'] = $rOD->where($map)->count();
+        $sData['list'] = $rOD->where($map)->field('receiveorder_id',true)->limit($page, $divide)->order('receiveorderdetail_id asc')->select();
+
+        $this->ajaxReturn($sData);
     }
 
 
-    /**
-     * 查看领取单列表
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    /**
-     * public function showReceiveOrderList()
-    {
 
-
-        // if(!IS_POST)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-        //每页10个
-        $divide = 10;
-        $map['receiveuser_id'] = session('user_id');
-        //查询偏移量$page, 页数*每页显示的数量
-        $page = (I("page") - 1) * $divide;
-        //表格
-        $receive = M('receiveorder');
-        $rCount = $receive->where($map)->count();
-        $rData['page'] = I('page');
-        $rData['list'] = $receive->where($map)->Field('receiveorder_id,receiveorder_number,receiveorder_date,receiveorder_state')->limit($page, $divide)->order("receiveorder_id asc")->select();
-        $rData['total'] = $rCount;
-        $this->ajaxReturn($rData);
-    }
-     * */
 }
 
 
