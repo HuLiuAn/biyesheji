@@ -425,7 +425,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         } else {
             data.supplier_phone = parseInt(data.supplier_phone);
             $scope.products = {};
-            count=data.products.length;
+            count = data.products.length;
             for (var i in data.products) {
                 $scope.products[i] = data.products[i];
             }
@@ -536,12 +536,79 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
 });
 
 app.controller('goodOrderListCtrl', function ($scope) {
-
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
+    $scope.stateText = [
+        "待收货", "审核通过", "退货"
+    ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
     });
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "单号",
+        field: 'order_number',
+        value: ''
+    }, {
+        flag: "仓库审核通过人",
+        field: 'auditor_name',
+        value: ''
+    }, {
+        flag: "采购负责人",
+        field: 'auditor_name',
+        value: ''
+    }];
 
+    $scope.dt = {};
+
+    $scope.dateOptions1 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        minDate: new Date(),
+        startingDay: 1
+    };
+    $scope.dateOptions2 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        minDate: new Date(),
+        startingDay: 1
+    };
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+
+    $scope.open1 = function () {
+        if ($scope.dt.end) {
+            console.log($scope.dt.end)
+            $scope.dateOptions1.maxDate = new Date(2020, 5, 33);
+        }
+        $scope.popup1.opened = true;
+    };
+
+    $scope.open2 = function () {
+        if ($scope.dt.start) {
+            console.log($scope.dt.start)
+            $scope.dateOptions1.maxDate = new Date(2020, 5, 33);
+        }
+        $scope.popup2.opened = true;
+    };
+
+
+    $scope.popup1 = {
+        opened: false
+    };
+
+    $scope.popup2 = {
+        opened: false
+    };
 });
 app.controller('goodOrderDetailCtrl', function ($scope) {
 

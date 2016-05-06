@@ -33,7 +33,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         order_supplier_list: base + "Purchase/showSupplierList",
         order_product_list: base + "Purchase/showSupplierProList",
         order_hub_list: base + "Purchase/showWareHouse",
-        order_list: base + "Purchase/queryOrder",
+        order_list: base + "Purchase/searchOrder",
         order_detail: base + "Purchase/showOrderDetail",
         new_order: base + "Purchase/addOrder"
     };
@@ -300,10 +300,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     }).
     //订单管理
     state('main.order-list', {
-        url: 'order/list/:page?search',
+        url: 'order/list/:page?order_number&order_time&purchaser_name&auditor_name&order_state',
         templateUrl: 'views/order/list.html',
         controller: 'goodOrderListCtrl',
-        Handler: "receive_list"
+        Handler: "order_list"
     }).state('main.order-detail', {
         url: 'order/detail/:id',
         templateUrl: 'views/order/detail.html',

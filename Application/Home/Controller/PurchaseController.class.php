@@ -213,7 +213,7 @@ class PurchaseController extends Controller
         //查询偏移量$page, 页数*每页显示的数量
         $page = ($arr->page - 1) * $divide;
         //表格
-        if (empty($page)) {
+        if (empty($arr->page)) {
             //没有页数，默认显示第一页
             $page = 0;
         }
@@ -409,7 +409,7 @@ class PurchaseController extends Controller
         //查询偏移量$page, 页数*每页显示的数量
         $page = ($arr->page - 1) * $divide;
         //表格
-        if (empty($page)) {
+        if ($arr->page) {
             //没有页数，默认显示第一页
             $page = 0;
         }
@@ -753,9 +753,62 @@ class PurchaseController extends Controller
      * author: shli
      * date: 2016.04.12
      */
-    public function queryOrder()
-    {
 
+    public function searchOrder()
+    {
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+
+        //每页10个
+        $divide = 10;
+        //查询偏移量$page, 页数*每页显示的数量
+        $page = ($arr->page - 1) * $divide;
+        //表格
+        if ($arr->page) {
+            //没有页数，默认显示第一页
+            $page = 0;
+        }
+
+        $sP = M('order');
+        $User = M('user');
+        $sPData['page'] = $arr->page;
+        if (!empty($arr->order_number) || !empty($arr->auditor_name) || !empty($arr->purchaser_name)) {
+            //只要有一个搜索条件，就选择搜索模式
+            $map['order_number'] = array('like', "%" . $arr->order_number . "%");
+            $map['auditor_name'] = array('like', "%" . $arr->auditor_name . "%");
+            $map['purchaser_name'] = array('like', "%" . $arr->purchaser_name . "%");
+            $sPData["total"] = $pCount = $sP->where($map)->count();
+            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("order_id asc")->select();
+
+        } else {
+            $sPData["total"] = $sP->count();
+            $sPData['list'] = $sP->limit($page, $divide)->order("order_id asc")->select();
+            $user_list = $User->select();
+//            var_dump($user_list);
+            foreach ($sPData['list'] as &$vi) {
+                foreach ($user_list as &$vo) {
+                    if ($vi['purchaser_id'] == $vo['user_id']) {
+                        $vi['purchaser_name'] = $vo['user_name'];
+                    }
+                    if ($vi['auditor_id'] == $vo['user_id']) {
+                        $vi['auditor_name'] = $vo['user_name'];
+                    }
+                }
+            }
+        }
+        $this->ajaxReturn($sPData);
     }
 
 
