@@ -96,6 +96,9 @@
         
         /**
          * 查找仓库
+         * 向前台返回仓库ID和名称
+         * 用户查询仓库调用该接口
+         * 调拨时选择出入库仓库调用该接口，且一张调拨单拥有唯一的入库和出库仓库
          * @access public
          * @param void
          * @return void
@@ -104,7 +107,7 @@
          * date: 2016.04.12
          */
         public function queryWareHouse(){
-            
+
             $json = file_get_contents("php://input");
             $arr = json_decode($json);
             //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
@@ -118,48 +121,46 @@
                 $this->ajaxReturn(json_encode($userInfo), 'JSON');
                 return;
             }
-            
-            $search = I('search');
-            $content =I('content');
-            
-            $sL = M('warehouse');
-            
-            switch ($search){
-            
-                case('warehouse_number'):   //按仓库名字搜索
-                    $condition['warehouse_number'] = array('like',"%{$content}%");
-                    $sLresult = $sL->where($condition)->select();
-                    break;
-                case(''):  //获取全部仓库
-                    $sLresult = $sL->select();
-                    break;
-            
-            }
-            
-            //$sLresult = $sL->where($condition)->select();
-            $sLcount = $sLresult->count();
-            if ($sLcount == 0){
-                 
-                $this->error('您所查询的供应商不存在，请重试....');
-            }
-            
+
+
             //每页10个
             $divide = 10;
-            
-            //偏移量$page ,页数*每页显示的记录条数
-            $page = (I('page')-1) * $divide;
-            
-            $sData['page'] = I('page');
-            $sData['total'] = $sLcount;
-            $sData['list'] = $sLresult->field('*')->limit($page,$divide)->order('warehouse_id asc')->select();
-            
-            $this->ajaxReturn($sData);
+            //查询偏移量$page, 页数*每页显示的数量
+            $page = ($arr->page - 1) * $divide;
+            //表格
+            if (empty($page)) {
+                //没有页数，默认显示第一页
+                $page = 0;
+            }
+
+            $sP = M('warehouse');
+            $sPData['page'] = $arr->page;
+            if (!empty($arr->name)) {
+                //选择搜索模式
+                $map['warehouse_number'] = array('like', "%" . $arr->name . "%");
+                $sPData["total"] = $pCount = $sP->where($map)->count();
+                $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("warehouse_id asc")->select();
+
+            } else {
+                $sPData["total"] = $sP->count();
+                $sPData['list'] = $sP->limit($page, $divide)->order("warehouse_id asc")->select();
+
+            }
+            $this->ajaxReturn($sPData);
         }
 
 
 
         /**
-         * 选择入库仓库需要补入的商品：商品的库存小于该商品在该的最大库存（可以选择入库仓库之前没有的商品）
+         * 选择需要进行调拨的商品
+         * 必须先选择入库和出库仓库，才能选择可进行调拨的商品
+         * 返回数据：
+         * product_id:商品id
+         * product_name:商品名称
+         * properties:商品属性
+         * inhubpro_capacity:入库仓库商品最大容量
+         * in_count:入库仓库商品现有库存
+         * out_count:出库仓库商品现有库存:
          * @access public
          * @param void
          * @return void
@@ -183,47 +184,35 @@
                 $this->ajaxReturn(json_encode($userInfo), 'JSON');
                 return;
             }
-            $map = session('warehouse_id');
-            $search = $arr->search;
-            $content = $arr->content;
 
-            $sL = D('AllocateProductView');
-
-            switch ($search){
-
-                case('product_name'):   //按商品名字搜索
-                    $condition['product_name'] = array('like',"%{$content}%");
-                    $sLresult = $sL->where($condition)->select();
-                    break;
-                case(''):  //获取全部商品
-                    $sLresult = $sL->select();
-                    break;
-
-            }
-
-            //$sLresult = $sL->where($condition)->select();
-            $sLcount = $sLresult->count();
-            if ($sLcount == 0){
-
-                $this->error('您所查询的商品不存在，请重试....');
-            }
-
-           if($sLresult->where($map)->find())
-               $alocatcount =
+            $map['inwarehouse_id'] = $arr->inwarehouse_id;
+            $map['outwarehouse_id'] = $arr->outwarehouse_id;
 
             //每页10个
             $divide = 10;
+            //查询偏移量$page, 页数*每页显示的数量
+            $page = ($arr->page - 1) * $divide;
+            //表格
+            if (empty($page)) {
+                //没有页数，默认显示第一页
+                $page = 0;
+            }
 
-            //偏移量$page ,页数*每页显示的记录条数
-            $page = ($arr->page-1) * $divide;
+            $sP = D(' AllocateProductView');
+            $sPData['page'] = $arr->page;
+            if ( !empty($arr->name)) {
+                //只要有一个搜索条件，就选择搜索模式
+                //$map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
+                $map['product_name'] = array('like', "%" . $arr->name . "%");
+                $sPData["total"] = $pCount = $sP->where($map)->count();
+                $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
 
-            $sData['page'] = $arr->page;
-            $sData['total'] = $sLcount;
+            } else {
+                $sPData["total"] = $sP->count();
+                $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
 
-            //TODO 此处需要修改
-            $sData['list'] = $sLresult->field('supplier_id',true)->limit($page,$divide)->order('product_id asc')->select();
-
-            $this->ajaxReturn($sData);
+            }
+            $this->ajaxReturn($sPData);
 
 
         }
@@ -231,7 +220,10 @@
 
 
             /**
-             * 仓库调拨
+             * 新增调拨单
+             * 仓库调拨不需要审核，一旦生成调拨单，则默认商品已经调拨成功
+             * 获取参数：
+             * count:商品调拨数量
              * @access public
              * @param void
              * @return void
@@ -239,7 +231,7 @@
              * author: shli
              * date: 2016.04.12
              */
-            public function allocate(){
+            public function addAllocate(){
 
                 $json = file_get_contents("php://input");
                 $arr = json_decode($json);
@@ -255,9 +247,48 @@
                     return;
                 }
             
-            
-        
-        
+                $aAO = D('AddAllocationOrderView');
+
+                $map1['inwarehouse_id'] = $arr->inwarehouse_id;
+                $map2['outwarehouse_id'] = $arr->outwarehouse_id;
+
+                $i['inwarehouse_id'] = $map1['inwarehouse_id'];
+                $i['product_id'] = $arr->product_id;
+                $o['outwarehouse_id'] = $map2['outwarehouse_id'];
+                $o['product_id'] = $arr->product_id;
+
+                $st['status'] = "0";
+                if(empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id) && empty($arr->count)){
+
+                    $this->ajaxReturn (json_encode($st),'JSON');
+                }
+
+
+                /* 选择一个随机的方案 */
+                mt_srand((double)microtime() * 1000000);
+                //生成订单号
+                $data['allocationorder_number']       = 'TACO' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
+                $data['allocationorder_date']         = date('Y-m-d', time());
+                $data['user_id']                        = $arr->user_id;
+                $data['inwarehouse_id']                = $arr->inwarehouse_id;
+                $data['outwarehouse_id']               = $arr->outwarehouse_id;
+                $data['product_id']                     = $arr->product_id;
+                $data['count']                           = $arr->count;
+
+                //一个统计字段自动更新的例子
+                //$Article = M("Article"); // 实例化Article对象
+                // $Article->where('id=5')->setInc('view',1); // 文章阅读数加1
+               // $Article->where('id=5')->setInc('view',1,60); // 文章阅读数加1， 并且延迟60秒更新（ 写入）
+                $data['in_count']  = $aAO->where($i)->setInc('in_count',$arr->count);
+                $data['out_count'] = $aAO->where($o)->setDec('out_count',$arr->count);
+
+                if($aAO->data($data)->add()){
+
+                    $st['status'] = "1";
+                    $this->ajaxReturn (json_encode($st),'JSON');
+                }
+
+                $this->ajaxReturn (json_encode($st),'JSON');
         }
         
         
