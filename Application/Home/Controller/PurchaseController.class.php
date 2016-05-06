@@ -447,6 +447,9 @@ class PurchaseController extends Controller
         // if(!IS_POST)
         //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
+        //调用Application/Home/Common/function.php中自定义方法imgUpload()获取图片名称
+        //$imgupload = imgUpload();
+
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
         //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
@@ -461,24 +464,29 @@ class PurchaseController extends Controller
             return;
         }
 
-        $map = session('supplier_id');
-        $sP = D('SupplierProductView');
+        if (empty($arr->supplier_id)) {
+            //没有ID直接返回失败
+            $result['status'] = "0";
+            $this->ajaxReturn(json_encode($result), 'JSON');
+        }
 
-        $sPresult = $sP->where($map)->select();
+        $map['supplier_id'] = $arr->supplier_id;
+        $supplier = M('supplier');
+        //获取供应商
+        $result = $supplier->where($map)->find();
+        if ($result) {
+            //获取商品列表
+            $spMap['supplier_id'] = $result['supplier_id'];
+            $Sp = M('supplierproduct');
+            $result['products'] = $Sp->join('__PRODUCT__ ON __SUPPLIERPRODUCT__.product_id = __PRODUCT__.product_id')->where($spMap)->select();
+            $result['status'] = "1";
+            $this->ajaxReturn(json_encode($result), 'JSON');
+        } else {
+            //获取供应商失败
+            $result['status'] = "0";
+            $this->ajaxReturn(json_encode($result), 'JSON');
+        }
 
-        $sPcount = $sPresult->count();
-
-        //每页10个
-        $divide = 10;
-        //查询偏移量$page, 页数*每页显示的数量
-        $page = (I("page") - 1) * $divide;
-        //表格
-
-
-        $sPData['page'] = I('page');
-        $sPData['list'] = $sPresult->field('product_id,product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
-        $sPData["total"] = $sPcount;
-        $this->ajaxReturn($sPData);
     }
 
     /**
@@ -493,10 +501,6 @@ class PurchaseController extends Controller
      */
     public function editSupplier()
     {
-
-        // if(!IS_POST)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-
         $json = file_get_contents("php://input");
         $arr = json_decode($json);
         //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
@@ -504,37 +508,35 @@ class PurchaseController extends Controller
             session_id($arr->session_id);
             session_start();
         }
-        if (!session('?user_id')) {
+        if (!session('?user_id') || !$arr->supplier_id) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
 
+        $supplier = M('supplier');
+        $supplier_product = M('supplierproduct');
+        //保存供应商，并获取供应商ID
         $data = array(
-
-            'supplier_name' => I('supplier_name'),
-            'supplier_contact' => I('supplier_contact'),
-            'supplier_phone' => I('supplier_phone'),
-            'supplier_address' => I('supplier_address')
+            'supplier_name' => $arr->supplier_name,
+            'supplier_contact' => $arr->supplier_contact,
+            'supplier_phone' => $arr->supplier_phone,
+            'supplier_address' => $arr->supplier_address,
         );
+        $smap['supplier_id'] = $arr->supplier_id;
+        $supplier->where($smap)->data($data)->save();
+        // var_dump($s);
 
-        $map['supplier_id'] = session('supplier_id');
-        $map['product_id'] = session('product_id');
-
-        $sD = D('SupplierDetailView');
-        $sDedit = $sD->where($map)->find();
-
-        $result = $sDedit->save($data);
-        if ($result == $sDedit->save($data)) {
-
-            $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
-
-            $st['status'] = "0";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+        //删除旧的，添加新的。
+        $supplier_product->where($smap)->delete();
+        foreach ($arr->product as $product) {
+            $smap['product_id'] = $product->product_id;
+            $smap['supplierproduct_price'] = $product->supplierproduct_price;
+            $supplier_product->data($smap)->add();
         }
+        $st = array('status' => 1);
+        $this->ajaxReturn(json_encode($st), 'JSON');
 
     }
 
