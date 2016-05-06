@@ -1,32 +1,79 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
-        <h3 class="box-title">新增商品</h3>
+        <h3 class="box-title">新增供应商</h3>
     </div>
     <!-- /.box-header -->
     <!-- form start -->
     <div class="box-body" style="padding-right: 20px;">
-        <div class="input-group" style="margin-bottom: 5px;" >
+        <div class="input-group" style="margin-bottom: 5px;">
             <span class="input-group-addon">名称</span>
-            <input type="text" class="form-control" id="name" placeholder="名称"/>
+            <input type="text" ng-model="supplier.name" class="form-control" id="name" placeholder="名称"/>
         </div>
-        <div class="input-group"  style="margin-bottom: 5px;" >
+        <div class="input-group" style="margin-bottom: 5px;">
             <span class="input-group-addon">联系人</span>
-            <input type="text" class="form-control" id="linecode" placeholder="联系人"/>
+            <input type="text" ng-model="supplier.contact" class="form-control" id="contact" placeholder="联系人"/>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
+        <div class="input-group" style="margin-bottom: 5px;">
             <span class="input-group-addon">电话</span>
-            <input type="number" class="form-control" id="phone" placeholder="电话"/>
+            <input type="number" ng-model="supplier.phone"  class="form-control" id="phone" placeholder="电话"/>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
+        <div class="input-group" style="margin-bottom: 5px;">
             <span class="input-group-addon">地址</span>
-            <input type="text" class="form-control" id="address" placeholder="地址"/>
+            <input type="text"  ng-model="supplier.address" class="form-control" id="address" placeholder="地址"/>
         </div>
-        <div class="form-group" style="margin-bottom: 5px;" >
-            <label >新增商品</label>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <label>新增商品</label>
         </div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 10%;"></th>
+                <th>商品</th>
+                <th>价格</th>
+                <th>操作</th>
+
+            </tr>
+            <tr>
+                <th style="padding-right: 10px;"></th>
+                <th style="padding-right: 10px;">
+                    <!--<input type="text" ng-model="product.product_name"/>-->
+                    <input type="text" ng-model="product.product_name" placeholder="输入商品名称..."
+                           uib-typeahead="address for address in getLocation($viewValue)"
+                           typeahead-on-select="selected($item, $model, $label, $event)"
+                           typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+
+                    <div ng-show="noResults">
+                        <i class="glyphicon glyphicon-remove"></i>未找到
+                    </div>
+
+
+                </th>
+                <th style="padding-right: 10px;position: relative;width:200px;"><input
+                        style="height: 34px;position: absolute;top:0;" type="number"
+                        ng-model="product.supplierproduct_price"/></th>
+                <th style="position: relative;">
+                    <a class="btn btn-success" href="" ng-click="add()"
+                       style="position: absolute;top:0;"
+                       ng-disabled="!product.product_name||!product.supplierproduct_price">添加</a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="(key,item) in products" style="height: 40px;">
+                <td style="width: 10%;">{{$index+1}}</td>
+                <td>{{item.product_name}}</td>
+                <td>{{item.supplierproduct_price}}</td>
+                <td><a
+                        class="btn btn-danger" href="" ng-click="del(key)"
+                        style="height: 26px;padding:0;padding-right: 2px;padding-left: 2px;">删除</a></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" ng-click="submit()">Submit</button>
     </div>
 </div>
