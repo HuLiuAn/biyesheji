@@ -128,7 +128,7 @@ class PurchaseController extends Controller
 
 
     /**
-     * 向tb_product表添加商品信息
+     * 显示product详情
      * @access public
      * @param void
      * @return void

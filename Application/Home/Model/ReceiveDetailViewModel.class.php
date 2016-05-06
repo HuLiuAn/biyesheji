@@ -9,8 +9,8 @@
     
         public $viewFields = array(
     
-            'receiveorder'          => array('receiveorder_id','admituser_id'),
-            'receiveorderdetail'    => array('product_id','count'),
+            //'receiveorder'          => array('receiveorder_id','admituser_id'),
+            'receiveorderdetail'    => array('receiveorder_id','product_id','count'),
             'product'               => array('_on' =>'receiveorderdetail.product_id = product.product_id','product_name','properties'),
             'warehouse'             => array('_on' =>'receiveorderdetail.warehouse_id = warehouse.warehouse_id','warehouse_number'),
         );

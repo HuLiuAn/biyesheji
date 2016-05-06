@@ -32,8 +32,8 @@
             
             $data = array(
                 
-                'warehouse_number'      => I('name'),
-                'warehouse_address'     => I('address'),
+                'warehouse_number'      => $arr->name,
+                'warehouse_address'     => $arr->address,
             );
             $is_success = $wH->data($data)->add();
             
@@ -76,16 +76,16 @@
             }
         
             $wH = M('warehouse');
-            $map['warehouse_id'] = session('warehouse_id');
+            $map['warehouse_id'] = $arr->warehouse_id;
             $data = array(
-        
-                'warehouse_number'      => I('name'),
-                'warehouse_address'     => I('address'),
+
+                'warehouse_number'      => $arr->name,
+                'warehouse_address'     => $arr->address,
             );
-            if ($wH->where($map)->find()){
-                $wH->where($map)->save($data);
-            $st = array ('status'=>1);
-            $this->ajaxReturn (json_encode($st),'JSON');
+            if ($wH->where($map)->save($data)){
+
+                $st = array ('status'=>1);
+                $this->ajaxReturn (json_encode($st),'JSON');
         }else {
         
                 $st = array ('status'=>0);
@@ -98,7 +98,9 @@
          * 查找仓库
          * 向前台返回仓库ID和名称
          * 用户查询仓库调用该接口
-         * 调拨时选择出入库仓库调用该接口，且一张调拨单拥有唯一的入库和出库仓库
+         * 调拨时选择出入库仓库调用该接口，
+         * 且一张调拨单拥有唯一的入库和出库仓库,
+         * 出入库仓库不能相同
          * @access public
          * @param void
          * @return void
@@ -138,13 +140,19 @@
             if (!empty($arr->name)) {
                 //选择搜索模式
                 $map['warehouse_number'] = array('like', "%" . $arr->name . "%");
-                $sPData["total"] = $pCount = $sP->where($map)->count();
+                $sPData["total"] = $sP->where($map)->count();
                 $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("warehouse_id asc")->select();
+
 
             } else {
                 $sPData["total"] = $sP->count();
                 $sPData['list'] = $sP->limit($page, $divide)->order("warehouse_id asc")->select();
 
+            }
+            $sPData['status']= "1";
+            if(empty($sPData)){
+                $sPData['status']= "0";
+                $this->ajaxReturn($sPData);
             }
             $this->ajaxReturn($sPData);
         }
@@ -188,6 +196,21 @@
             $map['inwarehouse_id'] = $arr->inwarehouse_id;
             $map['outwarehouse_id'] = $arr->outwarehouse_id;
 
+           // $i['inwarehouse_id'] = $arr->inwarehouse_id;
+            //$i['product_id'] = $arr->product_id;
+            //$o['outwarehouse_id'] = $arr->outwarehouse_id;
+            //$o['product_id'] = $arr->product_id;
+
+            //$inventory = M('inventory');
+            //$sPData['in_count']  = $inventory->where($i)->field('count')->find();
+            //$sPData['out_count']  = $inventory->where($o)->field('count')->find();
+
+
+            $sPData['status'] = "1";
+            if (empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id)) {
+                $sPData['status'] = "0";
+                $this->ajaxReturn($sPData);
+            }
             //每页10个
             $divide = 10;
             //查询偏移量$page, 页数*每页显示的数量
@@ -200,15 +223,15 @@
 
             $sP = D(' AllocateProductView');
             $sPData['page'] = $arr->page;
-            if ( !empty($arr->name)) {
+            if ( !empty($arr->barcode) || !empty($arr->name)) {
                 //只要有一个搜索条件，就选择搜索模式
-                //$map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
+                $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
                 $map['product_name'] = array('like', "%" . $arr->name . "%");
-                $sPData["total"] = $pCount = $sP->where($map)->count();
+                $sPData["total"] = $sP->where($map)->count();
                 $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
 
             } else {
-                $sPData["total"] = $sP->count();
+                $sPData["total"] = $sP->where($map)->count();
                 $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
 
             }
@@ -247,18 +270,18 @@
                     return;
                 }
             
-                $aAO = D('AddAllocationOrderView');
+                // $aAO = D('AddAllocationOrderView');
+                $aAO = M('allocationorder');
+                $aAD = M('allcationorderdetail');
+                $inventory = M('inventory');
 
-                $map1['inwarehouse_id'] = $arr->inwarehouse_id;
-                $map2['outwarehouse_id'] = $arr->outwarehouse_id;
-
-                $i['inwarehouse_id'] = $map1['inwarehouse_id'];
-                $i['product_id'] = $arr->product_id;
-                $o['outwarehouse_id'] = $map2['outwarehouse_id'];
-                $o['product_id'] = $arr->product_id;
+                //$i['inwarehouse_id'] = $arr->inwarehouse_id;
+                //$i['product_id'] = $arr->product_id;
+               // $o['outwarehouse_id'] = $arr->outwarehouse_id;
+                //$o['product_id'] = $arr->product_id;
 
                 $st['status'] = "0";
-                if(empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id) && empty($arr->count)){
+                if(empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id) && empty($arr->product->count)){
 
                     $this->ajaxReturn (json_encode($st),'JSON');
                 }
@@ -266,29 +289,55 @@
 
                 /* 选择一个随机的方案 */
                 mt_srand((double)microtime() * 1000000);
-                //生成订单号
+                //生成调拨单号
                 $data['allocationorder_number']       = 'TACO' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
                 $data['allocationorder_date']         = date('Y-m-d', time());
                 $data['user_id']                        = $arr->user_id;
                 $data['inwarehouse_id']                = $arr->inwarehouse_id;
                 $data['outwarehouse_id']               = $arr->outwarehouse_id;
-                $data['product_id']                     = $arr->product_id;
-                $data['count']                           = $arr->count;
+               // $data['product_id']                     = $arr->product_id;
+                //$data['count']                           = $arr->count;
+
+                //新增调拨单并将调拨单id赋给变量
+                $aAD_data['allocationorder_id'] = $aAO->data($data)->add();
+
+                if ( $aAD_data['allocationorder_id']) {
+
+                    //如果调拨单生成成功，向调拨单详情表中插入调拨商品记录
+                    foreach ($arr->product as $product) {
+                        $sp_data['product_id'] = $product->product_id;
+                        $sp_data['count'] = $product->count;
+                        $aAD->data($sp_data)->add();
+
+                        $i['warehouse_id'] = $arr->inwarehouse_id;
+                        $i['product_id'] = $product->product_id;
+                        $o['warehouse_id'] = $arr->outwarehouse_id;
+                        $o['product_id'] = $product->product_id;
+
+                        //修改该商品在出入库仓库库存数量
+                        $inventory->where($i)->setInc('count',$arr->count);
+                        $inventory->where($o)->setDec('count',$arr->count);
+                    }
+                    $st['status'] = "1";
+                    $this->ajaxReturn(json_encode($st), 'JSON');
+                }
+                $this->ajaxReturn(json_encode($st), 'JSON');
 
                 //一个统计字段自动更新的例子
                 //$Article = M("Article"); // 实例化Article对象
                 // $Article->where('id=5')->setInc('view',1); // 文章阅读数加1
                // $Article->where('id=5')->setInc('view',1,60); // 文章阅读数加1， 并且延迟60秒更新（ 写入）
-                $data['in_count']  = $aAO->where($i)->setInc('in_count',$arr->count);
-                $data['out_count'] = $aAO->where($o)->setDec('out_count',$arr->count);
 
-                if($aAO->data($data)->add()){
+                //$data['in_count']  = $aAO->where($i)->setInc('in_count',$arr->count);
+                //$data['out_count'] = $aAO->where($o)->setDec('out_count',$arr->count);
 
-                    $st['status'] = "1";
-                    $this->ajaxReturn (json_encode($st),'JSON');
-                }
+                //if($aAO->data($data)->add()){
 
-                $this->ajaxReturn (json_encode($st),'JSON');
+                //   $st['status'] = "1";
+                //    $this->ajaxReturn (json_encode($st),'JSON');
+               // }
+
+              //  $this->ajaxReturn (json_encode($st),'JSON');
         }
         
         
