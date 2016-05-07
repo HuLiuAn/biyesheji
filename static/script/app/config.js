@@ -300,7 +300,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     }).
     //订单管理
     state('main.order-list', {
-        url: 'order/list/:page?order_number&order_time&purchaser_name&auditor_name&order_state',
+        url: 'order/list/:page?order_number&start_time&end_time&purchaser_name&auditor_name&order_state',
         templateUrl: 'views/order/list.html',
         controller: 'goodOrderListCtrl',
         Handler: "order_list"

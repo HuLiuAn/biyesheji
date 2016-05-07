@@ -8,11 +8,15 @@
                href="#/good-manage/new" class="btn btn-success btn-flat">
                 <i class="fa fa-plus"></i>新增
             </a>
-            <bs-search class="pull-right" search="field:value" template="customTemplate.html"></bs-search>
+
+            <div class="box-tools">
+                <a href="" class="btn btn-default pull-right" ng-click="all()">全部</a>
+            </div>
+
         </div>
         <!-- /.box-header -->
         <div class="row">
-            <div class="col-md-3">起始日期：
+            <div class="col-md-2">起始日期：
                 <p class="input-group">
                     <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="dt.start"
                            is-open="popup1.opened" datepicker-options="dateOptions1" ng-required="true"
@@ -24,7 +28,7 @@
                 </p>
             </div>
 
-            <div class="col-md-3">结束日期：
+            <div class="col-md-2">结束日期：
                 <p class="input-group">
                     <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd"
                            ng-model="dt.end" is-open="popup2.opened"
@@ -35,13 +39,26 @@
           </span>
                 </p>
             </div>
-            <div class="col-md-4">
-                <div class="btn-group pull-right " ng-click="select()">
-                    <label class="btn btn-default" ng-model="radioModel" uib-btn-radio="">全部</label>
-                    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="0">待收获</label>
-                    <label class="btn btn-success" ng-model="radioModel" uib-btn-radio="1">审核通过</label>
-                    <label class="btn btn-danger" ng-model="radioModel" uib-btn-radio="2">退货</label>
-                </div>
+            <div class="col-md-2">状态
+                <p class="input-group">
+                    <select class="form-control" ng-model="dt.state">
+                        <option value="">全部</option>
+                        <option value="0">待收获</option>
+                        <option value="1">审核通过</option>
+                        <option value="2">退货</option>
+                    </select>
+                      <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="search2()"><i
+                    class="glyphicon glyphicon-search"></i></button></span>
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <p style="text-align: center;margin-bottom:0;height: 22px;"></p>
+
+                <p>
+                    <bs-search class="pull-right" search="field:value" template="customTemplate.html"></bs-search>
+                </p>
             </div>
         </div>
         <div class="box-body table-responsive no-padding">

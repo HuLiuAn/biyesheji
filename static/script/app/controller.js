@@ -535,7 +535,7 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
     }
 });
 
-app.controller('goodOrderListCtrl', function ($scope) {
+app.controller('goodOrderListCtrl', function ($scope, $state) {
     $scope.stateColor = [
         "label-info", "label-success", "label-danger"
     ];
@@ -557,24 +557,28 @@ app.controller('goodOrderListCtrl', function ($scope) {
         value: ''
     }, {
         flag: "采购负责人",
-        field: 'auditor_name',
+        field: 'purchaser_name',
         value: ''
     }];
 
-    $scope.dt = {};
+    $scope.dt = {
+        start: $state.start_time,
+        end: $state.end_time,
+        state: $state.order_state
+    };
 
     $scope.dateOptions1 = {
         dateDisabled: disabled,
         formatYear: 'yy',
-        maxDate: new Date(2020, 5, 22),
-        minDate: new Date(),
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
         startingDay: 1
     };
     $scope.dateOptions2 = {
         dateDisabled: disabled,
         formatYear: 'yy',
-        maxDate: new Date(2020, 5, 22),
-        minDate: new Date(),
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
         startingDay: 1
     };
     // Disable weekend selection
@@ -587,16 +591,14 @@ app.controller('goodOrderListCtrl', function ($scope) {
 
     $scope.open1 = function () {
         if ($scope.dt.end) {
-            console.log($scope.dt.end)
-            $scope.dateOptions1.maxDate = new Date(2020, 5, 33);
+            $scope.dateOptions1.maxDate = new Date($scope.dt.end);
         }
         $scope.popup1.opened = true;
     };
 
     $scope.open2 = function () {
         if ($scope.dt.start) {
-            console.log($scope.dt.start)
-            $scope.dateOptions1.maxDate = new Date(2020, 5, 33);
+            $scope.dateOptions1.minDate = new Date($scope.dt.start);
         }
         $scope.popup2.opened = true;
     };
@@ -609,6 +611,40 @@ app.controller('goodOrderListCtrl', function ($scope) {
     $scope.popup2 = {
         opened: false
     };
+    $scope.search2 = function () {
+        $scope.$broadcast('PageWillChange', {
+            start_time: Format($scope.dt.start, "yyyy-MM-dd"),
+            end_time: Format($scope.dt.end, "yyyy-MM-dd"),
+            order_state: $scope.dt.state
+            , purchaser_name: "", auditor_name: "", order_number: ""
+        });
+    };
+    $scope.all = function () {
+        $scope.$broadcast('PageWillChange', {
+            order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: "", order_state: ""
+        })
+        ;
+    }
+    function Format(time, fmt) {
+        if (!time || !fmt) {
+            return ""
+        }
+        var o = {
+            "M+": time.getMonth() + 1,                 //月份
+            "d+": time.getDate(),                    //日
+            "h+": time.getHours(),                   //小时
+            "m+": time.getMinutes(),                 //分
+            "s+": time.getSeconds(),                 //秒
+            "q+": Math.floor((time.getMonth() + 3) / 3), //季度
+            "S": time.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (time.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
 });
 app.controller('goodOrderDetailCtrl', function ($scope) {
 
