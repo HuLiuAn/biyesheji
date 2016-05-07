@@ -1,32 +1,28 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
-        <h3 class="box-title">采购</h3>
+        <h3 class="box-title">新增仓库</h3>
     </div>
     <!-- /.box-header -->
     <!-- form start -->
     <div class="box-body" style="padding-right: 20px;">
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">名称</span>
-            <input type="text" class="form-control" id="name" placeholder="名称"/>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon">仓库名</span>
+            <input type="text" ng-model="hub.warehouse_number" class="form-control" id="name" placeholder="必填*|仓库名"/>
         </div>
-        <div class="input-group"  style="margin-bottom: 5px;" >
-            <span class="input-group-addon">联系人</span>
-            <input type="text" class="form-control" id="linecode" placeholder="联系人"/>
-        </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">电话</span>
-            <input type="number" class="form-control" id="phone" placeholder="电话"/>
-        </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
+        <div class="input-group" style="margin-bottom: 5px;">
             <span class="input-group-addon">地址</span>
-            <input type="text" class="form-control" id="address" placeholder="地址"/>
+            <input type="text" ng-model="hub.warehouse_address" class="form-control" id="address" placeholder="必填*|地址"/>
         </div>
-        <div class="form-group" style="margin-bottom: 5px;" >
-            <label >新增商品</label>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon">最大容量</span>
+            <input type="number" ng-model="hub.warehouse_maxcount" class="form-control" id="phone" placeholder="必填*|最大容量"/>
         </div>
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" ng-disabled="!hub.warehouse_number||!hub.warehouse_address||!hub.warehouse_maxcount"
+                class="btn btn-primary" ng-click="submit()">提交
+        </button>
     </div>
 </div>

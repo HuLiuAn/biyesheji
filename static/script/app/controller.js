@@ -669,27 +669,60 @@ app.controller('goodHubListCtrl', function ($scope) {
         $scope.list = data;
 
     });
-
-});
-app.controller('goodHubDetailCtrl', function ($scope) {
-
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
-    });
     //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        ////console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
+    $scope.searchField = [{
+        flag: "仓库编号",
+        field: 'number',
+        value: ''
+    }, {
+        flag: "地址",
+        field: 'address',
+        value: ''
+    }];
 });
-app.controller('goodHubNewCtrl', function ($scope) {
+app.controller('goodHubDetailCtrl', function ($scope, $Bs_API, $http, $state) {
 
+    $http.post($Bs_API.getApi('edit_hub'), {
+        warehouse_id: $state.params.id
+    }).success(function (data) {
+        //var use
+
+        try {
+            $scope.hub = JSON.parse(data);
+            $scope.hub.warehouse_maxcount = parseInt($scope.hub.warehouse_maxcount);
+        } catch (e) {
+            $Bs_API.loading('抱歉，目前系统维护中！', 1);
+        }
+    }).error(function (data) {
+        $Bs_API.loading('网络错误，信息获取失败！', 1);
+    });
+
+    $scope.hub = {};
+    $scope.submit = function () {
+        if (!$scope.hub.warehouse_number || !$scope.hub.warehouse_address || !$scope.hub.warehouse_maxcount) {
+            $Bs_API.loading('数据未填完', 1);
+        }
+        $http.post($Bs_API.getApi('new_hub'), $scope.hub).success(function () {
+            $Bs_API.loading('成功');
+            $state.go('main.hub-list', {page: 1});
+        }).error(function () {
+            $Bs_API.loading('添加失败', 1);
+        });
+    }
+});
+app.controller('goodHubNewCtrl', function ($scope, $Bs_API, $state, $http) {
+    $scope.hub = {};
+    $scope.submit = function () {
+        if (!$scope.hub.warehouse_number || !$scope.hub.warehouse_address || !$scope.hub.warehouse_maxcount) {
+            $Bs_API.loading('数据未填完', 1);
+        }
+        $http.post($Bs_API.getApi('new_hub'), $scope.hub).success(function () {
+            $Bs_API.loading('成功');
+            $state.go('main.hub-list', {page: 1});
+        }).error(function () {
+            $Bs_API.loading('添加失败', 1);
+        });
+    }
 });
 
 app.controller('goodInoutListCtrl', function ($scope) {

@@ -1,34 +1,30 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
-        <h3 class="box-title">订单详情</h3>
+        <h3 class="box-title">仓库修改</h3>
     </div>
     <!-- /.box-header -->
     <!-- form start -->
     <div class="box-body" style="padding-right: 20px;">
-       <table>
-           <tr>
-               <td>时间</td><td>2fdafasfdsaf</td>
-           </tr>
-           <tr>
-               <td>单号</td><td>2fdafasfdsaf</td>
-           </tr>
-           <tr>
-               <td>状态</td><td>2fdafasfdsaf</td>
-           </tr>
-           <tr>
-               <td>供应商</td><td>2fdafasfdsaf</td>
-           </tr>
-           <tr>
-               <td>仓库审核人</td><td>2fdafasfdsaf</td>
-           </tr>
-           <tr>
-               <td>总价</td><td>2fdafasfdsaf</td>
-           </tr>
-       </table>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon">仓库名</span>
+            <input type="text" ng-model="hub.warehouse_number" class="form-control" id="name" placeholder="必填*|仓库名"/>
+        </div>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon">地址</span>
+            <input type="text" ng-model="hub.warehouse_address" class="form-control" id="address" placeholder="必填*|地址"/>
+        </div>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon">最大容量</span>
+            <input type="number" ng-model="hub.warehouse_maxcount" class="form-control" id="phone"
+                   placeholder="必填*|最大容量"/>
+        </div>
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
-        <button type="submit" class="btn btn-default">返回</button>
-        <button type="submit" class="btn btn-primary">修改</button>
+        <a class="btn btn-default" href="#/hub/list/1">返回</a>
+        <button type="submit" ng-disabled="!hub.warehouse_number||!hub.warehouse_address||!hub.warehouse_maxcount"
+                class="btn btn-primary" ng-click="submit()">提交
+        </button>
     </div>
 </div>

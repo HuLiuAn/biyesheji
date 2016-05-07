@@ -1,39 +1,46 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">订单查询</h3>
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">仓库查询</h3>
 
-        <a type="submit" name="submit" style="height: 20px;margin:0;margin-left:20px;padding:1px 8px;" href="#/good-manage/new" class="btn btn-success btn-flat">
-            <i class="fa fa-plus"></i>新增
-        </a>
-        <bs-search class="pull-right"></bs-search>
+            <a type="submit" name="submit" style="height: 20px;margin:0;margin-left:20px;padding:1px 8px;"
+               href="#/hub/new" class="btn btn-success btn-flat">
+                <i class="fa fa-plus"></i>新增
+            </a>
+            <bs-search class="pull-right" search="field:value"  template="customTemplate.html" ></bs-search>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <th>id</th>
+                    <th>仓库号</th>
+                    <th>最大容量</th>
+                    <th>地址</th>
+                    <th>操作</th>
+                </tr>
+                <tr ng-repeat="item in list">
+                    <td ng-bind="item.warehouse_id"></td>
+                    <td ng-bind="item.warehouse_number"></td>
+                    <td ng-bind="item.warehouse_maxcount"></td>
+                    <td ng-bind="item.warehouse_address"></td>
+                    <td><a href="#/hub/detail/{{item.warehouse_id}}"><i class="fa fa-edit"></i></a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+        <!-- /.box-body -->
+        <div class="box-footer clearfix no-border">
+            <bs-pagination></bs-pagination>
+        </div>
     </div>
-    <!-- /.box-header -->
-    <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-            <tbody><tr>
-                <th>选中</th>
-                <th>时间</th>
-                <th>单号</th>
-                <th>仓库审核通过人</th>
-                <th>采购负责人</th>
-                <th>状态</th>
-                <th>操作</th>
-            </tr>
-            <tr ng-repeat="item in list">
-                <td><input type="checkbox" /> </td>
-                <td ng-bind="item.time" ></td>
-                <td ng-bind="item.oid" ></td>
-                <td ng-bind="item.pass" ></td>
-                <td ng-bind="item.owner" ></td>
-                <td ng-bind="item.status" ></td>
-                <td><a href="#/order/detail/1"><i class="fa fa-edit"></i></a></td>
-            </tr>
-            </tbody></table>
-    </div>
-    <!-- /.box-body -->
-    <!-- /.box-body -->
-    <div class="box-footer clearfix no-border">
-        <bs-pagination></bs-pagination>
-    </div>
-</div></div>
+</div>
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span>{{match.model.flag}}</span>
+        <span ng-bind-html="match.model.value | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>

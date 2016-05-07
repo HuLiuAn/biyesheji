@@ -35,7 +35,10 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         order_hub_list: base + "Purchase/showWareHouse",
         order_list: base + "Purchase/searchOrder",
         order_detail: base + "Purchase/showOrderDetail",
-        new_order: base + "Purchase/addOrder"
+        new_order: base + "Purchase/addOrder",
+        new_hub: base + "WareHouse/addWareHouse",
+        hub_list: base + "WareHouse/queryWareHouse",
+        edit_hub: base + "WareHouse/modifyWareHouse"
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -446,10 +449,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
 
     //仓库管理
     state('main.hub-list', {
-        url: 'hub/list/:page?search',
+        url: 'hub/list/:page?number&address',
         templateUrl: 'views/hub/list.html',
         controller: 'goodHubListCtrl',
-        Handler: "receive_list"
+        Handler: "hub_list"
     }).state('main.hub-detail', {
         url: 'hub/detail/:id',
         templateUrl: 'views/hub/detail.html',

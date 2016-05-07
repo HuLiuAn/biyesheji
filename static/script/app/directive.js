@@ -87,25 +87,25 @@ app.directive('bsSider', function () {
                         href: 'order/list/1'
                     }]
                 },
-                chart: {
-                    name: '报表管理',
-                    href: 'work/mine/vm/1',
-                    icon: 'fa fa-table',
-                    base: "order",
-                    subMenu: [{
-                        name: '新增订单',
-                        href: 'orderApply'
-                    }, {
-                        name: '入库订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '购货订单'
-                        //href: '/orderApply'
-                    }, {
-                        name: '退货订单'
-                        //href: '/orderApply'
-                    }]
-                },
+                //chart: {
+                //    name: '报表管理',
+                //    href: 'work/mine/vm/1',
+                //    icon: 'fa fa-table',
+                //    base: "order",
+                //    subMenu: [{
+                //        name: '新增订单',
+                //        href: 'orderApply'
+                //    }, {
+                //        name: '入库订单'
+                //        //href: '/orderApply'
+                //    }, {
+                //        name: '购货订单'
+                //        //href: '/orderApply'
+                //    }, {
+                //        name: '退货订单'
+                //        //href: '/orderApply'
+                //    }]
+                //},
                 hub: {
                     name: '仓库管理',
                     href: 'hub/list/1',
