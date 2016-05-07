@@ -823,6 +823,48 @@ class PurchaseController extends Controller
         $this->ajaxReturn($sPData);
     }
 
+    public function getAllSupplierList()
+    {
+
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        $sP = M('supplier');
+        $map['supplier_name'] = array('like', "%" . I('name') . "%");
+        $sPData['list'] = $sP->where($map)->order("supplier_id asc")->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
+    }
+
+    public function getProductListBySupplierId()
+    {
+
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        $sP = M('supplierproduct');
+        $map['supplier_id'] = $arr->supplier_id;
+        $sPData["list"] = $sP->join(' __PRODUCT__  ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id', 'LEFT')
+            ->where($map)
+            ->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
+    }
 
     /**
      * 显示订单详情
