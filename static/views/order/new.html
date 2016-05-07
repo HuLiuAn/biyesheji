@@ -1,32 +1,23 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
-    <div class="box-header with-border">
-        <h3 class="box-title">采购</h3>
-    </div>
-    <!-- /.box-header -->
-    <!-- form start -->
-    <div class="box-body" style="padding-right: 20px;">
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">名称</span>
-            <input type="text" class="form-control" id="name" placeholder="名称"/>
+<!-- form.html -->
+<div class="row" style="min-height:700px;">
+    <div style="background: #fff;min-height:500px;" class="col-sm-8 col-sm-offset-2">
+
+        <div class="page-header text-center">
+            <h2>采购流程</h2>
+
+            <!-- the links to our nested states using relative paths -->
+            <!-- add the active class if the state matches our ui-sref -->
+            <div id="status-buttons" class="text-center">
+                <a ui-sref-active="active" ui-sref=".profile"><span style="color: #fff">1</span> 选择供应商</a>
+                <a ui-sref-active="active" ui-sref=".interests"><span style="color: #fff">2</span> 选择商品</a>
+                <a ui-sref-active="active" ui-sref=".payment"><span style="color: #fff">3</span>确认</a>
+            </div>
         </div>
-        <div class="input-group"  style="margin-bottom: 5px;" >
-            <span class="input-group-addon">联系人</span>
-            <input type="text" class="form-control" id="linecode" placeholder="联系人"/>
-        </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">电话</span>
-            <input type="number" class="form-control" id="phone" placeholder="电话"/>
-        </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">地址</span>
-            <input type="text" class="form-control" id="address" placeholder="地址"/>
-        </div>
-        <div class="form-group" style="margin-bottom: 5px;" >
-            <label >新增商品</label>
-        </div>
-    </div>
-    <!-- /.box-body -->
-    <div class="box-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+
+        <!-- use ng-submit to catch the form submission and use our Angular function -->
+
+        <div id="form-views" ui-view></div>
+
+
     </div>
 </div>

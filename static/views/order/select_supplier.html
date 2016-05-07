@@ -1,0 +1,21 @@
+<div class="input-group">
+    <input type="text"
+           ng-model="supplier.supplier_name"
+           placeholder="输入供应商名称..."
+           uib-typeahead="address for address in getSupplier($viewValue)"
+           typeahead-on-select="selected($item, $model, $label, $event)"
+           typeahead-loading="loadingSupplier"
+           typeahead-no-results="noResults"
+           class="form-control">
+
+    <span class="input-group-btn">
+    <button class="btn btn-success" ng-click="next1()"
+            ng-disabled="!supplier.supplier_name">下一步
+    </button>
+        </span>
+</div>
+
+<i ng-show="loadingSupplier" class="glyphicon glyphicon-refresh"></i>
+<div ng-show="noResults">
+    <i class="glyphicon glyphicon-remove"></i>未找到
+</div>

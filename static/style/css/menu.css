@@ -8,10 +8,12 @@
     z-index: 1999;
     display: none;
 }
-.loading-show{
+
+.loading-show {
     display: block;
 }
-.loading-msg{
+
+.loading-msg {
     z-index: 2000;
     position: fixed;
     margin: auto;
@@ -23,32 +25,182 @@
     height: 200px;
     overflow: hidden;
 }
-.loading-content{
+
+.loading-content {
     position: absolute;
     width: 100%;
     /*height: 200px;*/
     z-index: 2001;
-    border:2px solid #fff;
+    border: 2px solid #fff;
     /*box-shadow: inset 0 0 0 2px #29d, inset 0 0 0 7px #FFF;*/
     border-radius: 10px;
     margin: auto;
-    padding:12px;
+    padding: 12px;
     background-color: #ddd !important;
 }
-.loading-success{
-    color:#fff;
+
+.loading-success {
+    color: #fff;
     background-color: #00a65a !important;
 }
-.loading-error{
-    color:#fff;
+
+.loading-error {
+    color: #fff;
     background-color: #dd4b39 !important;
 }
+
 .uploadify-button {
     background-color: transparent;
     border: none;
     padding: 0;
     background-size: 120px 100px;
 }
+
 .uploadify:hover .uploadify-button {
     background-color: transparent;
+}
+
+/*采购*/
+/* style.css */
+/* BASIC STYLINGS
+============================================================================= */
+/* form styling */
+#form-container {
+    background: #2f2f2f;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+#form-container .page-header {
+    background: #151515;
+    margin: 0;
+    padding: 30px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/* numbered buttons */
+#status-buttons {
+}
+
+#status-buttons a {
+    color: #000;
+    display: inline-block;
+    font-size: 12px;
+    margin-right: 10px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#status-buttons a:hover {
+    text-decoration: none;
+}
+
+/* we will style the span as the circled number */
+#status-buttons span {
+    background: #080808;
+    display: block;
+    height: 30px;
+    margin: 0 auto 10px;
+    padding-top: 5px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+/* active buttons turn light green-blue*/
+#status-buttons a.active span {
+    background: #00BC8C;
+}
+
+/* style.css */
+/* ANIMATION STYLINGS
+============================================================================= */
+#signup-form {
+    position: relative;
+    min-height: 300px;
+    overflow: hidden;
+    padding: 30px;
+}
+
+#form-views {
+    width: auto;
+}
+
+/* basic styling for entering and leaving */
+/* left and right added to ensure full width */
+#form-views.ng-enter,
+#form-views.ng-leave {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    transition: 0.5s all ease;
+    -moz-transition: 0.5s all ease;
+    -webkit-transition: 0.5s all ease;
+}
+
+/* enter animation */
+#form-views.ng-enter {
+    -webkit-animation: slideInRight 0.5s both ease;
+    -moz-animation: slideInRight 0.5s both ease;
+    animation: slideInRight 0.5s both ease;
+}
+
+/* leave animation */
+#form-views.ng-leave {
+    -webkit-animation: slideOutLeft 0.5s both ease;
+    -moz-animation: slideOutLeft 0.5s both ease;
+    animation: slideOutLeft 0.5s both ease;
+}
+
+/* ANIMATIONS
+============================================================================= */
+/* slide out to the left */
+@keyframes slideOutLeft {
+    to {
+        transform: translateX(-200%);
+    }
+}
+
+@-moz-keyframes slideOutLeft {
+    to {
+        -moz-transform: translateX(-200%);
+    }
+}
+
+@-webkit-keyframes slideOutLeft {
+    to {
+        -webkit-transform: translateX(-200%);
+    }
+}
+
+/* slide in from the right */
+@keyframes slideInRight {
+    from {
+        transform: translateX(200%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@-moz-keyframes slideInRight {
+    from {
+        -moz-transform: translateX(200%);
+    }
+    to {
+        -moz-transform: translateX(0);
+    }
+}
+
+@-webkit-keyframes slideInRight {
+    from {
+        -webkit-transform: translateX(200%);
+    }
+    to {
+        -webkit-transform: translateX(0);
+    }
+}
+
+.checkboxselect {
+    background: #f0f3da;
 }

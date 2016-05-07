@@ -343,3 +343,44 @@ app.directive('bsSearch', function ($state) {
         }
     }
 });
+app.directive('bsCount', function ($state) {
+    return {
+
+        restrict: "E",
+        scope: {
+            bsvalue: "="
+        },
+        template: '  <a ng-click="minus()" style="height: 26px;width: 10px; margin: 0;"  ' +
+        '  class="btn btn-smamll btn-default">-</a>     ' +
+        '   <input type="text"    style="width: 60px;"  ' +
+        '  data-max="4980" class="amountInput"   ' +
+        ' ' +
+        '    ng-model="bsvalue" ' +
+        '   autocomplete="off">    ' +
+        '    <a ng-click="add()" style="height: 26px;width: 10px; margin: 0;"    ' +
+        'class="btn btn-smamll btn-default">+</a>'
+        ,
+        link: function ($scope, el, attr) {
+            //$scope.value = {};
+            $scope.add = function (index) {
+                if (!$scope.bsvalue) {
+                    $scope.bsvalue = 1;
+                    return;
+                }
+                $scope.bsvalue++;
+            };
+            $scope.minus = function (index) {
+                if (!$scope.bsvaluet) {
+                    $scope.bsvalue = 0;
+                    return;
+                }
+
+                var amount = --$scope.bsvalue
+                if (amount < 1) {
+                    $scope.bsvalue = 0;
+                }
+            };
+        }
+    }
+
+});

@@ -1,0 +1,34 @@
+<label>订单预览</label>
+<div class="form-group">
+    <div>
+        供应商：<span ng-bind="form.supplier.supplier_name"></span>
+    </div>
+    <div>
+        总价: <span ng-bind="form.supplier.total"></span>
+    </div>
+    <table style="width: 100%" class="table table-hover">
+        <tr>
+            <td style="width: 20%">商品</td>
+            <td>缩略图</td>
+            <td style="width: 20%">价格</td>
+            <td style="width: 20%">数量</td>
+            <td style="width: 20%">总价</td>
+        </tr>
+        <tr ng-repeat="item in form.product" ng-show="item.check">
+            <td ng-bind="item.product_name" class="ng-binding">2016-05-18</td>
+            <td><img ng-src="{{item.product_photo}}" style="height: 20px;"></td>
+            <td ng-bind="item.amount"></td>
+            <td ng-bind="item.supplierproduct_price" class="ng-binding">zhangsan</td>
+            <td>{{item.amount*item.supplierproduct_price}}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="form-group row">
+    <div class="col-xs-6  col-xs-offset-3">
+        <a class="btn btn-default" ui-sref="^.interests(state)">上一步</a>
+        <a class="btn  btn-info" ng-click="submit()">
+            提交 <i class="glyphicon glyphicon-circle-arrow-right"></i>
+        </a>
+    </div>
+</div>

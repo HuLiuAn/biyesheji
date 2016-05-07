@@ -30,8 +30,8 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         supplier_list: base + "Purchase/searchSupplier",
         edit_supplier: base + "Purchase/editSupplier",
         detail_supplier: base + "Purchase/showSupplierDetail",
-        order_supplier_list: base + "Purchase/showSupplierList",
-        order_product_list: base + "Purchase/showSupplierProList",
+        order_supplier_list: base + "Purchase/getAllSupplierList",
+        order_product_list: base + "Purchase/getProductListBySupplierId",
         order_hub_list: base + "Purchase/showWareHouse",
         order_list: base + "Purchase/searchOrder",
         order_detail: base + "Purchase/showOrderDetail",
@@ -311,8 +311,140 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     }).state('main.order-new', {
         url: 'order/new',
         templateUrl: 'views/order/new.html',
-        controller: 'goodOrderNewCtrl'
-    }). //仓库管理
+        controller: function ($scope) {
+            $scope.formData = {};
+        }
+    }).
+        state('main.order-new.profile', {
+            url: '/select_supplier?id&name',
+            templateUrl: 'views/order/select_supplier.html',
+            controller: function ($scope, $http, $Bs_API, $state) {
+
+                if ($state.params.id && $state.params.name) {
+                    $scope.formData.supplier = $scope.supplier = {
+                        supplier_id: $state.params.id,
+                        supplier_name: $state.params.name
+                    }
+                } else {
+                    $scope.formData.supplier = $scope.supplier = {};
+                }
+                $scope.next1 = function () {
+                    if (!$scope.supplier.supplier_id) {
+                        $Bs_API.loading("没有这个供应商", 1);
+                        return;
+                    }
+                    $state.go('main.order-new.interests', $scope.supplier);
+                };
+
+                $scope.getSupplier = function (val) {
+                    return $http.get($Bs_API.getApi('order_supplier_list'), {
+                        params: {
+                            name: val
+                        }
+                    }).then(function (response) {
+                        //console.log(response);
+                        return response.data['list'].map(function (item) {
+                            return item.supplier_id + "," + item.supplier_name
+                        });
+                    });
+                };
+                $scope.selected = function ($item, $model, $label, $event) {
+                    var s = $scope.supplier.supplier_name.split(',');
+                    $scope.supplier.supplier_name = s[1];
+                    $scope.supplier.supplier_id = s[0];
+                };
+            }
+        })
+
+        // url will be /form/interests
+        .state('main.order-new.interests', {
+            url: '/select_product/:supplier_id/:supplier_name',
+            templateUrl: 'views/order/select_product.html',
+            controller: function ($scope, $http, $Bs_API, $state) {
+                if ($state.params.supplier_id && $state.params.supplier_name) {
+                    $scope.formData.supplier = $state.params;
+                    $scope.state = {
+                        id: $state.params.supplier_id,
+                        name: $state.params.supplier_name
+                    };
+                    $http.post($Bs_API.getApi('order_product_list'), {
+                        supplier_id: $scope.state.id
+                    }).success(function (data) {
+                        if (!data.status) {
+                            $Bs_API.loading("获取失败", 1);
+                        } else {
+                            if (data.list.length < 1) {
+                                $Bs_API.loading("该供应商无商品", 1);
+                            } else {
+                                $scope.list = data.list;
+                            }
+                        }
+                    }).error(function () {
+                        $Bs_API.loading('加载失败');
+                    })
+                } else {
+                    $Bs_API.loading('请先选择供应商', 1)
+                    $state.go('main.order-new.profile');
+                }
+                $scope.next2 = function () {
+                    var selectproduct = [];
+                    var total = 0;
+                    var amount = 0;
+                    for (var i in $scope.list) {
+                        if ($scope.list[i].check) {
+                            selectproduct.push($scope.list[i]);
+                            amount += $scope.list[i].amount || 0;
+                            total += parseFloat($scope.list[i].amount) * parseFloat($scope.list[i].supplierproduct_price);
+                        }
+                    }
+
+                    $scope.formData.product = selectproduct;
+                    $scope.formData.supplier.total = total;
+                    if (selectproduct.length == 0) {
+                        $Bs_API.loading('请先选择商品', 1)
+                        return;
+                    }
+                    if (amount == 0) {
+                        $Bs_API.loading('请输入商品数量', 1)
+                        return;
+                    }
+                    $scope.state.data = JSON.stringify($scope.formData);
+                    $state.go('main.order-new.payment', $scope.state);
+                }
+            }
+        })
+
+        // url will be /form/payment
+        .state('main.order-new.payment', {
+            url: '/order_detail/:id/:name?data',
+            templateUrl: 'views/order/order_detail.html',
+            controller: function ($scope, $state, $Bs_API, $http) {
+                $scope.state = {
+                    id: $state.params.id || $scope.formData.supplier_id,
+                    name: $state.params.name || $scope.formData.supplier_name
+                };
+                if ($state.params.data) {
+                    $scope.form = JSON.parse($state.params.data);
+                } else if ($scope.formData) {
+                    $scope.form = $scope.formData;
+                } else {
+                    $Bs_API.loading('数据已过期', 1);
+                    $state.go('main.order-new.payment', $scope.state);
+                }
+
+                $scope.submit = function () {
+                    $http.post($Bs_API.getApi('new_order'), $scope.form).success(function () {
+                        $Bs_API.loading('成功');
+                        $state.go('main.order-list', {page: 1});
+                    }).error(function () {
+                        $Bs_API.loading('添加失败', 1);
+                    });
+                };
+            }
+        }).
+
+
+    //仓库管理
     state('main.hub-list', {
         url: 'hub/list/:page?search',
         templateUrl: 'views/hub/list.html',
