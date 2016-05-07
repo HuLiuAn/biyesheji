@@ -562,9 +562,9 @@ app.controller('goodOrderListCtrl', function ($scope, $state) {
     }];
 
     $scope.dt = {
-        start: $state.start_time,
-        end: $state.end_time,
-        state: $state.order_state
+        start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
+        end: $state.params.end_time ? new Date($state.params.end_time) : new Date(),
+        state: $state.params.order_state
     };
 
     $scope.dateOptions1 = {
@@ -603,11 +603,9 @@ app.controller('goodOrderListCtrl', function ($scope, $state) {
         $scope.popup2.opened = true;
     };
 
-
     $scope.popup1 = {
         opened: false
     };
-
     $scope.popup2 = {
         opened: false
     };

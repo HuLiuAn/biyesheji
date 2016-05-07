@@ -782,31 +782,43 @@ class PurchaseController extends Controller
         }
 
         $sP = M('order');
-        $User = M('user');
         $sPData['page'] = $arr->page;
-        if (!empty($arr->order_number) || !empty($arr->auditor_name) || !empty($arr->purchaser_name)) {
-            //只要有一个搜索条件，就选择搜索模式
+        if (!empty($arr->purchaser_name)) {
+            $map['USER1.user_name'] = array('like', "%" . $arr->purchaser_name . "%");
+        }
+        if (!empty($arr->auditor_name)) {
+            $map['USER2.user_name'] = array('like', "%" . $arr->auditor_name . "%");
+        }
+        if (!empty($arr->order_number)) {
             $map['order_number'] = array('like', "%" . $arr->order_number . "%");
-            $map['auditor_name'] = array('like', "%" . $arr->auditor_name . "%");
-            $map['purchaser_name'] = array('like', "%" . $arr->purchaser_name . "%");
-            $sPData["total"] = $pCount = $sP->where($map)->count();
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("order_id asc")->select();
-
+        }
+        if ($arr->order_state === "0" || !empty($arr->order_state)) {
+            $map['order_state'] = $arr->order_state;
+        }
+        if (!empty($arr->start_time) && !empty($arr->end_time)) {
+            $map['order_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
+        } else if (!empty($arr->start_time)) {
+            $map['order_time'] = array('gt', strtotime($arr->start_time));
+        } else if (!empty($arr->end_time)) {
+            $map['order_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
+        }
+        if (!empty(count($map))) {
+            //只要有一个搜索条件，就选择搜索模式
+            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
+                ->where($map)
+                ->count();
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
+                ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
+                ->where($map)
+                ->select();
         } else {
             $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("order_id asc")->select();
-            $user_list = $User->select();
-//            var_dump($user_list);
-            foreach ($sPData['list'] as &$vi) {
-                foreach ($user_list as &$vo) {
-                    if ($vi['purchaser_id'] == $vo['user_id']) {
-                        $vi['purchaser_name'] = $vo['user_name'];
-                    }
-                    if ($vi['auditor_id'] == $vo['user_id']) {
-                        $vi['auditor_name'] = $vo['user_name'];
-                    }
-                }
-            }
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
+                ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
+                ->select();
         }
         $this->ajaxReturn($sPData);
     }
