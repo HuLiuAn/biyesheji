@@ -9,8 +9,8 @@
         
         public $viewFields = array(
             
-            'product' => array('product_id','product_barcode','product_name','product_photo'),
-            'inventory' => array('_on'=>'product.product_id=inventory.product_id','count'),
+            'product' => array('product_id','product_barcode','product_name','product_photo','properties'),
+            'inventory' => array('_on'=>'product.product_id=inventory.product_id','count','warehouse_id'),
             'warehouse' => array('_on'=>'inventory.warehouse_id=warehouse.warehouse_id','warehouse_number'),
         );
     }

@@ -317,7 +317,9 @@
                         //修改该商品在出入库仓库库存数量
                         $inventory->where($i)->setInc('count',$arr->count);
                         $inventory->where($o)->setDec('count',$arr->count);
+
                     }
+
                     $st['status'] = "1";
                     $this->ajaxReturn(json_encode($st), 'JSON');
                 }
