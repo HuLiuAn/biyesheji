@@ -727,15 +727,9 @@ app.controller('goodHubNewCtrl', function ($scope, $Bs_API, $state, $http) {
 
 app.controller('goodInoutListCtrl', function ($scope, $state) {
 
-    $scope.stateColor = [
-        "label-info", "label-success", "label-danger"
-    ];
-    $scope.stateText = [
-        "待收货", "审核通过", "退货"
-    ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
-
+console.log(data);
     });
     $scope.dt = {
         start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),

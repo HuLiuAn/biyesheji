@@ -283,34 +283,44 @@ class WareHouseManagementController extends Controller
 
         $sP = M('allocationorder');
         $sPData['page'] = $arr->page;
-
-        $sPData['status'] = "0";
-
-        //TODO 查询条件太多，有点乱
-        if (!empty($arr->allocationorder_number) || !empty($arr->date) || !empty($arr->inwarehouse_number) || !empty($arr->admituser_number)) {
-
-            $pN['inwarehouse_number'] = array('like', "%" . $arr->inwarehouse_number . "%");
-            $aN['outwarehouse_number'] = array('like', "%" . $arr->outwarehouse_number . "%");
-            $uN['user_number'] = array('like', "%" . $arr->admituserr_number . "%");
-
+        if (!empty($arr->outwarehouse_number)) {
+            $map['WARE1.warehouse_number'] = array('like', "%" . $arr->outwarehouse_number . "%");
+        }
+        if (!empty($arr->inwarehouse_number)) {
+            $map['WARE2.warehouse_number'] = array('like', "%" . $arr->inwarehouse_number . "%");
+        }
+        if (!empty($arr->allocate_number)) {
+            $map['allocationorder_number'] = array('like', "%" . $arr->allocate_number . "%");
+        }
+        if (!empty($arr->start_time) && !empty($arr->end_time)) {
+            $map['allocationorder_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
+        } else if (!empty($arr->start_time)) {
+            $map['allocationorder_time'] = array('gt', strtotime($arr->start_time));
+        } else if (!empty($arr->end_time)) {
+            $map['allocationorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
+        }
+        if (!empty(count($map))) {
             //只要有一个搜索条件，就选择搜索模式
-            $map['allocationorder_number'] = array('like', "%" . $arr->allocationorder_number . "%");
-            //TODO 按照日期范围查询应该怎么匹配？
-            $map['allocationorder_date'] = array('like', "%" . $arr->date . "%");
-            $map['inwarehouse_id'] = M('warehouse')->where($pN)->find();
-            $map['outwarehouser_id'] = M('warehouse')->where($aN)->find();
-            $map['admituser_id'] = M('user')->where($uN)->find();
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['status'] = "1";
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("allocationorder_id asc")->select();
-
+            $sPData["total"] =  $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
+                ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
+                ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
+                ->where($map)
+                ->count();
+            $sPData['list'] = $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
+                ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
+                ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
+                ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name')
+                ->where($map)
+                ->select();
         } else {
             $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("allocationorder_id asc")->select();
+            $sPData['list'] = $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
+                ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
+                ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
+                ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name')
+                ->select();
         }
         $this->ajaxReturn($sPData);
-
-
     }
 
 

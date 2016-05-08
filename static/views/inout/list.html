@@ -69,8 +69,9 @@
                 <tr ng-repeat="item in list">
                     <td ng-bind="item.allocationorder_date"></td>
                     <td ng-bind="item.allocationorder_number"></td>
-                    <td ng-bind="item.inwarehouse_name"></td>
-                    <td ng-bind="item.outwarehouse_name"></td>
+                    <td  ng-bind="item.user_name"></td>
+                    <td ng-bind="item.inwarehouse_number"></td>
+                    <td ng-bind="item.outwarehouse_number"></td>
                     <td><a href="#/inout/detail/{{allocationorder_id}}"><i class="fa fa-edit"></i></a></td>
                 </tr>
                 </tbody>
