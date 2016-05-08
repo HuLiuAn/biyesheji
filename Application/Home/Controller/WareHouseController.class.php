@@ -197,51 +197,21 @@ class WareHouseController extends Controller
             return;
         }
 
-        $map['inwarehouse_id'] = $arr->inwarehouse_id;
-        $map['outwarehouse_id'] = $arr->outwarehouse_id;
-
-        // $i['inwarehouse_id'] = $arr->inwarehouse_id;
-        //$i['product_id'] = $arr->product_id;
-        //$o['outwarehouse_id'] = $arr->outwarehouse_id;
-        //$o['product_id'] = $arr->product_id;
-
-        //$inventory = M('inventory');
-        //$sPData['in_count']  = $inventory->where($i)->field('count')->find();
-        //$sPData['out_count']  = $inventory->where($o)->field('count')->find();
-
-
         $sPData['status'] = "1";
-        if (empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id)) {
+        if (empty($arr->in_ware_id) || empty($arr->out_ware_id) || empty($arr->product_id)) {
             $sPData['status'] = "0";
             $this->ajaxReturn($sPData);
         }
-        //每页10个
-        $divide = 10;
-        //查询偏移量$page, 页数*每页显示的数量
-        $page = ($arr->page - 1) * $divide;
-        //表格
-        if (empty($page)) {
-            //没有页数，默认显示第一页
-            $page = 0;
-        }
+        $sP = M('warehousecapacity');
 
-        $sP = D(' AllocateProductView');
-        $sPData['page'] = $arr->page;
-        if (!empty($arr->barcode) || !empty($arr->name)) {
-            //只要有一个搜索条件，就选择搜索模式
-            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
-            $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
-
-        } else {
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
-
-        }
+        $map['warehouse_id'] = array(array('eq', $arr->out_ware_id), array('eq', $arr->in_ware_id), 'or');
+        $map['product_id'] = $arr->product_id;
+//        要查询某个商品在某个仓库的数量
+//        1.通过产品id和仓库ID进行查找。如果没有记录，则返回0，和容量
+//        2.如果有记录，则查询容量，余量
+//这部分留给前端计算
+        $sPData['result'] = $sP->where($map)->select();
         $this->ajaxReturn($sPData);
-
-
     }
 
 
@@ -276,16 +246,11 @@ class WareHouseController extends Controller
 
         // $aAO = D('AddAllocationOrderView');
         $aAO = M('allocationorder');
-        $aAD = M('allcationorderdetail');
+        $aAD = M('allocationorderdetail');
         $inventory = M('inventory');
 
-        //$i['inwarehouse_id'] = $arr->inwarehouse_id;
-        //$i['product_id'] = $arr->product_id;
-        // $o['outwarehouse_id'] = $arr->outwarehouse_id;
-        //$o['product_id'] = $arr->product_id;
-
         $st['status'] = "0";
-        if (empty($arr->inwarehouse_id) && empty($arr->outwarehouse_id) && empty($arr->product->count)) {
+        if (empty($arr->warehouse->in_id) && empty($arr->warehouse->out_id)) {
 
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
@@ -296,31 +261,33 @@ class WareHouseController extends Controller
         //生成调拨单号
         $data['allocationorder_number'] = 'TACO' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $data['allocationorder_date'] = date('Y-m-d', time());
-        $data['user_id'] = $arr->user_id;
-        $data['inwarehouse_id'] = $arr->inwarehouse_id;
-        $data['outwarehouse_id'] = $arr->outwarehouse_id;
+        $data['allocationorder_time'] = time();
+        $data['user_id'] = session('user_id');
+        $data['inwarehouse_id'] = $arr->warehouse->in_id;
+        $data['outwarehouse_id'] = $arr->warehouse->out_id;
         // $data['product_id']                     = $arr->product_id;
         //$data['count']                           = $arr->count;
 
         //新增调拨单并将调拨单id赋给变量
-        $aAD_data['allocationorder_id'] = $aAO->data($data)->add();
+        $aA0_id = $aAO->data($data)->add();
 
-        if ($aAD_data['allocationorder_id']) {
+        if ($aA0_id) {
 
             //如果调拨单生成成功，向调拨单详情表中插入调拨商品记录
             foreach ($arr->product as $product) {
-                $sp_data['product_id'] = $product->product_id;
-                $sp_data['count'] = $product->count;
+                $sp_data['product_id'] = $product->id;
+                $sp_data['allocationorderdetail_count'] = $product->number;
+                $sp_data['allocationorder_id'] = $aA0_id;
                 $aAD->data($sp_data)->add();
 
-                $i['warehouse_id'] = $arr->inwarehouse_id;
-                $i['product_id'] = $product->product_id;
-                $o['warehouse_id'] = $arr->outwarehouse_id;
-                $o['product_id'] = $product->product_id;
+                $i['warehouse_id'] = $arr->warehouse->in_id;
+                $i['product_id'] = $product->id;
+                $o['warehouse_id'] = $arr->warehouse->out_id;
+                $o['product_id'] = $product->id;
 
                 //修改该商品在出入库仓库库存数量
-                $inventory->where($i)->setInc('count', $arr->count);
-                $inventory->where($o)->setDec('count', $arr->count);
+                $inventory->where($i)->setInc('count', $product->number);
+                $inventory->where($o)->setDec('count', $product->number);
 
             }
 
@@ -346,5 +313,22 @@ class WareHouseController extends Controller
         //  $this->ajaxReturn (json_encode($st),'JSON');
     }
 
+    //获取所有仓库
+    public function getAllWareHouseList()
+    {
+
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+        $sP = M('warehouse');
+        $map['warehouse_number'] = array('like', "%" . I('name') . "%");
+        $sPData['list'] = $sP->where($map)->order("warehouse_id asc")->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
+    }
 
 }

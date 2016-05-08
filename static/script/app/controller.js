@@ -927,7 +927,7 @@ app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
         };
         $http.post($Bs_API.getApi('new_allo'), $scope.form).success(function () {
             toastr.success('添加成功！');
-            //$state.go('main.allocate-list', {page: 1});
+            $state.go('main.inout-list', {page: 1});
         }).error(function () {
             toastr.error('添加失败！');
         });
