@@ -158,9 +158,16 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
             $Bs_API.loading('领取失败,请检查网络', 1);
         });
     };
-    $http.get($Bs_API.getApi('receive_product_detail')).success(function (data) {
-        $scope.data = data;
-        rollPic(data.product_photogroup);
+    $http.post($Bs_API.getApi('receive_product_detail'), {
+        product_id: $state.params.id
+    }).success(function (data) {
+        if(data.status==1){
+            $scope.data = data.result;
+            rollPic(JSON.parse(data.result.product_photogroup));
+        }else {
+            toastr.error('获取失败');
+        }
+
     }).error(function () {
         $Bs_API.loading('获取失败！请检查网络', 1);
     });

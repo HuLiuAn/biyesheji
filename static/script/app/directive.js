@@ -81,7 +81,7 @@ app.directive('bsSider', function () {
                     base: "order",
                     subMenu: [{
                         name: '采购',
-                        href: 'order/new'
+                        href: 'order/new/select_supplier'
                     }, {
                         name: '订单查询',
                         href: 'order/list/1'
