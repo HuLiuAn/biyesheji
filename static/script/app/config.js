@@ -38,7 +38,18 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         new_order: base + "Purchase/addOrder",
         new_hub: base + "WareHouse/addWareHouse",
         hub_list: base + "WareHouse/queryWareHouse",
-        edit_hub: base + "WareHouse/modifyWareHouse"
+        edit_hub: base + "WareHouse/modifyWareHouse",
+        new_allo: base + "WareHouse/addAllocate",
+        get_all_warehouse: base + "WareHouse/getAllWareHouseList",
+        allo_list: base + "WareHouseManagement/queryAllocationList",
+        allo_detail: base + "WareHouseManagement/showAllocationDetail",
+        get_ware_capacity: base + "WareHouse/allocateProduct",
+        man_order_list: base + "WareHouseManagement/queryOrderList",
+        man_order_detail: base + "WareHouseManagement/showOrderDetail",
+        do_review: base + "WareHouseManagement/review",
+        man_receive_list: base + "WareHouseManagement/queryReceiveOrder",
+        man_receive_detail: base + "WareHouseManagement/showReceiveOrderDetail",
+
     };
     var _$Bs_API = {
         getUrl: function (index) {
@@ -463,10 +474,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         controller: 'goodHubNewCtrl'
     }). //挑拨管理
     state('main.inout-list', {
-        url: 'inout/list/:page?search',
+        url: 'inout/list/:page?outwarehouse_number&start_time&end_time&inwarehouse_number&allocate_number',
         templateUrl: 'views/inout/list.html',
         controller: 'goodInoutListCtrl',
-        Handler: "receive_list"
+        Handler: "allo_list"
     }).state('main.inout-detail', {
         url: 'inout/detail/:id',
         templateUrl: 'views/inout/detail.html',
@@ -477,15 +488,15 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         controller: 'goodInoutNewCtrl'
     }). //审核管理
     state('main.check-order', {
-        url: 'check/order/:page?search',
+        url: 'check/order/:page?order_number&start_time&end_time&purchaser_name&auditor_name&order_state',
         templateUrl: 'views/check/order.html',
         controller: 'goodCheckOrderListCtrl',
-        Handler: "receive_list"
+        Handler: "man_order_list"
     }).state('main.check-good', {
         url: 'check/good/:page?search',
         templateUrl: 'views/check/good.html',
         controller: 'goodCheckGoodListCtrl',
-        Handler: "receive_list"
+        Handler: "man_receive_list"
     }).state('main.check-order-detail', {
         url: 'check/order-detail/:id',
         templateUrl: 'views/check/order-detail.html',

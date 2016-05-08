@@ -29,7 +29,8 @@
     <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker-bs3.css">
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-     <!--upload-->
+    <link rel="stylesheet" href="plugins/bootstrap-toastr/toastr.min.css">
+    <!--upload-->
     <link rel="stylesheet" href="plugins/upload/uploadify.css">
     <link rel="stylesheet" href="style/css/pace.min.css">
     <link rel="stylesheet" href="style/css/menu.css">
@@ -48,6 +49,7 @@
     <script src="script/plugin/bootstrap.min.js"></script>
     <script src="plugins/upload/jquery.uploadify.min.js"></script>
     <script src="script/plugin/jquery-barcode.min.js"></script>
+    <script src="plugins/bootstrap-toastr/toastr.min.js"></script>
     <!--//plugin for schema form-->
     <script type="text/javascript" src="script/plugin/angular-sanitize.min.js"></script>
 
@@ -60,12 +62,12 @@
     <script src="script/app/directive.js"></script>
     <script src="script/app/service.js"></script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini " ng-app="myApp" >
+<body class="hold-transition skin-blue sidebar-mini " ng-app="myApp">
 <!--删-->
 <div id="loading-info" class="loading-info">
-        <div class="loading-msg">
-            <div id="loading-content" class="loading-content"></div>
-        </div>
+    <div class="loading-msg">
+        <div id="loading-content" class="loading-content"></div>
+    </div>
 </div>
 <div ui-view></div>
 

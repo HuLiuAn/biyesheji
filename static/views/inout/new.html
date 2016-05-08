@@ -1,32 +1,108 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
     <div class="box-header with-border">
-        <h3 class="box-title">采购</h3>
+        <h3 class="box-title">新增仓库调拨</h3>
     </div>
     <!-- /.box-header -->
     <!-- form start -->
     <div class="box-body" style="padding-right: 20px;">
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">名称</span>
-            <input type="text" class="form-control" id="name" placeholder="名称"/>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <label>选择仓库</label>
         </div>
-        <div class="input-group"  style="margin-bottom: 5px;" >
-            <span class="input-group-addon">联系人</span>
-            <input type="text" class="form-control" id="linecode" placeholder="联系人"/>
+        <div class="row">
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="input-group" style="margin-bottom: 5px;">
+                    <span class="input-group-addon">出库仓库</span>
+                    <input type="text" ng-model="alloc.alloc_out.number" placeholder="输入仓库号..."
+                           uib-typeahead="address for address in getWare($viewValue)"
+                           typeahead-on-select="selectedWare($item, $model, $label, $event,'alloc_out','alloc_in')"
+                           typeahead-loading="loadingLocations1" typeahead-no-results="noResults1" class="form-control">
+                </div>
+                <div style="height: 20px;">
+                    <i ng-show="loadingLocations1" class="glyphicon glyphicon-refresh"></i>
+                    <i ng-show="noResults1" class="glyphicon glyphicon-remove">未找到</i>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="input-group" style="margin-bottom: 5px;">
+                    <span class="input-group-addon">入库仓库</span>
+                    <input type="text" ng-model="alloc.alloc_in.number" placeholder="输入仓库号..."
+                           uib-typeahead="address for address in getWare($viewValue)"
+                           typeahead-on-select="selectedWare($item, $model, $label, $event,'alloc_in','alloc_out')"
+                           typeahead-loading="loadingLocations2" typeahead-no-results="noResults2" class="form-control">
+                </div>
+                <div style="height: 20px;">
+                    <i ng-show="loadingLocations2" class="glyphicon glyphicon-refresh"></i>
+                    <i ng-show="noResults2" class="glyphicon glyphicon-remove">未找到</i>
+                </div>
+            </div>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">电话</span>
-            <input type="number" class="form-control" id="phone" placeholder="电话"/>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <label>选择商品</label>
         </div>
-        <div class="input-group" style="margin-bottom: 5px;" >
-            <span class="input-group-addon">地址</span>
-            <input type="text" class="form-control" id="address" placeholder="地址"/>
-        </div>
-        <div class="form-group" style="margin-bottom: 5px;" >
-            <label >新增商品</label>
-        </div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 10%;"></th>
+                <th>商品</th>
+                <th>数量</th>
+                <th>操作</th>
+
+            </tr>
+            <tr>
+                <th style="padding-right: 10px;"></th>
+                <th style="padding-right: 10px;">
+                    <!--<input type="text" ng-model="product.product_name"/>-->
+                    <input type="text" ng-model="product.product_name" placeholder="输入商品名称..."
+                           uib-typeahead="address for address in getPro($viewValue)"
+                           typeahead-on-select="selectedPro($item, $model, $label, $event)"
+                           typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+
+                    <div ng-show="noResults">
+                        <i class="glyphicon glyphicon-remove"></i>未找到
+                    </div>
+
+
+                </th>
+                <th style="padding-right: 10px;position: relative;width:200px;"><input
+                        style="height: 34px;position: absolute;top:0;" type="number"
+                        ng-model="product.number"/></th>
+                <th style="position: relative;">
+                    <a class="btn btn-success" href="" ng-click="add()"
+                       style="position: absolute;top:0;"
+                       ng-disabled="!product.product_name||!product.number">添加</a>
+                </th>
+            </tr>
+            </thead>
+        </table>
+        <table class="table table-hover">
+            <thead>
+            <th style="width: 10%;"></th>
+            <th>商品</th>
+            <th>调拨数量</th>
+            <th>调出仓库含量</th>
+            <th>调入仓库含量</th>
+            <th>调入仓库空闲</th>
+            <th>操作</th>
+            </thead>
+            <tbody>
+            <tr ng-class="{'producterror':item.error}" ng-repeat="(key,item) in products" style="height: 40px;">
+                <td style="width: 10%;">{{$index+1}}</td>
+                <td>{{item.product_name}}</td>
+                <td>{{item.number}}</td>
+                <td>{{item.out_ware_has}}</td>
+                <td>{{item.in_ware_has}}</td>
+                <td>{{item.in_ware_remain}}</td>
+                <td><a class="btn btn-danger" href="" ng-click="del(key)"
+                       style="height: 26px;padding:0;padding-right: 2px;padding-left: 2px;">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" ng-click="submit()">提交</button>
     </div>
 </div>

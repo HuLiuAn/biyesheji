@@ -725,12 +725,113 @@ app.controller('goodHubNewCtrl', function ($scope, $Bs_API, $state, $http) {
     }
 });
 
-app.controller('goodInoutListCtrl', function ($scope) {
+app.controller('goodInoutListCtrl', function ($scope, $state) {
 
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
+    $scope.stateText = [
+        "待收货", "审核通过", "退货"
+    ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
     });
+    $scope.dt = {
+        start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
+        end: $state.params.end_time ? new Date($state.params.end_time) : new Date()
+    };
+
+    $scope.dateOptions1 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    $scope.dateOptions2 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+
+    $scope.open1 = function () {
+        if ($scope.dt.end) {
+            $scope.dateOptions1.maxDate = new Date($scope.dt.end);
+        }
+        $scope.popup1.opened = true;
+    };
+
+    $scope.open2 = function () {
+        if ($scope.dt.start) {
+            $scope.dateOptions1.minDate = new Date($scope.dt.start);
+        }
+        $scope.popup2.opened = true;
+    };
+
+    $scope.popup1 = {
+        opened: false
+    };
+    $scope.popup2 = {
+        opened: false
+    };
+    $scope.search2 = function () {
+        $scope.$broadcast('PageWillChange', {
+            start_time: Format($scope.dt.start, "yyyy-MM-dd"),
+            end_time: Format($scope.dt.end, "yyyy-MM-dd")
+            , outwarehouse_number: "", inwarehouse_number: "", allocate_number: ""
+        });
+    };
+    $scope.all = function () {
+        $scope.$broadcast('PageWillChange', {
+            allocate_number: "", start_time: "", end_time: "", outwarehouse_number: "", inwarehouse_number: ""
+        })
+        ;
+    }
+    function Format(time, fmt) {
+        if (!time || !fmt) {
+            return ""
+        }
+        var o = {
+            "M+": time.getMonth() + 1,                 //月份
+            "d+": time.getDate(),                    //日
+            "h+": time.getHours(),                   //小时
+            "m+": time.getMinutes(),                 //分
+            "s+": time.getSeconds(),                 //秒
+            "q+": Math.floor((time.getMonth() + 3) / 3), //季度
+            "S": time.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (time.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "单号",
+        field: 'allocate_number',
+        value: ''
+    }, {
+        flag: "入库仓库",
+        field: 'inwarehouse_number',
+        value: ''
+    }, {
+        flag: "出库仓库",
+        field: 'outwarehouse_number',
+        value: ''
+    }];
 
 });
 app.controller('goodInoutDetailCtrl', function ($scope) {
@@ -750,17 +851,286 @@ app.controller('goodInoutDetailCtrl', function ($scope) {
         return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
     };
 });
-app.controller('goodInoutNewCtrl', function ($scope) {
+app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
+    $scope.product = {};
+    $scope.alloc = {
+        alloc_out: {},
+        alloc_in: {}
+    };
+    $scope.products = {};
+    var count = 0;
+    $scope.add = function () {
+        var pro = $scope.product;
+        if (!pro.product_name || !pro.number || parseInt(pro.number) < 1) {
+            return;
+        }
+        $scope.products[count] = pro;
+        count++;
+        $scope.product = {};
+        $http.post($Bs_API.getApi('get_ware_capacity'), {
+            product_id: pro.product_id,
+            in_ware_id: $scope.alloc.alloc_in.id,
+            out_ware_id: $scope.alloc.alloc_out.id
+        }).success(function (data) {
+            computeVulm(data, pro)
+        }).error(function (data) {
+            console.log(data);
+        })
+    };
+    $scope.del = function (key) {
+        delete $scope.products[key];
+    };
+    $scope.getPro = function (val) {
+        return $http.get($Bs_API.getApi('get_product_by_name'), {
+            params: {
+                name: val
+            }
+        }).then(function (response) {
+            //console.log(response);
+            return response.data['list'].map(function (item) {
+                return item.product_id + "," + item.product_name
+            });
+        });
+    };
 
+    $scope.selectedPro = function ($item, $model, $label, $event) {
+        var s = $item.split(',');
+        $scope.product.product_name = s[1];
+        $scope.product.product_id = s[0];
+    };
+    $scope.submit = function () {
+        //提取ID
+        if (!$scope.alloc.alloc_in.id || !$scope.alloc.alloc_out.id) {
+            toastr.error('未选择调出/入仓库！');
+            return;
+        }
+        var product = [], temp;
+        for (var i in  $scope.products) {
+            if (!$scope.products[i].error) {
+                temp = {
+                    id: $scope.products[i].product_id,
+                    number: $scope.products[i].number
+                };
+                product.push(temp);
+                temp = {}
+            }
+        }
+        if (product.length < 1) {
+            toastr.error('没有可调拨的商品');
+            return;
+        }
+        $scope.form = {};
+        $scope.form.product = product;
+        $scope.form.warehouse = {
+            in_id: $scope.alloc.alloc_in.id,
+            out_id: $scope.alloc.alloc_out.id
+        };
+        $http.post($Bs_API.getApi('new_allo'), $scope.form).success(function () {
+            toastr.success('添加成功！');
+            //$state.go('main.allocate-list', {page: 1});
+        }).error(function () {
+            toastr.error('添加失败！');
+        });
+    }
+    $scope.getWare = function (val) {
+        return $http.get($Bs_API.getApi('get_all_warehouse'), {
+            params: {
+                name: val
+            }
+        }).then(function (response) {
+            return response.data['list'].map(function (item) {
+                return item.warehouse_id + "," + item.warehouse_number + "," + item.warehouse_maxcount
+            });
+        });
+    };
+    $scope.selectedWare = function ($item, $model, $label, $event, target, comp, address) {
+        var s = $item.split(',');
+        if ($scope.alloc[comp].id == s[0]) {
+            toastr.error('出入仓库不能相同！');
+            $scope.alloc[target].number = '';
+            $scope.alloc[target].id = '';
+            $scope.alloc[target].max = '';
+        } else {
+            $scope.alloc[target].number = s[1];
+            $scope.alloc[target].id = s[0];
+            $scope.alloc[target].max = s[2];
+        }
+        console.log(address);
+    };
+    function computeVulm(data, pro) {
+        //计算返回的数量
+        pro.error = false;
+        if (data.status == 1) {
+            // 返货的result长度为0，1，2
+            switch (data.result.length) {
+                case 0:
+                {
+                    //没有记录，无法调拨
+                    toastr.error('商品: ' + pro.product_name + '库存为0，无法调拨！');
+                    pro.error = true;
+                    break;
+                }
+                case 1:
+                {
+                    if (data.result[0].warehouse_id == $scope.alloc.alloc_out.id) {
+                        pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+                        pro.in_ware_has = 0;
+                        pro.in_ware_remain = $scope.alloc.alloc_out.max;
+                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+                            pro.error = true;
+                        }
+                    } else {
+                        pro.error = true;
+                        toastr.error('商品: ' + pro.product_name + '入库存量为0，无法调拨！');
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
+                        pro.in_ware_has = data.result[1].maxcount - data.result[1].remindcount;
+                        pro.in_ware_remain = data.result[1].remindcount;
+                        pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+                            pro.error = true;
+                        }
+                    } else if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
+                        pro.in_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+                        pro.in_ware_remain = data.result[0].remindcount;
+                        pro.out_ware_has = data.result[1].maxcount - data.result[1].remindcount;
+                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+                            pro.error = true;
+                        }
+                    } else {
+                        pro.error = true;
+                        toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
+                    }
+
+                    break;
+                }
+                default :
+                {
+                    pro.error = true;
+                    toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
+                }
+            }
+        } else {
+            pro.error = true;
+            toastr.error('无法获取商品: ' + pro.product_name + ' 库存情况！');
+        }
+    }
 });
 
 
-app.controller('goodCheckOrderListCtrl', function ($scope) {
+app.controller('goodCheckOrderListCtrl', function ($scope, $state) {
 
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
+    $scope.stateText = [
+        "待收货", "审核通过", "退货"
+    ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
     });
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "单号",
+        field: 'order_number',
+        value: ''
+    }, {
+        flag: "仓库审核通过人",
+        field: 'auditor_name',
+        value: ''
+    }, {
+        flag: "采购负责人",
+        field: 'purchaser_name',
+        value: ''
+    }];
+
+    $scope.dt = {
+        start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
+        end: $state.params.end_time ? new Date($state.params.end_time) : new Date(),
+        state: $state.params.order_state
+    };
+
+    $scope.dateOptions1 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    $scope.dateOptions2 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+
+    $scope.open1 = function () {
+        if ($scope.dt.end) {
+            $scope.dateOptions1.maxDate = new Date($scope.dt.end);
+        }
+        $scope.popup1.opened = true;
+    };
+
+    $scope.open2 = function () {
+        if ($scope.dt.start) {
+            $scope.dateOptions1.minDate = new Date($scope.dt.start);
+        }
+        $scope.popup2.opened = true;
+    };
+
+    $scope.popup1 = {
+        opened: false
+    };
+    $scope.popup2 = {
+        opened: false
+    };
+    $scope.search2 = function () {
+        $scope.$broadcast('PageWillChange', {
+            start_time: Format($scope.dt.start, "yyyy-MM-dd"),
+            end_time: Format($scope.dt.end, "yyyy-MM-dd"),
+            order_state: $scope.dt.state
+            , purchaser_name: "", auditor_name: "", order_number: ""
+        });
+    };
+    $scope.all = function () {
+        $scope.$broadcast('PageWillChange', {
+            order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: "", order_state: ""
+        })
+        ;
+    }
+    function Format(time, fmt) {
+        if (!time || !fmt) {
+            return ""
+        }
+        var o = {
+            "M+": time.getMonth() + 1,                 //月份
+            "d+": time.getDate(),                    //日
+            "h+": time.getHours(),                   //小时
+            "m+": time.getMinutes(),                 //分
+            "s+": time.getSeconds(),                 //秒
+            "q+": Math.floor((time.getMonth() + 3) / 3), //季度
+            "S": time.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (time.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
 
 });
 app.controller('goodCheckOrderDetailCtrl', function ($scope) {
@@ -781,12 +1151,116 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope) {
     };
 });
 
-app.controller('goodCheckGoodListCtrl', function ($scope) {
+app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
 
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
+    $scope.stateText = [
+        "待收货", "审核通过", "退货"
+    ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
     });
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "单号",
+        field: 'order_number',
+        value: ''
+    }, {
+        flag: "仓库审核通过人",
+        field: 'auditor_name',
+        value: ''
+    }, {
+        flag: "采购负责人",
+        field: 'purchaser_name',
+        value: ''
+    }];
+
+    $scope.dt = {
+        start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
+        end: $state.params.end_time ? new Date($state.params.end_time) : new Date(),
+        state: $state.params.order_state
+    };
+
+    $scope.dateOptions1 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    $scope.dateOptions2 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+
+    $scope.open1 = function () {
+        if ($scope.dt.end) {
+            $scope.dateOptions1.maxDate = new Date($scope.dt.end);
+        }
+        $scope.popup1.opened = true;
+    };
+
+    $scope.open2 = function () {
+        if ($scope.dt.start) {
+            $scope.dateOptions1.minDate = new Date($scope.dt.start);
+        }
+        $scope.popup2.opened = true;
+    };
+
+    $scope.popup1 = {
+        opened: false
+    };
+    $scope.popup2 = {
+        opened: false
+    };
+    $scope.search2 = function () {
+        $scope.$broadcast('PageWillChange', {
+            start_time: Format($scope.dt.start, "yyyy-MM-dd"),
+            end_time: Format($scope.dt.end, "yyyy-MM-dd"),
+            order_state: $scope.dt.state
+            , purchaser_name: "", auditor_name: "", order_number: ""
+        });
+    };
+    $scope.all = function () {
+        $scope.$broadcast('PageWillChange', {
+            order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: "", order_state: ""
+        })
+        ;
+    }
+    function Format(time, fmt) {
+        if (!time || !fmt) {
+            return ""
+        }
+        var o = {
+            "M+": time.getMonth() + 1,                 //月份
+            "d+": time.getDate(),                    //日
+            "h+": time.getHours(),                   //小时
+            "m+": time.getMinutes(),                 //分
+            "s+": time.getSeconds(),                 //秒
+            "q+": Math.floor((time.getMonth() + 3) / 3), //季度
+            "S": time.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (time.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
 });
 app.controller('goodCheckGoodDetailCtrl', function ($scope) {
 

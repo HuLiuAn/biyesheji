@@ -1,52 +1,97 @@
-<div class="box box-primary" style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">订单查询</h3>
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">订单审核</h3>
 
-        <div class="box-tools">
-            <div class="input-group input-group-sm pull-right" style="width: 50px;margin-left: 5px;">
-                <div class="input-group-btn">
-                    <a type="submit" name="submit" href="#/order/new" class="btn btn-success btn-flat">
-                        <i class="fa fa-plus"></i>新增
-                    </a>
-                </div>
+            <div class="box-tools">
+                <a href="" class="btn btn-default pull-right" ng-click="all()">全部</a>
             </div>
-            <div class="input-group input-group-sm" style="width: 150px;">
-                <input type="text" ng-model="data.search" placeholder="search" class="form-control pull-right" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
-                <div class="input-group-btn">
-                    <button type="submit" name="submit" ng-click="search()" class="btn btn-warning btn-flat">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
+
+        </div>
+        <!-- /.box-header -->
+        <div class="row">
+            <div class="col-md-2">起始日期：
+                <p class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" ng-model="dt.start"
+                           is-open="popup1.opened" datepicker-options="dateOptions1" ng-required="true"
+                           close-text="Close" alt-input-formats="altInputFormats"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open1()"><i
+                    class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+                </p>
+            </div>
+
+            <div class="col-md-2">结束日期：
+                <p class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd"
+                           ng-model="dt.end" is-open="popup2.opened"
+                           datepicker-options="dateOptions2" ng-required="true" close-text="Close"/>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open2()"><i
+                    class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+                </p>
+            </div>
+            <div class="col-md-2">状态
+                <p class="input-group">
+                    <select class="form-control" ng-model="dt.state">
+                        <option value="">全部</option>
+                        <option value="0">待收获</option>
+                        <option value="1">审核通过</option>
+                        <option value="2">退货</option>
+                    </select>
+                      <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="search2()"><i
+                    class="glyphicon glyphicon-search"></i></button></span>
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <p style="text-align: center;margin-bottom:0;height: 22px;"></p>
+
+                <p>
+                    <bs-search class="pull-right" search="field:value" template="customTemplate.html"></bs-search>
+                </p>
             </div>
         </div>
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <th>选中</th>
+                    <th>时间</th>
+                    <th>单号</th>
+                    <th>审核人</th>
+                    <th>采购负责人</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                <tr ng-repeat="item in list">
+                    <td><input type="checkbox"/></td>
+                    <td ng-bind="item.order_date"></td>
+                    <td ng-bind="item.order_number"></td>
+                    <td ng-bind="item.auditor_name"></td>
+                    <td ng-bind="item.purchaser_name"></td>
+                    <td><span
+                            class="label  {{stateColor[item.order_state]}}">{{stateText[item.order_state]}}</span>
+                    </td>
+                    <td><a href="#/order/detail/{{order_id}}"><i class="fa fa-edit"></i></a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+        <!-- /.box-body -->
+        <div class="box-footer clearfix no-border">
+            <bs-pagination></bs-pagination>
+        </div>
     </div>
-    <!-- /.box-header -->
-    <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-            <tbody><tr>
-                <th>选中</th>
-                <th>时间</th>
-                <th>单号</th>
-                <th>仓库审核通过人</th>
-                <th>采购负责人</th>
-                <th>状态</th>
-                <th>操作</th>
-            </tr>
-            <tr ng-repeat="item in list">
-                <td><input type="checkbox" /> </td>
-                <td ng-bind="item.time" ></td>
-                <td ng-bind="item.oid" ></td>
-                <td ng-bind="item.pass" ></td>
-                <td ng-bind="item.owner" ></td>
-                <td ng-bind="item.status" ></td>
-                <td><a href="#/order/detail/1"><i class="fa fa-edit"></i></a></td>
-            </tr>
-            </tbody></table>
-    </div>
-    <!-- /.box-body -->
-    <!-- /.box-body -->
-    <div class="box-footer clearfix no-border">
-        <bs-pagination></bs-pagination>
-    </div>
-</div></div>
+</div>
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span>{{match.model.flag}}</span>
+        <span ng-bind-html="match.model.value | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>
