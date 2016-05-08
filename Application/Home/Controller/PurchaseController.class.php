@@ -893,17 +893,18 @@ class PurchaseController extends Controller
         }
 
 
-        $map['order_id'] = session('order_id');
-        $sOD = D('DealOrderView');
+        $map['order_id'] = $arr->order_id;
 
-        $divide = 15;
-        $page = (I('page') - 1) * $divide;
+        $sP = M('order');
 
-        $sData['page'] = I('page');
-        $sData['tatal'] = $sOD->count();
-        $sData['list'] = $sOD->where($map)->field('*')->limit($page, $divide)->order('orderdetail_id asc')->select();
+        $sPData['result'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
+            ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
+            ->where($map)
+            ->find();
 
-        $this->ajaxReturn($sData);
+        $sPData['status'] = 1;
+        $this->ajaxReturn($sPData);
     }
 
 

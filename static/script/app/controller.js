@@ -161,10 +161,10 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $http.post($Bs_API.getApi('receive_product_detail'), {
         product_id: $state.params.id
     }).success(function (data) {
-        if(data.status==1){
+        if (data.status == 1) {
             $scope.data = data.result;
             rollPic(JSON.parse(data.result.product_photogroup));
-        }else {
+        } else {
             toastr.error('获取失败');
         }
 
@@ -544,10 +544,10 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
 
 app.controller('goodOrderListCtrl', function ($scope, $state) {
     $scope.stateColor = [
-        "label-info", "label-success", "label-danger"
+        "label-warning","label-success", "label-info","label-primary",  "label-danger"
     ];
     $scope.stateText = [
-        "待收货", "审核通过", "退货"
+        "待审核",  "审核通过", "退货", "待收货","审核不通过"
     ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
@@ -651,22 +651,27 @@ app.controller('goodOrderListCtrl', function ($scope, $state) {
         return fmt;
     }
 });
-app.controller('goodOrderDetailCtrl', function ($scope) {
+app.controller('goodOrderDetailCtrl', function ($scope, $http, $Bs_API, $state) {
 
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
+    $scope.stateColor = [
+        "label-warning","label-success", "label-info","label-primary",  "label-danger"
+    ];
+    $scope.stateText = [
+        "待审核",  "审核通过", "退货", "待收货","审核不通过"
+    ];
+    //allocationorder_id
+    $http.post($Bs_API.getApi('order_detail'), {
+        order_id: $state.params.id
+    }).success(function (data) {
+        //var use
+        if (data && data.status && data.status == 1) {
+            $scope.order = data.result;
+        } else {
+            toastr.error('系统维护中！');
+        }
+    }).error(function (data) {
+        toastr.error('网络错误，信息获取失败！');
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        ////console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 
 
@@ -1132,22 +1137,60 @@ app.controller('goodCheckOrderListCtrl', function ($scope, $state) {
     }
 
 });
-app.controller('goodCheckOrderDetailCtrl', function ($scope) {
-
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
+app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $state) {
+    $scope.stateColor = [
+        "label-warning","label-success", "label-info","label-primary",  "label-danger"
+    ];
+    $scope.stateText = [
+        "待审核",  "审核通过", "退货", "待收货","审核不通过"
+    ];
+    //allocationorder_id
+    $http.post($Bs_API.getApi('man_order_detail'), {
+        order_id: $state.params.id
+    }).success(function (data) {
+        //var use
+        if (data && data.status && data.status == 1) {
+            $scope.order = data.result;
+        } else {
+            toastr.error('系统维护中！');
+        }
+    }).error(function (data) {
+        toastr.error('网络错误，信息获取失败！');
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        ////console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
+    $scope.reject = function () {
+        $http.post($Bs_API.getApi('do_review'), {
+            number: $scope.order.order_number,
+            type: 'order',
+            state: 5
+        }).success(function (data) {
+            if (data.status == 1) {
+                toastr.success('审核成功！');
+            } else {
+                toastr.error('审核失败！');
+            }
 
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
+        }).error(function (data) {
+            toastr.error('网络错误，提交失败！');
+        });
+    }
+    $scope.pass = function () {
+        $http.post($Bs_API.getApi('do_review'), {
+            id: $state.params.id,
+            type: 'order',
+            state: 1
+        }).success(function (data) {
+            data = JSON.parse(data);
+            if (data.status == 1) {
+                toastr.success('审核成功！');
+                $state.go('main.check-order', {page: 1})
+            } else {
+                toastr.error('审核失败！');
+            }
+
+        }).error(function (data) {
+            toastr.error('网络错误，提交失败！');
+        });
+    }
 });
 
 app.controller('goodCheckGoodListCtrl', function ($scope, $state) {

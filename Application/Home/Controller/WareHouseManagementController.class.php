@@ -7,7 +7,7 @@ class WareHouseManagementController extends Controller
 {
 
     /**
-     * 查询订单
+     * 查询待审核订单
      * @access public
      * @param void
      * @return void
@@ -44,18 +44,7 @@ class WareHouseManagementController extends Controller
 
         $sP = M('order');
         $sPData['page'] = $arr->page;
-        if (!empty($arr->purchaser_name)) {
-            $map['USER1.user_name'] = array('like', "%" . $arr->purchaser_name . "%");
-        }
-        if (!empty($arr->auditor_name)) {
-            $map['USER2.user_name'] = array('like', "%" . $arr->auditor_name . "%");
-        }
-        if (!empty($arr->order_number)) {
-            $map['order_number'] = array('like', "%" . $arr->order_number . "%");
-        }
-        if ($arr->order_state === "0" || !empty($arr->order_state)) {
-            $map['order_state'] = $arr->order_state;
-        }
+        $map['order_state'] = 0;
         if (!empty($arr->start_time) && !empty($arr->end_time)) {
             $map['order_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
         } else if (!empty($arr->start_time)) {
@@ -63,27 +52,68 @@ class WareHouseManagementController extends Controller
         } else if (!empty($arr->end_time)) {
             $map['order_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
-        if (!empty(count($map))) {
-            //只要有一个搜索条件，就选择搜索模式
-            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
-                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
-                ->where($map)
-                ->count();
-            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
-                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
-                ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
-                ->where($map)
-                ->select();
-        } else {
-            $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
-                ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
-                ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
-                ->select();
-        }
+
+        //只要有一个搜索条件，就选择搜索模式
+        $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->where($map)
+            ->count();
+        $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->field('tb_order.*, USER1.user_name as purchaser_name')
+            ->where($map)
+            ->select();
+
         $this->ajaxReturn($sPData);
     }
 
+    public function queryOrderListOfMine()
+    {
+        $json = file_get_contents("php://input");
+        $arr = json_decode($json);
+        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
+        if ($arr->session_id) {
+            session_id($arr->session_id);
+            session_start();
+        }
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+
+
+        //每页10个
+        $divide = 10;
+        //查询偏移量$page, 页数*每页显示的数量
+        $page = ($arr->page - 1) * $divide;
+        //表格
+        if ($arr->page) {
+            //没有页数，默认显示第一页
+            $page = 0;
+        }
+
+        $sP = M('order');
+        $sPData['page'] = $arr->page;
+        $map['auditor_id'] = session('user_id');
+        if (!empty($arr->start_time) && !empty($arr->end_time)) {
+            $map['order_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
+        } else if (!empty($arr->start_time)) {
+            $map['order_time'] = array('gt', strtotime($arr->start_time));
+        } else if (!empty($arr->end_time)) {
+            $map['order_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
+        }
+
+        //只要有一个搜索条件，就选择搜索模式
+        $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->where($map)
+            ->count();
+        $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->field('tb_order.*, USER1.user_name as purchaser_name')
+            ->where($map)
+            ->select();
+
+        $this->ajaxReturn($sPData);
+    }
 
     /**
      * 显示订单详情
@@ -113,17 +143,17 @@ class WareHouseManagementController extends Controller
 
 
         $map['order_id'] = $arr->order_id;
-        $map['supplier_id'] = $arr->supplier_id;
-        $sOD = D('DealOrderView');
 
-        $divide = 15;
-        $page = ($arr->page - 1) * $divide;
+        $sP = M('order');
 
-        $sData['page'] = $arr->page;
-        $sData['total'] = $sOD->where($map)->count();
-        $sData['list'] = $sOD->where($map)->field('order_id,supplier_id', true)->limit($page, $divide)->order('orderdetail_id asc')->select();
+        $sPData['result'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+            ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
+            ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
+            ->where($map)
+            ->find();
 
-        $this->ajaxReturn($sData);
+        $sPData['status'] = 1;
+        $this->ajaxReturn($sPData);
     }
 
 
@@ -367,7 +397,7 @@ class WareHouseManagementController extends Controller
             ->find();
         $map2['product_id'] = $sData['result']['product_id'];
         $rOD = M('product')->where($map2)->find();
-        $sData['result']['product_name']=$rOD['product_name'];
+        $sData['result']['product_name'] = $rOD['product_name'];
         $sData['status'] = "1";
         $this->ajaxReturn($sData);
 
@@ -394,35 +424,31 @@ class WareHouseManagementController extends Controller
             session_id($arr->session_id);
             session_start();
         }
-        if (!session('?user_id')) {
+        if (!session('?user_id') || empty($arr->id)) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
 
-        $map = $arr->number;
 
-        $is_order = "TROL";
-        $is_receive = "TOAL";
-
-        $st['status'] = "0";
-        if (explode($is_order, $map)) {
+        if ($arr->type == 'order') {
             $st['status'] = "1";
-            $result = M('order')->where($arr->id)->save($arr->state);
+            $map['order_id'] = $arr->id;
+            $data['order_state']=$arr->state;
+            $result = M('order')->where($map)->save($data);
 
             //如果审核通过，修改入库商品库存
             if ($result == 1) {
-
                 //TODO   修改所有入库商品库存
-                $rOD['receiveorderdetail_id'] = M('receiveorderdetail')->where($arr->id)->select();
-
+                $rOD['receiveorderdetail_id'] = M('receiveorderdetail')->where($map)->select();
             }
-        }
-
-        if (explode($is_receive, $map)) {
+        } else if ($arr->type == 'receive') {
             $st['status'] = "1";
+            $map['receiveorder_id'] = $arr->id;
             $result = M('receiveorder')->where($map)->save($arr->state);
+        } else {
+            $st['status'] = "0";
         }
 
         $this->ajaxReturn(json_encode($st), 'JSON');
