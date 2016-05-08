@@ -301,7 +301,7 @@ class WareHouseManagementController extends Controller
         }
         if (!empty(count($map))) {
             //只要有一个搜索条件，就选择搜索模式
-            $sPData["total"] =  $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
+            $sPData["total"] = $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
                 ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
                 ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
                 ->where($map)
@@ -353,15 +353,22 @@ class WareHouseManagementController extends Controller
 
 
         $map['allocationorder_id'] = $arr->allocationorder_id;
-        $rOD = D('AllocationOrderDetailView');
-
-        $divide = 15;
-        $page = ($arr->page - 1) * $divide;
-
-        $sData['page'] = $arr->page;
-        $sData['total'] = $rOD->where($map)->count();
-        $sData['list'] = $rOD->where($map)->field('allocationorder_id', true)->limit($page, $divide)->order('allocationorderdetail_id asc')->select();
-
+        if (empty($arr->allocationorder_id)) {
+            $userInfo['status'] = "0";
+            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            return;
+        }
+        $rOD = M('allocationorder');
+        $sData['result'] = $rOD->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
+            ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
+            ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
+            ->join(' __ALLOCATIONORDERDETAIL__  ON __ALLOCATIONORDERDETAIL__.allocationorder_id = __ALLOCATIONORDER__.allocationorder_id', 'LEFT')
+            ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name,product_id,allocationorderdetail_count')
+            ->find();
+        $map2['product_id'] = $sData['result']['product_id'];
+        $rOD = M('product')->where($map2)->find();
+        $sData['result']['product_name']=$rOD['product_name'];
+        $sData['status'] = "1";
         $this->ajaxReturn($sData);
 
     }

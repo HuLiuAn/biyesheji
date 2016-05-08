@@ -729,7 +729,7 @@ app.controller('goodInoutListCtrl', function ($scope, $state) {
 
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
-console.log(data);
+        //console.log(data);
     });
     $scope.dt = {
         start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
@@ -828,22 +828,20 @@ console.log(data);
     }];
 
 });
-app.controller('goodInoutDetailCtrl', function ($scope) {
-
-    $scope.$on('PageLoaded', function (e, data) {
-        $scope.list = data;
-
+app.controller('goodInoutDetailCtrl', function ($scope, $http, $Bs_API, $state) {
+    //allocationorder_id
+    $http.post($Bs_API.getApi('allo_detail'), {
+        allocationorder_id: $state.params.id
+    }).success(function (data) {
+        //var use
+        if (data && data.status && data.status == 1) {
+            $scope.alloc = data.result;
+        } else {
+            toastr.error('系统维护中！');
+        }
+    }).error(function (data) {
+        toastr.error('网络错误，信息获取失败！');
     });
-    //获取当前页面
-    $scope.data = {};
-    $scope.search = function () {
-        ////console.log('click search')
-        $scope.$broadcast('PageWillChange', $scope.data);
-    };
-
-    $scope.getLocation = function (val) {
-        return ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
-    };
 });
 app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.product = {};
