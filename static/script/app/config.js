@@ -45,6 +45,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         allo_detail: base + "WareHouseManagement/showAllocationDetail",
         get_ware_capacity: base + "WareHouse/allocateProduct",
         man_order_list: base + "WareHouseManagement/queryOrderList",
+        man_order_history: base + "WareHouseManagement/queryOrderListOfMine",
         man_order_detail: base + "WareHouseManagement/showOrderDetail",
         do_review: base + "WareHouseManagement/review",
         man_receive_list: base + "WareHouseManagement/queryReceiveOrder",
@@ -81,7 +82,6 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
 
     return _$Bs_API;
 
-
     //信息提示
     function loading(msg, type, time) {
         $('#loading-info').show();
@@ -107,7 +107,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
 });
 var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 //检查登陆信息
-app.run(function ($rootScope, $location, $http) {
+app.run(function ($rootScope, $location, $http,$Bs_API) {
     $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
         console.log(data);
         try {
@@ -492,11 +492,16 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         templateUrl: 'views/check/order.html',
         controller: 'goodCheckOrderListCtrl',
         Handler: "man_order_list"
+    }). state('main.check-order-mine', {
+        url: 'check/order-mine/:page?order_number&start_time&end_time&purchaser_name&auditor_name&order_state',
+        templateUrl: 'views/check/order-mine.html',
+        controller: 'goodCheckOrderListCtrl',
+        Handler: "man_order_history"
     }).state('main.check-good', {
         url: 'check/good/:page?search',
         templateUrl: 'views/check/good.html',
         controller: 'goodCheckGoodListCtrl',
-        Handler: "man_receive_list"
+        Handler: "man_order_history"
     }).state('main.check-order-detail', {
         url: 'check/order-detail/:id',
         templateUrl: 'views/check/order-detail.html',

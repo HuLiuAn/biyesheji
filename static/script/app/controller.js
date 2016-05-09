@@ -1029,10 +1029,10 @@ app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
 app.controller('goodCheckOrderListCtrl', function ($scope, $state) {
 
     $scope.stateColor = [
-        "label-info", "label-success", "label-danger"
+        "label-warning", "label-success", "label-info", "label-primary", "label-danger"
     ];
     $scope.stateText = [
-        "待收货", "审核通过", "退货"
+        "待审核", "审核通过", "退货", "待收货", "审核不通过"
     ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
@@ -1159,12 +1159,14 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
     });
     $scope.reject = function () {
         $http.post($Bs_API.getApi('do_review'), {
-            number: $scope.order.order_number,
+            id: $state.params.id,
             type: 'order',
-            state: 5
+            state: 4
         }).success(function (data) {
+            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
+                $state.reload()
             } else {
                 toastr.error('审核失败！');
             }
@@ -1182,7 +1184,7 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
             data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
-                $state.go('main.check-order', {page: 1})
+                $state.reload()
             } else {
                 toastr.error('审核失败！');
             }
@@ -1322,10 +1324,12 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $sta
         $http.post($Bs_API.getApi('do_review'), {
             id: $state.params.id,
             type: 'receive',
-            state: 5
+            state: 4
         }).success(function (data) {
+            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
+                $state.reload()
             } else {
                 toastr.error('审核失败！');
             }
@@ -1343,7 +1347,7 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $sta
             data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
-                $state.go('main.check-order', {page: 1})
+                $state.reload()
             } else {
                 toastr.error('审核失败！');
             }

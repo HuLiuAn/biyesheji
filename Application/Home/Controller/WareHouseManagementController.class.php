@@ -95,6 +95,7 @@ class WareHouseManagementController extends Controller
         $sP = M('order');
         $sPData['page'] = $arr->page;
         $map['auditor_id'] = session('user_id');
+        $map['order_state'] = array('gt', 0);
         if (!empty($arr->start_time) && !empty($arr->end_time)) {
             $map['order_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
         } else if (!empty($arr->start_time)) {
@@ -435,7 +436,7 @@ class WareHouseManagementController extends Controller
         if ($arr->type == 'order') {
             $st['status'] = "1";
             $map['order_id'] = $arr->id;
-            $data['order_state']=$arr->state;
+            $data['order_state'] = $arr->state;
             $result = M('order')->where($map)->save($data);
 
             //如果审核通过，修改入库商品库存
