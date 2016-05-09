@@ -498,17 +498,17 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         controller: 'goodCheckOrderListCtrl',
         Handler: "man_order_history"
     }).state('main.check-good', {
-        url: 'check/good/:page?search',
+        url: 'check/good/:page?order_number&start_time&end_time&purchaser_name&auditor_name&order_state',
         templateUrl: 'views/check/good.html',
         controller: 'goodCheckGoodListCtrl',
-        Handler: "man_order_history"
+        Handler: "man_receive_list"
     }).state('main.check-order-detail', {
         url: 'check/order-detail/:id',
         templateUrl: 'views/check/order-detail.html',
         controller: 'goodCheckOrderDetailCtrl'
     }).state('main.check-good-detail', {
         url: 'check/good-detail/:id',
-        templateUrl: 'views/check/good.html',
+        templateUrl: 'views/check/good-detail.html',
         controller: 'goodCheckGoodDetailCtrl'
     });
     $urlRouterProvider.otherwise('/home')

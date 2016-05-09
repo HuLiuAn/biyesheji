@@ -201,32 +201,37 @@ class WareHouseManagementController extends Controller
 
         $sP = M('receiveorder');
         $sPData['page'] = $arr->page;
+        if ($arr->order_state === "0" || !empty($arr->order_state)) {
+            $map['receiveorder_state'] = $arr->order_state;
+        }
+        if (!empty($arr->start_time) && !empty($arr->end_time)) {
+            $map['receiveorder_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
+        } else if (!empty($arr->start_time)) {
+            $map['receiveorder_time'] = array('gt', strtotime($arr->start_time));
+        } else if (!empty($arr->end_time)) {
+            $map['receiveorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
+        }
 
-        $sPData['status'] = "0";
-
-        //TODO 查询条件太多，有点乱
-        if (!empty($arr->receiveorder_number) || !empty($arr->date) || !empty($arr->admituser_number) || !empty($arr->receiveuser_number) || !empty($arr->receiveorder_state)) {
-
-            $pN['user_number'] = array('like', "%" . $arr->admituser_number . "%");
-            $aN['user_number'] = array('like', "%" . $arr->receiveuser_number . "%");
-
+        if (!empty(count($map))) {
             //只要有一个搜索条件，就选择搜索模式
-            $map['receiveorder_number'] = array('like', "%" . $arr->receiveorder_number . "%");
-            //TODO 按照日期范围查询应该怎么匹配？
-            $map['receiveorder_date'] = array('like', "%" . $arr->date . "%");
-            $map['receiveuser_id'] = M('user')->where($pN)->find();
-            $map['admituser_id'] = M('user')->where($aN)->find();
-            $map['receiveorder_state'] = $arr->receiveorder_state;
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['status'] = "1";
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
-
+            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')->count();
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+                ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
+                ->where($map)
+                ->select();
         } else {
             $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+                ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
+                ->select();
         }
         $this->ajaxReturn($sPData);
-
     }
 
 
@@ -447,7 +452,8 @@ class WareHouseManagementController extends Controller
         } else if ($arr->type == 'receive') {
             $st['status'] = "1";
             $map['receiveorder_id'] = $arr->id;
-            $result = M('receiveorder')->where($map)->save($arr->state);
+            $data['receiveorder_state'] = $arr->state;
+            $result = M('receiveorder')->where($map)->save($data);
         } else {
             $st['status'] = "0";
         }

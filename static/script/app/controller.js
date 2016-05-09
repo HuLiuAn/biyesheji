@@ -1197,31 +1197,16 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
 
 app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
 
+    $scope.stateText = [
+        "等待审核", "审核通过", "审核不通过"
+    ];
     $scope.stateColor = [
         "label-info", "label-success", "label-danger"
-    ];
-    $scope.stateText = [
-        "待收货", "审核通过", "退货"
     ];
     $scope.$on('PageLoaded', function (e, data) {
         $scope.list = data;
 
     });
-    //获取当前页面
-    $scope.searchField = [{
-        flag: "单号",
-        field: 'order_number',
-        value: ''
-    }, {
-        flag: "仓库审核通过人",
-        field: 'auditor_name',
-        value: ''
-    }, {
-        flag: "采购负责人",
-        field: 'purchaser_name',
-        value: ''
-    }];
-
     $scope.dt = {
         start: $state.params.start_time ? new Date($state.params.start_time) : new Date(),
         end: $state.params.end_time ? new Date($state.params.end_time) : new Date(),
@@ -1284,6 +1269,12 @@ app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
         })
         ;
     }
+    $scope.radioModel = $state.params.order_state;
+    $scope.select = function () {
+        $scope.$broadcast('PageWillChange', {
+            order_state: $scope.radioModel, order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: ""
+        });
+    }
     function Format(time, fmt) {
         if (!time || !fmt) {
             return ""
@@ -1307,9 +1298,14 @@ app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
 
 });
 app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
-
+    $scope.stateText = [
+        "等待审核", "审核通过", "审核不通过"
+    ];
+    $scope.stateColor = [
+        "label-info", "label-success", "label-danger"
+    ];
     $http.post($Bs_API.getApi('man_receive_detail'), {
-        order_id: $state.params.id
+        receiveorder_id: $state.params.id
     }).success(function (data) {
         //var use
         if (data && data.status && data.status == 1) {

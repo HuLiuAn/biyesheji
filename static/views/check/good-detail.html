@@ -1,70 +1,59 @@
-<div class="box box-primary" style="padding: 10px;border:1px solid rgba(128, 128, 128, 0.26);margin-bottom: 0px">
-
-    <div class="box-header ui-sortable-handle" style="cursor: move;">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+    <div class="box-header with-border">
+        <h3 class="box-title">领取单详情</h3>
+        <small class="pull-right"><i class="fa fa-clock-o"></i>
+            {{order.receiveorder_date|timeformat}}
+        </small>
     </div>
     <!-- /.box-header -->
-    <div class="box-body">
-        <!-- title row -->
-        <div class="row">
-            <div class="col-xs-12">
-                <h2 class="page-header">
-                    清单详情
-                    <small class="pull-right"><i class="fa fa-clock-o"></i>
-                        {{order.receiveorder_date|timeformat}}
-                    </small>
-                </h2>
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <th style="width:50%">单号:</th>
-                            <td ng-bind="order.receiveorder_number"></td>
-                        </tr>
-                        <tr>
-                            <th>申请人</th>
-                            <td ng-bind="order.receiveuser_name"></td>
-                        </tr>
-                        <tr>
-                            <th>状态</th>
-                            <td><span class="label  {{stateColor[order.receiveorder_state]}}">{{stateText[order.receiveorder_state]}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>产品:</th>
-                            <td><a ng-bind="order.product_name" href="#/good/detail/{{data.product_id}}"></a></td>
-                        </tr>
-                        <tr>
-                            <th>产品图片:</th>
-                            <td><img style="max-width:500px;" ng-src="{{order.product_photo}}"/></td>
-                        </tr>
-                        <tr>
-                            <th>Total:</th>
-                            <td ng-bind="order.product_amount"></td>
-                        </tr>
-                        <tr>
-                            <th>经手人</th>
-                            <td ng-bind="order.admituser_name"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- /.col -->
-        </div>
+    <!-- form start -->
+    <div class="box-body" style="padding-right: 20px;">
+        <table class="tableshow">
+            <tr>
+                <td style="width:50%">单号:</td>
+                <td ng-bind="order.receiveorder_number"></td>
+            </tr>
+            <tr>
+                <td>申请人</td>
+                <td ng-bind="order.receiveuser_name"></td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td><span class="label  {{stateColor[order.receiveorder_state]}}">{{stateText[order.receiveorder_state]}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>产品:</td>
+                <td><a ng-bind="order.product_name" href="#/good/detail/{{data.product_id}}"></a></td>
+            </tr>
+            <tr>
+                <td>产品图片:</td>
+                <td><img style="max-width:500px;" ng-src="{{order.product_photo}}"/></td>
+            </tr>
+            <tr>
+                <td>数量:</td>
+                <td ng-bind="order.product_amount"></td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td><span
+                        class="label  {{stateColor[order.order_state]}}">{{stateText[order.order_state]}}</span></td>
+            </tr>
+            <tr ng-if="order.admituser_name">
+                <td>审核人</td>
+                <td>{{order.admituser_name}}</td>
+            </tr>
+            <tr ng-if="order.review_time">
+                <td>审核时间</td>
+                <td>{{order.review_time}}</td>
+            </tr>
+        </table>
     </div>
     <!-- /.box-body -->
-    <div class="box-footer clearfix no-border">
-        <div class="box-footer">
-            <a type="submit" class="btn btn-default" href="#/check/reveive-list/1">返回</a>
-            <a type="submit" ng-if="order.order_state==0" class="btn btn-danger" href="" ng-click="reject()">不通过</a>
-            <a type="submit" ng-if="order.order_state==0" class="btn btn-success" href="" ng-click="pass()">审核通过</a>
-        </div>
+    <div class="box-footer">
+        <a type="submit" class="btn btn-default" href="#/check/good/1">返回</a>
+        <a type="submit" ng-if="order.order_state==0" class="btn btn-danger" href="" ng-click="reject()">不通过</a>
+        <a type="submit" ng-if="order.order_state==0" class="btn btn-success" href="" ng-click="pass()">审核通过</a>
     </div>
 </div>
-
