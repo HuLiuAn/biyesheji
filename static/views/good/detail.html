@@ -1,54 +1,37 @@
-<div style="padding: 10px;border:1px solid rgba(128, 128, 128, 0.26);">
+<div class="box box-primary"
+     style="margin: 0;padding-top:10px;padding-bottom: 40px;padding-right: 10px ;padding-left: 10px ;">
+    <div class="box-header with-border">
+        <h3 class="box-title">商品: {{data.product_name}}</h3>
+    </div>
     <div class="box-body box-profile" style="padding: 10px;border:1px solid rgba(128, 128, 128, 0.26);">
-        <div class="row">
-            <div class="col-lg-7 col-sm-7 col-md-7">
-                <uib-carousel active="active" interval="myInterval" no-wrap="noWrapSlides">
-                    <uib-slide ng-repeat="slide in slides track by slide.id" index="slide.id">
-                        <img ng-src="{{slide.image}}" style="margin:auto;">
+        <div class="row" ng-if="slides" style="min-height: 100px;">
+            <uib-carousel active="active" interval="myInterval" no-wrap="noWrapSlides">
+                <uib-slide ng-repeat="slide in slides track by slide.id" index="slide.id">
+                    <img ng-src="{{slide.image}}" style="margin:auto;">
 
-                        <div class="carousel-caption">
-                            <h4>Slide {{slide.id}}</h4>
-
-                            <p>{{slide.text}}</p>
-                        </div>
-                    </uib-slide>
-                </uib-carousel>
-            </div>
-            <div style="padding: 10px;">
-                <h3 ng-bind="data.product_name">
-
-                </h3>
-
-                <div style="margin-top:5px;">
-                    规格：
-                    <button class="btn btn-warning">
-                        大
-                    </button>
-                    <button class="btn btn-warning">
-                        中
-                    </button>
-                    <button class="btn btn-warning">
-                        小
-                    </button>
-                </div>
-                <div>
-                    剩余：{{data.count}}
-                </div>
-                <div style="margin-top:5px;">数量：
-                    <a ng-click="minus()" style="height: 26px;width: 10px; margin: 0;"
-                       class="btn btn-smamll btn-default">-</a>
-                    <input type="text"
-                           style="width: 60px;"
-                           ng-model="data.amount"
-                           autocomplete="off">
-                    <a ng-click="add()" style="height: 26px;width: 10px; margin: 0;"
-                       class="btn btn-smamll btn-default">+</a>
-                </div>
-                <div style="position: relative;">
-                    <a href="" ng-click="addToCart()" class="btn btn-primary"
-                       style="position: absolute;top:-20px;;right: 20px;"><b>领取该商品</b></a>
-                </div>
-            </div>
+                    <div class="carousel-caption">
+                    </div>
+                </uib-slide>
+            </uib-carousel>
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div>
+            剩余：{{data.count}}
+        </div>
+        <div style="margin-top:5px;">数量：
+            <a ng-click="minus()" style="height: 26px;width: 10px; margin: 0;"
+               class="btn btn-smamll btn-default">-</a>
+            <input type="text"
+                   style="width: 60px;"
+                   ng-model="data.amount"
+                   autocomplete="off">
+            <a ng-click="add()" style="height: 26px;width: 10px; margin: 0;"
+               class="btn btn-smamll btn-default">+</a>
+        </div>
+        <div style="position: relative;">
+            <a href="" ng-click="addToCart()" class="btn btn-primary"
+               style="position: absolute;top:-20px;;right: 20px;"><b>领取该商品</b></a>
         </div>
     </div>
     <table style="width: 100%;margin-top: 20px;">

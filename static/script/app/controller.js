@@ -164,6 +164,10 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
         if (data.status == 1) {
             $scope.data = data.result;
             rollPic(JSON.parse(data.result.product_photogroup));
+            if (data.result.property) {
+                builtProperty(JSON.parse(data.result.property));
+            }
+
         } else {
             toastr.error('获取失败');
         }
@@ -171,7 +175,9 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     }).error(function () {
         toastr.error('获取失败！请检查网络');
     });
+    function builtProperty(pro){
 
+    }
     $scope.pro = {
         a: {
             title: "名称",
@@ -1272,7 +1278,12 @@ app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
     $scope.radioModel = $state.params.order_state;
     $scope.select = function () {
         $scope.$broadcast('PageWillChange', {
-            order_state: $scope.radioModel, order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: ""
+            order_state: $scope.radioModel,
+            order_number: "",
+            start_time: "",
+            end_time: "",
+            purchaser_name: "",
+            auditor_name: ""
         });
     }
     function Format(time, fmt) {
