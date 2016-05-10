@@ -201,6 +201,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 }).error(function (data) {
                     $Bs_API.loading('网络错误，信息获取失败！', 1);
                 });
+                $scope.editToggle();
             };
 
             function extend(data) {

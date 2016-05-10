@@ -7,14 +7,27 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <strong><i class="fa fa-book margin-r-5"></i> 姓名</strong>
+        <strong><i class="fa fa-registered   margin-r-5"></i> 工号</strong>
 
         <p class="text-muted">
-            <span ng-if="!edit">{{user.user_name}}</span> <input ng-if="edit" type="text" ng-model="info.user_name"/>
+            <span>{{user.user_number}}</span>
         </p>
 
         <hr>
+        <strong><i class="fa fa-user  margin-r-5"></i> 姓名</strong>
 
+        <p class="text-muted">
+            <span>{{user.user_name}}</span>
+        </p>
+
+        <hr>
+        <strong><i class="fa fa-book margin-r-5"></i> 部门</strong>
+
+        <p class="text-muted">
+            <span>{{user.user_department}}</span>
+        </p>
+
+        <hr>
         <strong><i class="fa fa-mobile-phone margin-r-5"></i> 手机号</strong>
 
         <p class="text-muted">
@@ -23,7 +36,7 @@
 
         <hr>
 
-        <strong><i class="fa  fa-user    margin-r-5"></i> 角色</strong>
+        <strong><i class="fa fa-vimeo margin-r-5" ng-class="{'text-orange':'user.user_role==0','text-aqua':'user.user_role==1','text-primary':'user.user_role==2'}"></i> 角色</strong>
 
         <p class="text-muted">
             <span>{{role[user.user_role]}}</span>
