@@ -167,10 +167,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
 
 
                 } catch (e) {
-                    $Bs_API.loading('抱歉，目前系统维护中！', 1);
+                    toastr.error('抱歉，目前系统维护中！', 1);
                 }
             }).error(function (data) {
-                $Bs_API.loading('网络错误，信息获取失败！', 1);
+                toastr.error('网络错误，信息获取失败！', 1);
             });
             $scope.editToggle = function () {
                 $scope.edit = !$scope.edit;
@@ -186,20 +186,20 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     try {
                         var final = JSON.parse(data);
                         if (final && final.status == 1) {
-                            $Bs_API.loading('修改成功');
+                            toastr.success('修改成功');
                             $state.go('main.user-info');
                             $scope.user = extend($scope.info);
                         } else {
-                            $Bs_API.loading('修改失败！', 1);
+                            toastr.error('修改失败！', 1);
                         }
 
                     }
                     catch (e) {
-                        $Bs_API.loading('抱歉，目前系统维护中！', 1);
+                        toastr.error('抱歉，目前系统维护中！');
                     }
 
                 }).error(function (data) {
-                    $Bs_API.loading('网络错误，信息获取失败！', 1);
+                    toastr.error('网络错误，信息获取失败！');
                 });
                 $scope.editToggle();
             };
@@ -222,7 +222,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             $scope.changeKey = function () {
 
                 if (!validation()) {
-                    console.log('密码不一致');
+                    toastr.error('两次新密码不一致');
                     return;
                 }
 
@@ -233,19 +233,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     try {
                         var final = JSON.parse(data);
                         if (final && final.status == 1) {
-                            $Bs_API.loading('修改成功');
+                           toastr.success('修改成功');
                             $state.go('main.user-info');
                         } else {
-                            $Bs_API.loading('修改失败！', 1);
+                            toastr.error('修改失败！');
                         }
 
                     }
                     catch (e) {
-                        $Bs_API.loading('抱歉，目前系统维护中！', 1);
+                        toastr.error('抱歉，目前系统维护中！');
                     }
 
                 }).error(function (data) {
-                    $Bs_API.loading('修改失败');
+                    toastr.error('修改失败');
                 });
             };
 
@@ -345,7 +345,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 }
                 $scope.next1 = function () {
                     if (!$scope.supplier.supplier_id) {
-                        $Bs_API.loading("没有这个供应商", 1);
+                        toastr.error("没有这个供应商");
                         return;
                     }
                     $state.go('main.order-new.interests', $scope.supplier);
@@ -386,19 +386,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                         supplier_id: $scope.state.id
                     }).success(function (data) {
                         if (!data.status) {
-                            $Bs_API.loading("获取失败", 1);
+                            toastr.error("获取失败");
                         } else {
                             if (data.list.length < 1) {
-                                $Bs_API.loading("该供应商无商品", 1);
+                                toastr.error("该供应商无商品");
                             } else {
                                 $scope.list = data.list;
                             }
                         }
                     }).error(function () {
-                        $Bs_API.loading('加载失败');
+                        toastr.error('加载失败');
                     })
                 } else {
-                    $Bs_API.loading('请先选择供应商', 1)
+                    toastr.error('请先选择供应商', 1)
                     $state.go('main.order-new.profile');
                 }
                 $scope.next2 = function () {
@@ -416,11 +416,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                     $scope.formData.product = selectproduct;
                     $scope.formData.supplier.total = total;
                     if (selectproduct.length == 0) {
-                        $Bs_API.loading('请先选择商品', 1)
+                        toastr.error('请先选择商品', 1)
                         return;
                     }
                     if (amount == 0) {
-                        $Bs_API.loading('请输入商品数量', 1)
+                        toastr.error('请输入商品数量', 1)
                         return;
                     }
                     $scope.state.data = JSON.stringify($scope.formData);
@@ -443,16 +443,16 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 } else if ($scope.formData) {
                     $scope.form = $scope.formData;
                 } else {
-                    $Bs_API.loading('数据已过期', 1);
+                    toastr.error('数据已过期');
                     $state.go('main.order-new.payment', $scope.state);
                 }
 
                 $scope.submit = function () {
                     $http.post($Bs_API.getApi('new_order'), $scope.form).success(function () {
-                        $Bs_API.loading('成功');
+                        toastr.success('成功');
                         $state.go('main.order-list', {page: 1});
                     }).error(function () {
-                        $Bs_API.loading('添加失败', 1);
+                        toastr.error('添加失败');
                     });
                 };
             }

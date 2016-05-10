@@ -142,20 +142,20 @@ app.controller('goodHistoryCtrl', function ($scope, $state) {
 app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.addToCart = function () {
         if ($scope.data.count && $scope.data.amount > $scope.data.count) {
-            $Bs_API.loading('余量不足,领取失败', 1);
+            toastr.error('余量不足,领取失败');
             return;
         }
         if (!parseInt($scope.data.amount)) {
-            $Bs_API.loading('请输入领取数量', 1);
+            toastr.error('请输入领取数量');
             return;
         }
         $http.post($Bs_API.getApi('add_to_cart'), {
             "product_id": $state.params.id,
             "amount": parseInt($scope.data.amount)
         }).success(function (data) {
-            $Bs_API.loading('领取成功');
+            toastr.success('领取成功');
         }).error(function () {
-            $Bs_API.loading('领取失败,请检查网络', 1);
+            toastr.error('领取失败,请检查网络');
         });
     };
     $http.post($Bs_API.getApi('receive_product_detail'), {
@@ -169,7 +169,7 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
         }
 
     }).error(function () {
-        $Bs_API.loading('获取失败！请检查网络', 1);
+        toastr.error('获取失败！请检查网络');
     });
 
     $scope.pro = {
@@ -276,7 +276,7 @@ app.controller('goodHisDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $http.get($Bs_API.getApi('receive_detail')).success(function (data) {
         $scope.data = data;
     }).error(function () {
-        $Bs_API.loading('获取失败！请检查网络', 1);
+        toastr.error('获取失败！请检查网络');
     });
     $scope.stateText = [
         "等待审核", "审核通过", "审核不通过"
@@ -313,7 +313,7 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
         data.product_photogroup = JSON.parse(data.product_photogroup) || [];
         data.product_barcode = parseInt(data.product_barcode);
         if (!data.status) {
-            $Bs_API.loading("获取失败", 1);
+            toastr.error("获取失败");
         } else {
             for (var i = data.product_photogroup.length; i < 6; i++) {
                 data.product_photogroup[i] = "";
@@ -324,7 +324,7 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
         }
 
     }).error(function () {
-        $Bs_API.loading('获取失败！请检查网络', 1);
+        toastr.error('获取失败！请检查网络');
     });
 
     var Upload = {};
@@ -350,10 +350,10 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
         }
 
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.good-manage-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
     $scope.edit = function () {
@@ -391,10 +391,10 @@ app.controller('goodManageNewCtrl', function ($scope, $http, $Bs_API, $state) {
             }
         }
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.good-manage-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
 });
@@ -428,7 +428,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
     }).success(function (data) {
         data = JSON.parse(data);
         if (!data.status) {
-            $Bs_API.loading("获取失败", 1);
+            toastr.error("获取失败");
         } else {
             data.supplier_phone = parseInt(data.supplier_phone);
             $scope.products = {};
@@ -441,7 +441,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         }
 
     }).error(function (data) {
-        $Bs_API.loading('获取失败！请检查网络', 1);
+        toastr.error('获取失败！请检查网络');
     });
     $scope.product = {};
     $scope.supplier = {};
@@ -484,10 +484,10 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         }
         $scope.supplier.product = product;
         $http.post($Bs_API.getApi('edit_supplier'), $scope.supplier).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.provider-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
 });
@@ -534,10 +534,10 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
         }
         $scope.supplier.product = product;
         $http.post($Bs_API.getApi('new_supplier'), $scope.supplier).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.provider-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
 });
@@ -703,22 +703,22 @@ app.controller('goodHubDetailCtrl', function ($scope, $Bs_API, $http, $state) {
             $scope.hub = JSON.parse(data);
             $scope.hub.warehouse_maxcount = parseInt($scope.hub.warehouse_maxcount);
         } catch (e) {
-            $Bs_API.loading('抱歉，目前系统维护中！', 1);
+            toastr.error('抱歉，目前系统维护中！');
         }
     }).error(function (data) {
-        $Bs_API.loading('网络错误，信息获取失败！', 1);
+        toastr.error('网络错误，信息获取失败！');
     });
 
     $scope.hub = {};
     $scope.submit = function () {
         if (!$scope.hub.warehouse_number || !$scope.hub.warehouse_address || !$scope.hub.warehouse_maxcount) {
-            $Bs_API.loading('数据未填完', 1);
+            toastr.error('数据未填完');
         }
         $http.post($Bs_API.getApi('new_hub'), $scope.hub).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.hub-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
 });
@@ -726,13 +726,13 @@ app.controller('goodHubNewCtrl', function ($scope, $Bs_API, $state, $http) {
     $scope.hub = {};
     $scope.submit = function () {
         if (!$scope.hub.warehouse_number || !$scope.hub.warehouse_address || !$scope.hub.warehouse_maxcount) {
-            $Bs_API.loading('数据未填完', 1);
+            toastr.error('数据未填完');
         }
         $http.post($Bs_API.getApi('new_hub'), $scope.hub).success(function () {
-            $Bs_API.loading('成功');
+            toastr.success('成功');
             $state.go('main.hub-list', {page: 1});
         }).error(function () {
-            $Bs_API.loading('添加失败', 1);
+            toastr.error('添加失败');
         });
     }
 });
