@@ -8,9 +8,9 @@
     class ProductListViewModel extends ViewModel{
         
         public $viewFields = array(
-            
-            'product' => array('product_id','product_barcode','product_name','product_photo','properties'),
-            'inventory' => array('_on'=>'product.product_id=inventory.product_id','count','warehouse_id'),
+
+            'inventory' => array('inventory_id','warehouse_id','product_id','count'),
+            'product' => array( '_on'=>'inventory.product_id=product.product_id','product_barcode','product_name','product_photo','properties'),
             'warehouse' => array('_on'=>'inventory.warehouse_id=warehouse.warehouse_id','warehouse_number'),
         );
     }

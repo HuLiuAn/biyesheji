@@ -686,7 +686,7 @@ class PurchaseController extends Controller
      * author: shli
      * date: 2016.04.12
      */
-    public function showWareHouse()
+    public function getAllWareHouseList()
     {
 
         // if(!IS_AJAX)
@@ -706,41 +706,18 @@ class PurchaseController extends Controller
             return;
         }
 
-        $search = I('search');
-        $content = I('content');
+        //$sP = M('warehouse');
+        //$inventory = M('inventory');
+        $sP = D('ProductView');
 
-        $sL = M('warehouse');
+        $temp['warehouse_number'] = array('like', "%" . I('name') . "%");
+        $map['warehouse_id'] = M('warehouse')->where($temp)->select();
+        $map['product_id'] = $arr->product_id;
 
-        switch ($search) {
 
-            case('warehouse_number'):   //按仓库名字搜索
-                $condition['warehouse_number'] = array('like', "%{$content}%");
-                $sLresult = $sL->where($condition)->select();
-                break;
-            case(''):  //获取全部仓库
-                $sLresult = $sL->select();
-                break;
-
-        }
-
-        //$sLresult = $sL->where($condition)->select();
-        $sLcount = $sLresult->count();
-        if ($sLcount == 0) {
-
-            $this->error('您所查询的供应商不存在，请重试....');
-        }
-
-        //每页10个
-        $divide = 10;
-
-        //偏移量$page ,页数*每页显示的记录条数
-        $page = (I('page') - 1) * $divide;
-
-        $sData['page'] = I('page');
-        $sData['total'] = $sLcount;
-        $sData['list'] = $sLresult->field('warehouse_address', true)->limit($page, $divide)->order('warehouse_id asc')->select();
-
-        $this->ajaxReturn($sData);
+        $sPData['list'] = $sP->where($map)->order("warehouse_id asc")->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
     }
 
 
@@ -802,7 +779,7 @@ class PurchaseController extends Controller
         } else if (!empty($arr->end_time)) {
             $map['order_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
-        if (!empty(count($map))) {
+        if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
             $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
@@ -892,73 +869,28 @@ class PurchaseController extends Controller
             return;
         }
 
-
+        $sPData['status'] = 0;
         $map['order_id'] = $arr->order_id;
 
-        $sP = M('order');
+        $sPo = M('order');
 
-        $sPData['result'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
+        $sPData['result'] = $sPo->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
             ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
             ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
             ->where($map)
             ->find();
 
-        $sPData['status'] = 1;
+        //$sP = M('orderdetail');
+        $sP = D('DealOrderView');
+
+        $sPData['list'] = $sP->where($map)->order('orderdetail_id asc')->select();
+        if($sPData['list']) {
+            $sPData['status'] = 1;
+            $this->ajaxReturn($sPData);
+        }
         $this->ajaxReturn($sPData);
     }
 
-
-    /**
-     * 在订单中，为某一个商品选择入库仓库
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    /* public function showWareHouse(){
-
-         // if(!IS_AJAX)
-         //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-
-         $search = I('search');
-         $content =I('content');
-
-         $aO = M('warehouse');
-
-         switch ($search){
-
-             case('warehouse_number'):   //按仓库名字搜索
-                 $condition['warehouse_number'] = array('like',"%{$content}%");
-                 break;
-             case(''):  //获取全部仓库名字
-                 $condition['warehouse_id'] = $aO['warehouse_id'];
-                 break;
-
-         }
-
-         $aOresult = $aO->where($condition)->select();
-         $aOcount = $aOresult->count();
-         if ($aOcount == 0){
-
-             $this->error('您所查询的仓库不存在，请重试....');
-         }
-
-         //每页10个
-         $divide = 10;
-
-         //偏移量$page ,页数*每页显示的记录条数
-         $page = (I('page')-1) * $divide;
-
-         $aData['page'] = I('page');
-         $aData['total'] = $aOcount;
-         $aData['list'] = $aOresult->field('warehouse_id,warehouse_nUMBER')->limit($page,$divide)->order('warehouse_id asc')->select();
-
-         $this->ajaxReturn($aData);
-
-
-     }*/
 
 
     /**
@@ -987,28 +919,7 @@ class PurchaseController extends Controller
             return;
         }
 
-
-        $aO = D('AddOrderView');
-
-        $sP = M('supplierproduct');
-        $map['supplier_id'] = session('supplier_id');
-        $map['product_id'] = session('product_id');
-        $sPtemp = $sP->where($map)->select();
-
-
-        $aData = array(
-
-            'product_id' => session('product_id'),
-            'warehouse_id' => session('warehouse_id'),
-            //TODO 将一个变量的值付给另一个变量的方法是否正确？
-            'supplierproduct_id' => $sPtemp['supplierproduct_id'],
-
-            'count' => session('count'),
-            'purchaser_id' => session('orderuser_id'),
-            'value' => session('value'),
-            'sumvalue' => session('sumvalue'),
-
-        );
+        $st['status'] = "0";
 
         /* 选择一个随机的方案 */
         mt_srand((double)microtime() * 1000000);
@@ -1016,17 +927,46 @@ class PurchaseController extends Controller
         $rCInfo['order_number'] = 'TOAL' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $rCInfo['order_date'] = date('Y-m-d', time());
         $rCInfo['order_state'] = 0;
-        $rC->add($rCInfo);
+        //foreach ($arr->supplier as $supplier) {
 
-        if ($rC->where($rCInfo)->find()) {
+            $rCInfo['order_totalprice'] = $arr->supplier->total;
+            $rCInfo['supplier_id'] = $arr->supplier->supplier_id;
+            $rCInfo['purchaser_id'] = $arr->user_id;
+            $rCInfo['order_time']=time();
 
-            $st['status'] = "1";
+            $o = M('order')->add($rCInfo);
+       // }
+
+
+        if (!$o) {
+
             $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
+        } /*else {
 
             $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
+*/
+
+        $temp['order_id'] = $o;
+        if ($temp['order_id']) {
+
+            //如果领取单生成成功，则向领取单详情表插入领取商品记录
+            foreach ($arr->product as $product) {
+
+                $rCDInfo['product_id'] = $product->product_id;
+                $rCDInfo['warehouse_id'] = $product->warehouse_id;
+                $rCDInfo['product_count'] = $product->amount;
+                $rCDInfo['order_id'] = $temp['order_id'];
+                $rCDInfo['product_totalPrice'] = $product->amount * $product->supplierproduct_price;
+                M('orderdetail')->data($rCDInfo)->add();
+
+            }
+            $st['status'] = "1";
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+
+        $this->ajaxReturn(json_encode($st), 'JSON');
 
 
     }

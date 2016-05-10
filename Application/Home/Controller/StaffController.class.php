@@ -467,7 +467,6 @@ class StaffController extends Controller
             return;
         }
 
-
         //每页10个
         $divide = 10;
         //查询偏移量$page, 页数*每页显示的数量
@@ -478,21 +477,41 @@ class StaffController extends Controller
             $page = 0;
         }
 
-        $sP = M('product');
-        $sPData['page'] = $arr->page;
-        if (!empty($arr->barcode) || !empty($arr->name)) {
-            //只要有一个搜索条件，就选择搜索模式
-            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
-            $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
+        $sL = D("ProductListView");
 
-        } else {
-            $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
+        $sPData['page'] = $arr->page;
+
+        if (!empty($arr->barcode) || !empty($arr->name)) {
+            $data = array(
+                'product_name' => array('like', "%" . $arr->name . "%"),
+                'product_barcode' => array('like', "%" . $arr->barcode . "%"),
+
+            );
+
+            $map['product_id'] = M('product')->where($data['product_name'])->select();
+            $map['product_barcode'] = M('product')->where($data['product_barcode'])->select();
+
+            $sLMap = $sL->where($map)->select();
+            $sLm = $sLMap->where('count')->select();
+
+            $gData['total'] = $sL->where($sLm)->count();
+            //TODO 不能显示全部的商品，不太清楚原因
+            $gData['list'] = $sL->where($sLMap)->field('*')->limit($page, $divide)->order("inventory_id asc")->select();
+
+        }else {
+
+            //如果商品的库存为0，则不计入记录数
+            $gData['total'] = M('inventory')->where('count')->count();
+            //TODO 不能显示全部的商品，不太清楚原因
+            $gData['list'] = $sL->where('count')->field('*')->limit($page, $divide)->order("inventory_id desc")->select();
 
         }
-        $this->ajaxReturn($sPData);
+        if ($gData['total'] == 0) {
+
+            $this->error('您所查询的商品不存在，请重试....');
+        }
+        $this->ajaxReturn($gData);
+
     }
 
 
@@ -580,16 +599,26 @@ class StaffController extends Controller
         $sPData['page'] = $arr->page;
 
         if (!empty($arr->barcode) || !empty($arr->name)) {
+            $data = array(
+                'product_name' => array('like', "%" . $arr->name . "%"),
+                'product_barcode' => array('like', "%" . $arr->barcode . "%"),
 
-            $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
-            $gData['total'] = $sL->where($map)->count();
-            $gData['list'] = $sL->where($map)->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
+            );
 
-        } else {
+            $map['product_id'] = M('product')->where($data['product_name'])->select();
+            $map['product_barcode'] = M('product')->where($data['product_barcode'])->select();
 
-            $gData['total'] = $sL->count();
-            $gData['list'] = $sL->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
+            $sLMap = $sL->where($map)->select();
+            $sLm = $sLMap->where('count')->select();
+
+            $gData['total'] = $sL->where($sLm)->count();
+            $gData['list'] = $sL->where($sLMap)->field('*')->limit($page, $divide)->order("inventory_id asc")->select();
+
+        }else {
+
+            //如果商品的库存为0，则不计入记录数
+            $gData['total'] = M('inventory')->where('count')->count();
+            $gData['list'] = $sL->where('count')->field('*')->limit($page, $divide)->order("inventory_id asc")->select();
         }
         if ($gData['total'] == 0) {
 
