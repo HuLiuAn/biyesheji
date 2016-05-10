@@ -64,10 +64,12 @@
             <tr ng-repeat="(key,item) in products" style="height: 40px;">
                 <td style="width: 10%;">{{$index+1}}</td>
                 <td>{{item.product_name}}</td>
-                <td>{{item.supplierproduct_price}}</td>
+                <td><span ng-if="!item.isEdit">{{item.supplierproduct_price}}</span><input ng-if="item.isEdit" type="text" ng-model="products[key].supplierproduct_price"/></td>
                 <td><a
-                        class="btn btn-danger" href="" ng-click="del(key)"
-                        style="height: 26px;padding:0;padding-right: 2px;padding-left: 2px;">删除</a></td>
+                        class="btn btn-warning" href="" ng-if="!item.isEdit" ng-click="change(key)"
+                        style="height: 26px;padding:0;padding-right: 2px;padding-left: 2px;">修改</a><a
+                        class="btn btn-success" ng-if="item.isEdit" href="" ng-click="change(key)"
+                        style="height: 26px;padding:0;padding-right: 2px;padding-left: 2px;">保存</a></td>
             </tr>
             </tbody>
         </table>

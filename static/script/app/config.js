@@ -270,7 +270,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         templateUrl: 'views/good/cart.html',
         controller: 'goodCartCtrl'
     }).state('main.good-his', {
-        url: 'good/history/:page?state',
+        url: 'good/history/:page?number&timestart&timeend&auditor&state',
         templateUrl: 'views/good/history.html',
         controller: 'goodHistoryCtrl',
         Handler: "receive_list"

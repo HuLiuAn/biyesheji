@@ -384,3 +384,18 @@ app.directive('bsCount', function ($state) {
     }
 
 });
+
+app.directive('bsNotspace', function ($state) {
+    return {
+
+        restrict: "A",
+        link: function ($scope, el, attr) {
+            el.on('keydown',function(e){
+                if(e.keyCode==32){
+                    return false;
+                }
+            })
+        }
+    }
+
+});

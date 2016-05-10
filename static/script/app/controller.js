@@ -132,12 +132,112 @@ app.controller('goodHistoryCtrl', function ($scope, $state) {
     $scope.stateColor = [
         "label-info", "label-success", "label-danger"
     ];
-    $scope.radioModel = $state.params.state;
+    $scope.dta = {
+        status: $state.params.state
+    };
     $scope.select = function () {
         $scope.$broadcast('PageWillChange', {
-            state: $scope.radioModel
+            state: $scope.dta.status,
+            number: "",
+            timeend: "",
+            timestart: "",
+            auditor: ""
         });
     }
+    //获取当前页面
+    $scope.searchField = [{
+        flag: "单号",
+        field: 'number',
+        value: ''
+    }, {
+        flag: "审核人",
+        field: 'auditor',
+        value: ''
+    }];
+
+    $scope.dt = {
+        start: $state.params.timestart ? new Date($state.params.timestart) : new Date(),
+        end: $state.params.timeend ? new Date($state.params.timeend) : new Date(),
+        state: $state.params.state
+    };
+
+    $scope.dateOptions1 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    $scope.dateOptions2 = {
+        dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(),
+        minDate: new Date(2016, 01, 01),
+        startingDay: 1
+    };
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+
+    $scope.open1 = function () {
+        if ($scope.dt.end) {
+            $scope.dateOptions1.maxDate = new Date($scope.dt.end);
+        }
+        $scope.popup1.opened = true;
+    };
+
+    $scope.open2 = function () {
+        if ($scope.dt.start) {
+            $scope.dateOptions1.minDate = new Date($scope.dt.start);
+        }
+        $scope.popup2.opened = true;
+    };
+
+    $scope.popup1 = {
+        opened: false
+    };
+    $scope.popup2 = {
+        opened: false
+    };
+    $scope.search2 = function () {
+        $scope.$broadcast('PageWillChange', {
+            timestart: Format($scope.dt.start, "yyyy-MM-dd"),
+            timeend: Format($scope.dt.end, "yyyy-MM-dd"),
+            state: $scope.dt.state
+            , auditor: "", number: ""
+        });
+    };
+    $scope.all = function () {
+        $scope.$broadcast('PageWillChange', {
+            number: "", timestart: "", timeend: "", auditor: "", state: ""
+        })
+    }
+    function Format(time, fmt) {
+        if (!time || !fmt) {
+            return ""
+        }
+        var o = {
+            "M+": time.getMonth() + 1,                 //月份
+            "d+": time.getDate(),                    //日
+            "h+": time.getHours(),                   //小时
+            "m+": time.getMinutes(),                 //分
+            "s+": time.getSeconds(),                 //秒
+            "q+": Math.floor((time.getMonth() + 3) / 3), //季度
+            "S": time.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (time.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+
 });
 app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.addToCart = function () {
@@ -151,7 +251,8 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
         }
         $http.post($Bs_API.getApi('add_to_cart'), {
             "product_id": $state.params.id,
-            "amount": parseInt($scope.data.amount)
+            "count": parseInt($scope.data.amount),
+            warehouse_id: $scope.data.warehouse_id
         }).success(function (data) {
             toastr.success('领取成功');
         }).error(function () {
@@ -175,9 +276,10 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     }).error(function () {
         toastr.error('获取失败！请检查网络');
     });
-    function builtProperty(pro){
+    function builtProperty(pro) {
 
     }
+
     $scope.pro = {
         a: {
             title: "名称",
@@ -461,8 +563,8 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         count++;
         $scope.product = {};
     };
-    $scope.del = function (key) {
-        delete $scope.products[key];
+    $scope.change = function (key) {
+        $scope.products[key].isEdit=! $scope.products[key].isEdit;
     };
     $scope.getLocation = function (val) {
         return $http.get($Bs_API.getApi('get_product_by_name'), {
@@ -483,6 +585,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         $scope.product.product_id = s[0];
     };
     $scope.submit = function () {
+      
         //提取ID
         var product = [];
         for (var i in  $scope.products) {
@@ -533,6 +636,10 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
         $scope.product.product_id = s[0];
     };
     $scope.submit = function () {
+        if(  !$scope.supplier.name|| !$scope.supplier.contact||!$scope.supplier.address||!$scope.supplier.phone){
+            toastr.error('供应商基本信息不完整!');
+            return;
+        }
         //提取ID
         var product = [];
         for (var i in  $scope.products) {
@@ -1274,17 +1381,6 @@ app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
             order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: "", order_state: ""
         })
         ;
-    }
-    $scope.radioModel = $state.params.order_state;
-    $scope.select = function () {
-        $scope.$broadcast('PageWillChange', {
-            order_state: $scope.radioModel,
-            order_number: "",
-            start_time: "",
-            end_time: "",
-            purchaser_name: "",
-            auditor_name: ""
-        });
     }
     function Format(time, fmt) {
         if (!time || !fmt) {
