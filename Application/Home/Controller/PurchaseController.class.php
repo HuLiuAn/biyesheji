@@ -485,15 +485,14 @@ class PurchaseController extends Controller
         if (!session('?user_id') || !$arr->supplier_id) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            $this->ajaxReturn($userInfo, 'JSON');
             return;
         }
 
         $final = preg_match('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->supplier_phone) ? 1 : 0;
-
+        $st['status'] = "0";
         if (!$final) {
-            $st['status'] = "0";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
 
         $supplier = M('supplier');
@@ -506,7 +505,6 @@ class PurchaseController extends Controller
             'supplier_address' => $arr->supplier_address,
         );
         $smap['supplier_id'] = $arr->supplier_id;
-
         $supplier->where($smap)->data($data)->save();
 
 
@@ -528,7 +526,7 @@ class PurchaseController extends Controller
             }
         }
         $st['status'] = "1";
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn($st);
 
     }
 
