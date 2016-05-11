@@ -163,6 +163,7 @@ class WareHouseController extends Controller
     }
 
 
+
     /**
      * 选择需要进行调拨的商品
      * 必须先选择入库和出库仓库，才能选择可进行调拨的商品
@@ -204,15 +205,23 @@ class WareHouseController extends Controller
         }
         $sP = M('inventory');
 
-        $map['warehouse_id'] = array(array('eq', $arr->out_ware_id), array('eq', $arr->in_ware_id), 'or');
-        $map['product_id'] = $arr->product_id;
+        //$map['warehouse_id'] = array(array('eq', $arr->out_ware_id), array('eq', $arr->in_ware_id), 'or');
+        $map1['warehouse_id'] = $arr->in_ware_id;
+        $map2['warehouse_id'] = $arr->out_ware_id;
+        $map1['product_id'] = $map2['product_id'] = $arr->product_id;
 //        要查询某个商品在某个仓库的数量
 //        1.通过产品id和仓库ID进行查找。如果没有记录，则返回0，和容量
 //        2.如果有记录，则查询容量，余量
 //这部分留给前端计算
 
-        $sPData['result'] = $sP->where($map)->select();
-        $this->ajaxReturn($sPData);
+        $in =  $sP->where($map1)->find();
+        $out =  $sP->where($map1)->find();
+        $result['product_id'] = $arr->product_id;
+        $result['in_max'] = $in['max'];
+        $result['in_count'] = $in['count'];
+        $result['out_count'] = $out['count'];
+        //$sPData['result'] = $sP->where($map)->select();
+        $this->ajaxReturn($result);
     }
 
 
@@ -247,7 +256,7 @@ class WareHouseController extends Controller
 
         // $aAO = D('AddAllocationOrderView');
         $aAO = M('allocationorder');
-        $aAD = M('allocationorderdetail');
+        //$aAD = M('allocationorderdetail');
         $inventory = M('inventory');
 
         $st['status'] = "0";
@@ -264,8 +273,9 @@ class WareHouseController extends Controller
         $data['allocationorder_date'] = date('Y-m-d', time());
         $data['allocationorder_time'] = time();
         $data['user_id'] = session('user_id');
-        $data['inwarehouse_id'] = $arr->warehouse->in_id;
-        $data['outwarehouse_id'] = $arr->warehouse->out_id;
+        $data['inwarehouse_id'] = $arr->in_ware_id;
+        $data['outwarehouse_id'] = $arr->out_ware_id;
+        $date['allocationorder_product'] = $arr->product;
         // $data['product_id']                     = $arr->product_id;
         //$data['count']                           = $arr->count;
 
@@ -274,16 +284,17 @@ class WareHouseController extends Controller
 
         if ($aA0_id) {
 
+            $i['warehouse_id'] = $arr->in_ware_id;
+            $o['warehouse_id'] = $arr->out_ware_id;
             //如果调拨单生成成功，向调拨单详情表中插入调拨商品记录
             foreach ($arr->product as $product) {
-                $sp_data['product_id'] = $product->id;
-                $sp_data['allocationorderdetail_count'] = $product->number;
-                $sp_data['allocationorder_id'] = $aA0_id;
-                $aAD->data($sp_data)->add();
+                //$sp_data['product_id'] = $product->id;
+               // $sp_data['allocationorderdetail_count'] = $product->number;
+                //$sp_data['allocationorder_id'] = $aA0_id;
+               // $aAD->data($sp_data)->add();
 
-                $i['warehouse_id'] = $arr->warehouse->in_id;
+
                 $i['product_id'] = $product->id;
-                $o['warehouse_id'] = $arr->warehouse->out_id;
                 $o['product_id'] = $product->id;
 
                 //修改该商品在出入库仓库库存数量
