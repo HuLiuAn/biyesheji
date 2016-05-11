@@ -43,7 +43,7 @@ class PurchaseController extends Controller
         $st['status'] = "0";
         if ($final == 0) {
 
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
 
         //保存供应商，并获取供应商ID
@@ -63,12 +63,11 @@ class PurchaseController extends Controller
                 $supplier_product->data($sp_data)->add();
             }
             $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
-
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
+
         $st['status'] = "0";
+        $this->ajaxReturn($st);
     }
 
 

@@ -638,9 +638,13 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
             product.push($scope.products[i]);
         }
         $scope.supplier.product = product;
-        $http.post($Bs_API.getApi('new_supplier'), $scope.supplier).success(function () {
-            toastr.success('成功');
-            $state.go('main.provider-list', {page: 1});
+        $http.post($Bs_API.getApi('new_supplier'), $scope.supplier).success(function (data) {
+            if(data['status']==1){
+                toastr.success('成功');
+                $state.go('main.provider-list', {page: 1});
+            }else{
+                toastr.error('添加失败');
+            }
         }).error(function () {
             toastr.error('添加失败');
         });
