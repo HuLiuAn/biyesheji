@@ -1396,7 +1396,16 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
 });
 
 app.controller('goodCheckGoodListCtrl', function ($scope, $state) {
-
+    $scope.dta = {
+        status: $state.params.state
+    };
+    $scope.select = function () {
+        console.log('s')
+        $scope.$broadcast('PageWillChange', {
+            order_state: $scope.dta.status,
+            order_number: "", start_time: "", end_time: "", purchaser_name: "", auditor_name: ""
+        });
+    }
     $scope.stateText = [
         "等待审核", "审核通过", "审核不通过"
     ];
@@ -1503,7 +1512,7 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $sta
     }).success(function (data) {
         //var use
         if (data && data.status && data.status == 1) {
-            $scope.order = data.result;
+            $scope.data = data.result;
         } else {
             toastr.error('系统维护中！');
         }
@@ -1514,9 +1523,8 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $sta
         $http.post($Bs_API.getApi('do_review'), {
             id: $state.params.id,
             type: 'receive',
-            state: 4
+            state: 2
         }).success(function (data) {
-            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
                 $state.reload()
@@ -1534,7 +1542,6 @@ app.controller('goodCheckGoodDetailCtrl', function ($scope, $http, $Bs_API, $sta
             type: 'receive',
             state: 1
         }).success(function (data) {
-            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
                 $state.reload()

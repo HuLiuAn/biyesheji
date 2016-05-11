@@ -228,27 +228,28 @@ class WareHouseManagementController extends Controller
 
         if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
-            /*$sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
-                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
-                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')->count();
+            $sPData["total"] = $sP->where($map)->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
                 ->where($map)
-                ->select();*/
-            $sPData["total"] = $sP->where($map)->count();
-            //$sPData['status'] = "1";
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
+                ->select();
         } else {
-            /*$sPData["total"] = $sP->count();
+            $sPData["total"] = $sP->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
-                ->select();*/
-            $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
+                ->select();
+        }
+
+        $photo = M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s = json_decode($vi['photo']);
+            $pmap['id'] = $s[0];
+            $re = $photo->where($pmap)->find();
+            $vi['product_photo'] = '.' . $re['image'];
         }
         $this->ajaxReturn($sPData);
     }
@@ -279,14 +280,24 @@ class WareHouseManagementController extends Controller
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
-
-
         $map['receiveorder_id'] = $arr->receiveorder_id;
         $rOD = M('receiveorder');
+        $sPData['result'] = $rOD->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+            ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+            ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+            ->join(' __WAREHOUSE__  ON __WAREHOUSE__.warehouse_id = __RECEIVEORDER__.warehouse_id', 'LEFT')
+            ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name,warehouse_number')
+            ->where($map)
+            ->find();
 
-        $sData['list'] = $rOD->where($map)->find();
-        $sData['status'] = "1";
-        $this->ajaxReturn($sData);
+        $photo = M('photo');
+        $s = json_decode($sPData['result']['photo']);
+        $pmap['id'] = $s[0];
+        $re = $photo->where($pmap)->find();
+        $sPData['result']['product_photo'] = '.' . $re['image'];
+
+        $sPData['status']=1;
+        $this->ajaxReturn($sPData);
     }
 
 
@@ -488,7 +499,11 @@ class WareHouseManagementController extends Controller
             $st['status'] = "1";
             $map['receiveorder_id'] = $arr->id;
             $data['receiveorder_state'] = $arr->state;
+            $data['auditor_id']=session('user_id') ;
             $result = M('receiveorder')->where($map)->save($data);
+            if($arr->state==1){
+                //TODO 从库存中剪掉。
+            }
         } else {
             $st['status'] = "0";
         }
