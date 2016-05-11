@@ -108,28 +108,28 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
 });
 var app = angular.module('myApp', ['bs.api', 'ui.router', 'ui.bootstrap']);
 //检查登陆信息
-app.run(function ($rootScope, $location, $http,$Bs_API) {
-    $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
-        console.log(data);
-        try {
-            var user = JSON.parse(data);
-            if (user && user.status == 1) {
-                $rootScope.USERLOGIN = JSON.parse(data);
-            } else {
-                alert('尚未登陆，请重新登陆！');
-                window.location = 'login.html';
-            }
-        }
-        catch (e) {
-            alert('抱歉，目前系统维护中！');
-            window.location = 'login.html';
-        }
-
-    }).error(function () {
-        alert('网络错误，请重新登陆！');
-        window.location = 'login.html';
-    })
-});
+//app.run(function ($rootScope, $location, $http,$Bs_API) {
+//    $http.get('../index.php/Home/Staff/checkLogin').success(function (data) {
+//        console.log(data);
+//        try {
+//            var user = JSON.parse(data);
+//            if (user && user.status == 1) {
+//                $rootScope.USERLOGIN = JSON.parse(data);
+//            } else {
+//                alert('尚未登陆，请重新登陆！');
+//                window.location = 'login.html';
+//            }
+//        }
+//        catch (e) {
+//            alert('抱歉，目前系统维护中！');
+//            window.location = 'login.html';
+//        }
+//
+//    }).error(function () {
+//        alert('网络错误，请重新登陆！');
+//        window.location = 'login.html';
+//    })
+//});
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //配置网址
 
@@ -573,3 +573,4 @@ app.filter('timeformat', function () {
     };
 
 });
+

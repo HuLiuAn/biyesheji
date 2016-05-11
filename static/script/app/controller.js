@@ -20,7 +20,9 @@ app.controller('loginCtrl', function ($scope, $http) {
     });
 });
 app.controller('menuCtrl', function ($scope) {
-
+    $scope.role = [
+        '超级管理员', '管理员', '采购员', '员工'
+    ];
 });
 app.controller('homeCtrl', function ($scope) {
     $scope.info = [{
