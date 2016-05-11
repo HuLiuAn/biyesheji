@@ -15,7 +15,8 @@
 
             //'order'             => array('order_id','order_totalprice' => 'sumvalue'),
             'orderdetail'       => array('order_id','orderdetail_id','product_id','product_count' => 'count','product_totalprice' => 'value'),
-            'product'           => array('_on' => 'orderdetail.product_id = product.product_id','product_name','properties'),
             'supplierproduct'   => array('supplier_id','_on' => 'orderdetail.product_id = supplierproduct.product_id','supplierproduct_price'=>'product_price'),
+            'product'           => array('_on' => 'orderdetail.product_id = product.product_id','product_name','property'=>'properties'),
+
         );
     }

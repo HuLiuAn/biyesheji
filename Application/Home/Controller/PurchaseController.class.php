@@ -38,6 +38,14 @@ class PurchaseController extends Controller
 
         $supplier = M('supplier');
         $supplier_product = M('supplierproduct');
+
+        $final = preg_match('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->phone) ? 1 : 0;
+        $st['status'] = "0";
+        if ($final == 0) {
+
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+
         //保存供应商，并获取供应商ID
         $data = array(
             'supplier_name' => $arr->name,
@@ -45,6 +53,7 @@ class PurchaseController extends Controller
             'supplier_phone' => $arr->phone,
             'supplier_address' => $arr->address,
         );
+
         $sp_data['supplier_id'] = $supplier->data($data)->add();
         // var_dump($s);
         if ($sp_data['supplier_id']) {
@@ -53,13 +62,13 @@ class PurchaseController extends Controller
                 $sp_data['supplierproduct_price'] = $product->supplierproduct_price;
                 $supplier_product->data($sp_data)->add();
             }
-            $st = array('status' => 1);
+            $st['status'] = "1";
             $this->ajaxReturn(json_encode($st), 'JSON');
         } else {
-            $st = array('status' => 0);
+
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
-
+        $st['status'] = "0";
     }
 
 
@@ -97,9 +106,10 @@ class PurchaseController extends Controller
 
         $data['product_name'] = $arr->product_name;
         $data['product_barcode'] = $arr->product_barcode;
-        $data['product_photogroup'] = json_encode($arr->product_photogroup);
-        $data['product_photo'] = $arr->product_photo;
-        $data['properties'] = $arr->product_properties;
+        $pdata['product_photogroup'] = json_encode($arr->product_photogroup);
+        $pdata['product_photo'] = $arr->product_photo;
+
+        $data['property'] = $arr->product_properties;
         $product = M('product');
         //添加商品成功
         if ($arr->product_id) {
@@ -167,13 +177,16 @@ class PurchaseController extends Controller
 
         $map['product_id'] = $arr->product_id;
         $product = M('product');
-        //添加商品成功
+
+        //TODO 获取图片
+        //$product = M('tb_photo');
+
         $result = $product->where($map)->find();
         if ($result) {
             $result['status'] = "1";
             $this->ajaxReturn(json_encode($result), 'JSON');
         } else {
-            //添加商品失败
+
             $result['status'] = "0";
             $this->ajaxReturn(json_encode($result), 'JSON');
         }
@@ -330,52 +343,7 @@ class PurchaseController extends Controller
     }*/
 
 
-    /**
-     * 将商品从供应商提供商品列表中删除
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    public function delProFromSupplier()
-    {
 
-        // if(!IS_POST)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-
-        $json = file_get_contents("php://input");
-        $arr = json_decode($json);
-        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
-        if ($arr->session_id) {
-            session_id($arr->session_id);
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
-
-        $get['supplier_id'] = session('supplier_id');
-        $get['product_id'] = session('product_id');
-
-        $sP = M('supplierproduct');
-        $result = $sP->where($get)->delete();
-        if ($result) {
-
-            $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
-
-        } else {
-
-            $st['status'] = "0";
-            $this->ajaxReturn(json_encode($st), 'JSON');
-
-        }
-    }
 
 
     /**
@@ -409,7 +377,7 @@ class PurchaseController extends Controller
         //查询偏移量$page, 页数*每页显示的数量
         $page = ($arr->page - 1) * $divide;
         //表格
-        if ($arr->page) {
+        if (!$arr->page) {
             //没有页数，默认显示第一页
             $page = 0;
         }
@@ -515,6 +483,13 @@ class PurchaseController extends Controller
             return;
         }
 
+        $final = preg_match('/^(13|15|18)(\d{9})|^6(\d{4,5})$/', $arr->supplier_phone) ? 1 : 0;
+
+        if (!$final) {
+            $st['status'] = "0";
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+
         $supplier = M('supplier');
         $supplier_product = M('supplierproduct');
         //保存供应商，并获取供应商ID
@@ -525,156 +500,32 @@ class PurchaseController extends Controller
             'supplier_address' => $arr->supplier_address,
         );
         $smap['supplier_id'] = $arr->supplier_id;
+
         $supplier->where($smap)->data($data)->save();
-        // var_dump($s);
-
-        //删除旧的，添加新的。
-        $supplier_product->where($smap)->delete();
-        foreach ($arr->product as $product) {
-            $smap['product_id'] = $product->product_id;
-            $smap['supplierproduct_price'] = $product->supplierproduct_price;
-            $supplier_product->data($smap)->add();
-        }
-        $st = array('status' => 1);
-        $this->ajaxReturn(json_encode($st), 'JSON');
-
-    }
 
 
-    /**
-     * 在订单界面返回供应商ID和名字，用于为订单选择唯一供应商
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    public function showSupplierList()
-    {
+        //供应商已有商品不能删除
+        //$supplier_product->where($smap)->delete();
+            foreach ($arr->product as $product) {
+                $smap1['product_id'] = $product->product_id;
+                $smap2['supplierproduct_price'] = $product->supplierproduct_price;
 
-        // if(!IS_AJAX)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
+                $temp = $supplier_product->where($smap1)->find();
 
-        $json = file_get_contents("php://input");
-        $arr = json_decode($json);
-        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
-        if ($arr->session_id) {
-            session_id($arr->session_id);
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
+                if($temp){
+                    $supplier_product->where($smap1)->save($smap2);
+                }else {
 
-        $search = I('search');
-        $content = I('content');
-
-        $sL = M('supplier');
-
-        switch ($content) {
-
-            case('supplier_name'):   //按供应商名字搜索
-                $condition['supplier_name'] = array('like', "%{$content}%");
-                $sLresult = $sL->where($condition)->select();
-                break;
-            case(''):  //获取全部供应商
-                $sLresult = $sL->select();
-                break;
-
-        }
-
-        //$sLresult = $sL->where($condition)->select();
-        $sLcount = $sLresult->count();
-        if ($sLcount == 0) {
-
-            $this->error('您所查询的供应商不存在，请重试....');
-        }
-
-        //每页10个
-        $divide = 10;
-
-        //偏移量$page ,页数*每页显示的记录条数
-        $page = (I('page') - 1) * $divide;
-
-        $sData['page'] = I('page');
-        $sData['total'] = $sLcount;
-        $sData['list'] = $sLresult->field('supplier_id,supplier_name')->limit($page, $divide)->order('supplier_id asc')->select();
-
-        $this->ajaxReturn($sData);
+                    $smap['product_id'] = $smap1['product_id'];
+                    $smap['supplierproduct_price'] = $smap2['supplierproduct_price'];
+                    $supplier_product->data($smap)->add();
+                }
+            }
+            $st['status'] = "1";
+            $this->ajaxReturn(json_encode($st), 'JSON');
 
     }
 
-
-    /**
-     * 在订单界面，确定供应商之后，列表显示该供应商可供采购的商品信息
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    public function showSupplierProList()
-    {
-
-        // if(!IS_AJAX)
-        //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-
-        $json = file_get_contents("php://input");
-        $arr = json_decode($json);
-        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
-        if ($arr->session_id) {
-            session_id($arr->session_id);
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
-
-        $map['supplier_id'] = session('supplier_id');
-        $search = I('search');
-        $content = I('content');
-
-        $sL = D('SupplierProductView')->where($map)->select();
-
-        switch ($search) {
-
-            case('product_name'):   //按商品名字搜索
-                $condition['product_name'] = array('like', "%{$content}%");
-                break;
-            case(''):  //获取全部供应商
-                $condition['supplier_id'] = $sL['supplier_id'];
-                break;
-
-        }
-
-        $sLresult = $sL->where($condition)->select();
-        $sLcount = $sLresult->count();
-        if ($sLcount == 0) {
-
-            $this->error('您所查询的商品不存在，请重试....');
-        }
-
-        //每页10个
-        $divide = 10;
-
-        //偏移量$page ,页数*每页显示的记录条数
-        $page = (I('page') - 1) * $divide;
-
-        $sData['page'] = I('page');
-        $sData['total'] = $sLcount;
-        $sData['list'] = $sLresult->field('supplier_id', true)->limit($page, $divide)->order('product_id asc')->select();
-
-        $this->ajaxReturn($sData);
-
-    }
 
 
     /**
@@ -706,41 +557,14 @@ class PurchaseController extends Controller
             return;
         }
 
-        $search = I('search');
-        $content = I('content');
+        $sP = M('warehouse');
+        //$In = M('inventory');
 
-        $sL = M('warehouse');
 
-        switch ($search) {
-
-            case('warehouse_number'):   //按仓库名字搜索
-                $condition['warehouse_number'] = array('like', "%{$content}%");
-                $sLresult = $sL->where($condition)->select();
-                break;
-            case(''):  //获取全部仓库
-                $sLresult = $sL->select();
-                break;
-
-        }
-
-        //$sLresult = $sL->where($condition)->select();
-        $sLcount = $sLresult->count();
-        if ($sLcount == 0) {
-
-            $this->error('您所查询的供应商不存在，请重试....');
-        }
-
-        //每页10个
-        $divide = 10;
-
-        //偏移量$page ,页数*每页显示的记录条数
-        $page = (I('page') - 1) * $divide;
-
-        $sData['page'] = I('page');
-        $sData['total'] = $sLcount;
-        $sData['list'] = $sLresult->field('warehouse_address', true)->limit($page, $divide)->order('warehouse_id asc')->select();
-
-        $this->ajaxReturn($sData);
+        $map['warehouse_number'] = array('like', "%" . I('name') . "%");
+        $sPData['list'] = $sP->where($map)->field('warehouse_id,warehouse_number')->order("warehouse_id asc")->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
     }
 
 
@@ -823,6 +647,16 @@ class PurchaseController extends Controller
         $this->ajaxReturn($sPData);
     }
 
+
+    /**
+     * 在订单界面返回供应商ID和名字，用于为订单选择唯一供应商
+     * @access public
+     * @param void
+     * @return void
+     *
+     * author: shli
+     * date: 2016.04.12
+     */
     public function getAllSupplierList()
     {
 
@@ -840,6 +674,17 @@ class PurchaseController extends Controller
         $this->ajaxReturn($sPData);
     }
 
+
+
+    /**
+     * 在订单界面，确定供应商之后，列表显示该供应商可供采购的商品信息
+     * @access public
+     * @param void
+     * @return void
+     *
+     * author: shli
+     * date: 2016.04.12
+     */
     public function getProductListBySupplierId()
     {
 
@@ -892,10 +737,11 @@ class PurchaseController extends Controller
             return;
         }
 
-
+        $sPData['status'] = 0;
         $map['order_id'] = $arr->order_id;
 
         $sP = M('order');
+        $sPO = M('orderdetail');
 
         $sPData['result'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
             ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
@@ -903,62 +749,26 @@ class PurchaseController extends Controller
             ->where($map)
             ->find();
 
-        $sPData['status'] = 1;
+        //$sP = D('DealOrderView');
+
+        //$sPData['list'] = $sP->where($map)->order('orderdetail_id asc')->select();
+
+        $sPData['list'] = $sPO ->where($map)
+            //->join('__ORDERDETAIL__ ON __ORDERDETAIL__.order_id = __ORDER__.order_id')
+            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id','LEFT')
+            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id','LEFT')
+            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id','LEFT')
+            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, product_name')
+
+            ->select();
+
+        if($sPData['list']) {
+            $sPData['status'] = 1;
+            $this->ajaxReturn($sPData);
+        }
         $this->ajaxReturn($sPData);
     }
 
-
-    /**
-     * 在订单中，为某一个商品选择入库仓库
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    /* public function showWareHouse(){
-
-         // if(!IS_AJAX)
-         //   E("页面不存在");     //防止URL直接访问，开发阶段可关闭
-
-         $search = I('search');
-         $content =I('content');
-
-         $aO = M('warehouse');
-
-         switch ($search){
-
-             case('warehouse_number'):   //按仓库名字搜索
-                 $condition['warehouse_number'] = array('like',"%{$content}%");
-                 break;
-             case(''):  //获取全部仓库名字
-                 $condition['warehouse_id'] = $aO['warehouse_id'];
-                 break;
-
-         }
-
-         $aOresult = $aO->where($condition)->select();
-         $aOcount = $aOresult->count();
-         if ($aOcount == 0){
-
-             $this->error('您所查询的仓库不存在，请重试....');
-         }
-
-         //每页10个
-         $divide = 10;
-
-         //偏移量$page ,页数*每页显示的记录条数
-         $page = (I('page')-1) * $divide;
-
-         $aData['page'] = I('page');
-         $aData['total'] = $aOcount;
-         $aData['list'] = $aOresult->field('warehouse_id,warehouse_nUMBER')->limit($page,$divide)->order('warehouse_id asc')->select();
-
-         $this->ajaxReturn($aData);
-
-
-     }*/
 
 
     /**
@@ -988,27 +798,8 @@ class PurchaseController extends Controller
         }
 
 
-        $aO = D('AddOrderView');
 
-        $sP = M('supplierproduct');
-        $map['supplier_id'] = session('supplier_id');
-        $map['product_id'] = session('product_id');
-        $sPtemp = $sP->where($map)->select();
-
-
-        $aData = array(
-
-            'product_id' => session('product_id'),
-            'warehouse_id' => session('warehouse_id'),
-            //TODO 将一个变量的值付给另一个变量的方法是否正确？
-            'supplierproduct_id' => $sPtemp['supplierproduct_id'],
-
-            'count' => session('count'),
-            'purchaser_id' => session('orderuser_id'),
-            'value' => session('value'),
-            'sumvalue' => session('sumvalue'),
-
-        );
+        $st['status'] = "0";
 
         /* 选择一个随机的方案 */
         mt_srand((double)microtime() * 1000000);
@@ -1016,19 +807,53 @@ class PurchaseController extends Controller
         $rCInfo['order_number'] = 'TOAL' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $rCInfo['order_date'] = date('Y-m-d', time());
         $rCInfo['order_state'] = 0;
-        $rC->add($rCInfo);
+        //foreach ($arr->supplier as $supplier) {
 
-        if ($rC->where($rCInfo)->find()) {
+        $supplier = $arr->supplier;
+        $rCInfo['order_totalprice'] = $arr->total;
+        $rCInfo['purchaser_id'] = session('user_id');
+        $rCInfo['order_time']=time();
 
-            $st['status'] = "1";
+        $o = M('order')->add($rCInfo);
+        // }
+
+
+        if (!$o) {
+
             $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
+        } /*else {
 
             $st['status'] = "0";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
+*/
 
+        $temp['order_id'] = $o;
+        if ($temp['order_id']) {
 
+            //$map['supplier_id'] = $supplier->supplier_id;
+            //如果订单生成成功，则向订单详情表插入领取商品记录
+            foreach ($arr->product as $product) {
+
+                //$map['product_id'] = $product->product_id;
+
+                $rCDInfo['supplierproduct_id'] = $product->supplierproduct_id;
+                if(!$product->warehouse_id){
+                    $rCDInfo['warehouse_id'] = 1;
+                }else{
+                    $rCDInfo['warehouse_id'] = $product->warehouse_id;
+                }
+                $rCDInfo['product_count'] = $product->amount;
+                $rCDInfo['order_id'] = $temp['order_id'];
+                $rCDInfo['product_totalPrice'] = $product->amount * $product->supplierproduct_price;
+                M('orderdetail')->data($rCDInfo)->add();
+
+            }
+            $st['status'] = "1";
+            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+
+        $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
@@ -1047,3 +872,4 @@ class PurchaseController extends Controller
 }
 
 ?>
+

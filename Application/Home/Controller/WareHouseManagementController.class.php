@@ -142,18 +142,30 @@ class WareHouseManagementController extends Controller
             return;
         }
 
-
+        $sPData['status'] = 0;
         $map['order_id'] = $arr->order_id;
 
         $sP = M('order');
-
+        $sPO = M('orderdetail');
         $sPData['result'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
             ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
             ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
             ->where($map)
             ->find();
 
-        $sPData['status'] = 1;
+        $sPData['list'] = $sPO ->where($map)
+            //->join('__ORDERDETAIL__ ON __ORDERDETAIL__.order_id = __ORDER__.order_id')
+            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id','LEFT')
+            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id','LEFT')
+            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id','LEFT')
+            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, product_name')
+
+            ->select();
+
+        if($sPData['list']) {
+            $sPData['status'] = 1;
+            $this->ajaxReturn($sPData);
+        }
         $this->ajaxReturn($sPData);
     }
 
@@ -212,9 +224,9 @@ class WareHouseManagementController extends Controller
             $map['receiveorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
 
-        if (!empty(count($map))) {
+        if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
-            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+            /*$sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
@@ -222,14 +234,19 @@ class WareHouseManagementController extends Controller
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
                 ->where($map)
-                ->select();
+                ->select();*/
+            $sPData["total"] = $sP->where($map)->count();
+            //$sPData['status'] = "1";
+            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
         } else {
-            $sPData["total"] = $sP->count();
+            /*$sPData["total"] = $sP->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
-                ->select();
+                ->select();*/
+            $sPData["total"] = $sP->count();
+            $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
         }
         $this->ajaxReturn($sPData);
     }
@@ -263,15 +280,10 @@ class WareHouseManagementController extends Controller
 
 
         $map['receiveorder_id'] = $arr->receiveorder_id;
-        $rOD = D('ReceiveDetailView');
+        $rOD = M('receiveorder');
 
-        $divide = 15;
-        $page = ($arr->page - 1) * $divide;
-
-        $sData['page'] = $arr->page;
-        $sData['total'] = $rOD->where($map)->count();
-        $sData['list'] = $rOD->where($map)->field('receiveorder_id', true)->limit($page, $divide)->order('receiveorderdetail_id asc')->select();
-
+        $sData['list'] = $rOD->where($map)->find();
+        $sData['status'] = "1";
         $this->ajaxReturn($sData);
     }
 
@@ -335,7 +347,7 @@ class WareHouseManagementController extends Controller
         } else if (!empty($arr->end_time)) {
             $map['allocationorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
-        if (!empty(count($map))) {
+        if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
             $sPData["total"] = $sP->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
                 ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
@@ -398,12 +410,12 @@ class WareHouseManagementController extends Controller
         $sData['result'] = $rOD->join(' __WAREHOUSE__ WARE1 ON WARE1.warehouse_id = __ALLOCATIONORDER__.outwarehouse_id', 'LEFT')
             ->join(' __WAREHOUSE__ WARE2 ON WARE2.warehouse_id = __ALLOCATIONORDER__.inwarehouse_id', 'LEFT')
             ->join(' __USER__  ON __USER__.user_id = __ALLOCATIONORDER__.user_id', 'LEFT')
-            ->join(' __ALLOCATIONORDERDETAIL__  ON __ALLOCATIONORDERDETAIL__.allocationorder_id = __ALLOCATIONORDER__.allocationorder_id', 'LEFT')
-            ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name,product_id,allocationorderdetail_count')
+            //->join(' __ALLOCATIONORDERDETAIL__  ON __ALLOCATIONORDERDETAIL__.allocationorder_id = __ALLOCATIONORDER__.allocationorder_id', 'LEFT')
+            ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name')
             ->find();
         $map2['product_id'] = $sData['result']['product_id'];
-        $rOD = M('product')->where($map2)->find();
-        $sData['result']['product_name'] = $rOD['product_name'];
+        $aOD = M('product')->where($map2)->find();
+        $sData['result']['product_name'] = $aOD['product_name'];
         $sData['status'] = "1";
         $this->ajaxReturn($sData);
 
