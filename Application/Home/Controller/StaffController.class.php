@@ -302,22 +302,27 @@ class StaffController extends Controller
         // if(!IS_AJAX)
         //E("页面不存在");     //防止URL直接访问，开发阶段可关闭
 
+        $st['status'] = "0";
+
         $map['user_id'] = session('user_id');
         $map['user_password'] = $arr->old;
         $data['user_password'] = $arr->new;
         //$new['user_password'] = I('newpassword','','md5');
 
-
-        $final = preg_match('#[!#$%^&*(){}~`"\';:?+=<>/\[\]]+#', $arr->new) ? 0 : 1;
-        //$final = $user->where($map)->save($data);
-        $st['status'] = "1";
-        if ($final == 0) {
-            $st['status'] = "0";
+        $temp = $user->where($map)->find();
+        if(!$temp){
             $this->ajaxReturn(json_encode($st), 'JSON');
-        } else {
+        }
+        $final = preg_match('#[!#$%^&*(){}~`"\";:?+=<>/\[\]]+#', $arr->new) ?  0 : 1 ;
+        //$final = $user->where($map)->save($data);
+
+        if ($final) {
+            $st['status'] = "1";
             $user->where($map)->save($data);
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
+
+            $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
@@ -478,21 +483,29 @@ class StaffController extends Controller
             $page = 0;
         }
 
-        $sP = M('product');
-        $sPData['page'] = $arr->page;
-        if (!empty($arr->barcode) || !empty($arr->name)) {
-            //只要有一个搜索条件，就选择搜索模式
-            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
-            $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("product_id asc")->select();
+        $sL = D("ProductListView");
 
-        } else {
-            $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
+        $sPData['page'] = $arr->page;
+
+        if (!empty($arr->barcode) || !empty($arr->name)) {
+
+            $map['product_name'] = array('like', "%" . $arr->name . "%");
+            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
+            $gData['total'] = $sL->where($map)->count();
+            $gData['list'] = $sL->where($map)->limit($page, $divide)->order("product_id asc")->select();
+
+        }else {
+
+            //如果商品的库存为0，则不计入记录数
+            $gData['total'] = M('inventory')->where('count')->count();
+            $gData['list'] = $sL->where('count')->field('*')->limit($page, $divide)->order("product_id asc")->select();
 
         }
-        $this->ajaxReturn($sPData);
+        if ($gData['total'] == 0) {
+
+            $this->error('您所查询的商品不存在，请重试....');
+        }
+        $this->ajaxReturn($gData);
     }
 
 
@@ -530,74 +543,13 @@ class StaffController extends Controller
         $get['product_id'] = $arr->product_id;
 //        $pD = D('ProductDetailView');
 
-        $pD = M('product');
+        $pD = D('ProductListView');
         $proInfo['status'] = "1";
         $proInfo['result'] = $pD->where($get)->find();
         $this->ajaxReturn($proInfo);
 
     }
 
-
-    /**
-     * 查询商品
-     * 返回商品id,名称，属性，组图，仓库，库存数量
-     * @access public
-     * @param void
-     * @return void
-     *
-     * author: shli
-     * date: 2016.04.12
-     */
-    public function searchProduct()
-    {
-
-        $json = file_get_contents("php://input");
-        $arr = json_decode($json);
-        //上面的代码，适用于前台POST过来的是JSON，而不是表单。然后I（）方法不用。
-        if ($arr->session_id) {
-            session_id($arr->session_id);
-            session_start();
-        }
-        if (!session('?user_id')) {
-            $userInfo['status'] = "0";
-            $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
-            return;
-        }
-
-        //每页10个
-        $divide = 10;
-        //查询偏移量$page, 页数*每页显示的数量
-        $page = ($arr->page - 1) * $divide;
-        //表格
-        if (empty($arr->page)) {
-            //没有页数，默认显示第一页
-            $page = 0;
-        }
-
-        $sL = D("ProductListView");
-
-        $sPData['page'] = $arr->page;
-
-        if (!empty($arr->barcode) || !empty($arr->name)) {
-
-            $map['product_name'] = array('like', "%" . $arr->name . "%");
-            $map['product_barcode'] = array('like', "%" . $arr->barcode . "%");
-            $gData['total'] = $sL->where($map)->count();
-            $gData['list'] = $sL->where($map)->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
-
-        } else {
-
-            $gData['total'] = $sL->count();
-            $gData['list'] = $sL->field('product_barcode', true)->limit($page, $divide)->order("product_id asc")->select();
-        }
-        if ($gData['total'] == 0) {
-
-            $this->error('您所查询的商品不存在，请重试....');
-        }
-        $this->ajaxReturn($gData);
-
-    }
 
 
     /**
@@ -629,19 +581,10 @@ class StaffController extends Controller
             return;
         }
 
-        $aAO = M('allocationorder');
-        $aAD = M('allocationorderdetail');
-        $inventory = M('inventory');
-
-        //$i['inwarehouse_id'] = $arr->inwarehouse_id;
-        //$i['product_id'] = $arr->product_id;
-        // $o['outwarehouse_id'] = $arr->outwarehouse_id;
-        //$o['product_id'] = $arr->product_id;
-
         $st['status'] = "0";
 
         $rO = M('receiveorder');
-        $rOD = M('receiveorderdetail');
+       // $rOD = M('receiveorderdetail');
 
 
         /* 选择一个随机的方案 */
@@ -650,22 +593,13 @@ class StaffController extends Controller
         $rCInfo['receiveorder_number'] = 'TROL' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $rCInfo['receiveorder_date'] = date('Y-m-d', time());
         $rCInfo['receiveorder_state'] = 0;
-        $rCInfo['receiveuser_id'] = $arr->user_id;
+        $rCInfo['receiveorder_time'] = time();
+        $rCInfo['receiveuser_id'] = session('user_id');      //$arr->user_id;
+        $rCInfo['product_id'] = $arr->product_id;
+        $rCInfo['warehouse_id'] = $arr->warehouse_id;
+        $rCInfo['receiveproduct_count'] = $arr->amount;
 
-
-        $temp['receiveorder_id'] = $rO->data($rCInfo)->add();
-        if ($temp['receiveorder_id']) {
-
-            //如果领取单生成成功，则向领取单详情表插入领取商品记录
-            foreach ($arr->product as $product) {
-
-                $rCDInfo['product_id'] = $product->product_id;
-                $rCDInfo['warehouse_id'] = $product->warehouse_id;
-                $rCDInfo['count'] = $product->count;
-
-                $rOD->data($rCDInfo)->add();
-
-            }
+        if($rO->data($rCInfo)->add()){
             $st['status'] = "1";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
@@ -719,26 +653,32 @@ class StaffController extends Controller
         $sP = M('receiveorder');
         $sPData['page'] = $arr->page;
 
-        $sPData['status'] = "0";
+        //$sPData['status'] = "0";
 
-        $map['receiveuser_id'] = $arr->user_id;
+        $map['receiveuser_id'] = session('user_id');
 
-        //TODO 查询条件太多，有点乱
-        if (!empty($arr->receiveorder_number) || !empty($arr->date) || !empty($arr->receiveuser_number) || !empty($arr->receiveorder_state)) {
-
-            $aN['user_number'] = array('like', "%" . $arr->receiveuser_number . "%");
-
-            //只要有一个搜索条件，就选择搜索模式
+        if (!empty($arr->receiveorder_number)){
             $map['receiveorder_number'] = array('like', "%" . $arr->receiveorder_number . "%");
-            //TODO 按照日期范围查询应该怎么匹配？
-            $map['receiveorder_date'] = array('like', "%" . $arr->date . "%");
-            $map['admituser_id'] = M('user')->where($aN)->find();
-            $map['receiveorder_state'] = $arr->receiveorder_state;
-            $sPData["total"] = $sP->where($map)->count();
-            $sPData['status'] = "1";
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
+        }
+        if (!empty($arr->start_time) && !empty($arr->end_time)) {
+            $map['receiveorder_time'] = array(array('gt', strtotime($arr->start_time)), array('lt', strtotime($arr->end_time) + 3600 * 24 - 1));
+        } else if (!empty($arr->start_time)) {
+            $map['receiveorder_time'] = array('gt', strtotime($arr->start_time));
+        } else if (!empty($arr->end_time)) {
+            $map['receiveorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
+        }
+        if(!empty($arr->state)) {
 
-        } else {
+            $map['receiveorder_state'] = $arr->state;
+        }
+        if(!empty($map)){
+
+            $sPData["total"] = $sP->where($map)->count();
+            //$sPData['status'] = "1";
+            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
+        }
+
+         else {
             $sPData["total"] = $sP->count();
             $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
         }
@@ -828,17 +768,11 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
-
-
         $map['receiveorder_id'] = $arr->receiveorder_id;
-        $rOD = D('ReceiveDetailView');
+        $rOD = M('receiveorder');
 
-        $divide = 15;
-        $page = ($arr->page - 1) * $divide;
 
-        $sData['page'] = $arr->page;
-        $sData['total'] = $rOD->where($map)->count();
-        $sData['list'] = $rOD->where($map)->field('receiveorder_id', true)->limit($page, $divide)->order('receiveorderdetail_id asc')->select();
+        $sData = $rOD->where($map)->find();
 
         $this->ajaxReturn($sData);
     }

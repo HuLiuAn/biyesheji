@@ -802,7 +802,7 @@ class PurchaseController extends Controller
         } else if (!empty($arr->end_time)) {
             $map['order_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
-        if (!empty(count($map))) {
+        if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
             $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __ORDER__.purchaser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __ORDER__.auditor_id', 'LEFT')
