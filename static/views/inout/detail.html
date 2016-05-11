@@ -27,13 +27,13 @@
                 <td>入库仓库</td>
                 <td>{{alloc.inwarehouse_number}}</td>
             </tr>
-            <tr>
-                <td>商品</td>
-                <td>{{alloc.product_name}}</td>
-            </tr>
-            <tr>
-                <td>数量</td>
-                <td>{{alloc.allocationorderdetail_count}}</td>
+            <tr ng-repeat="item in alloc.product">
+                <td>商品{{$index+1}}</td>
+                <td>
+                    商品名：{{item.product_name}}；
+                    数量：{{item.number}}；
+                </td>
+
             </tr>
         </table>
     </div>

@@ -262,7 +262,7 @@ class WareHouseController extends Controller
         $st['status'] = "0";
         if (empty($arr->warehouse->in_id) && empty($arr->warehouse->out_id)) {
 
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
 
 
@@ -273,9 +273,9 @@ class WareHouseController extends Controller
         $data['allocationorder_date'] = date('Y-m-d', time());
         $data['allocationorder_time'] = time();
         $data['user_id'] = session('user_id');
-        $data['inwarehouse_id'] = $arr->in_ware_id;
-        $data['outwarehouse_id'] = $arr->out_ware_id;
-        $date['allocationorder_product'] = $arr->product;
+        $data['inwarehouse_id'] = $arr->warehouse->in_id;
+        $data['outwarehouse_id'] = $arr->warehouse->out_id;
+        $data['allocationorder_product'] =json_encode($arr->product);
         // $data['product_id']                     = $arr->product_id;
         //$data['count']                           = $arr->count;
 
@@ -284,8 +284,8 @@ class WareHouseController extends Controller
 
         if ($aA0_id) {
 
-            $i['warehouse_id'] = $arr->in_ware_id;
-            $o['warehouse_id'] = $arr->out_ware_id;
+            $i['warehouse_id'] = $arr->warehouse->in_id;
+            $o['warehouse_id'] = $arr->warehouse->out_id;
             //如果调拨单生成成功，向调拨单详情表中插入调拨商品记录
             foreach ($arr->product as $product) {
                 //$sp_data['product_id'] = $product->id;
@@ -304,9 +304,9 @@ class WareHouseController extends Controller
             }
 
             $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn($st);
 
         //一个统计字段自动更新的例子
         //$Article = M("Article"); // 实例化Article对象

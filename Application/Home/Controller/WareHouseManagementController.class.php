@@ -413,9 +413,14 @@ class WareHouseManagementController extends Controller
             //->join(' __ALLOCATIONORDERDETAIL__  ON __ALLOCATIONORDERDETAIL__.allocationorder_id = __ALLOCATIONORDER__.allocationorder_id', 'LEFT')
             ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name')
             ->find();
-        $map2['product_id'] = $sData['result']['product_id'];
-        $aOD = M('product')->where($map2)->find();
-        $sData['result']['product_name'] = $aOD['product_name'];
+        $pr=json_decode($sData['result']['allocationorder_product']);
+        foreach($pr as &$vi){
+            $map2['product_id'] =$vi->id;
+            $aOD = M('product')->where($map2)->find();
+            $vi->product_name=$aOD['product_name'];
+        }
+
+        $sData['result']['product'] = $pr;
         $sData['status'] = "1";
         $this->ajaxReturn($sData);
 

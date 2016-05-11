@@ -416,17 +416,17 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
     $scope.images = [];
     $scope.data = {};
     $http.post($Bs_API.getApi('product_detail'), {product_id: $state.params.id || "0"}).success(function (data) {
-        var photogroup=[];
+        var photogroup = [];
         data.photogroup = data.photogroup || [];
         data.data.product_barcode = parseInt(data['data'].product_barcode);
         if (!data.status) {
             toastr.error("获取失败");
         } else {
             for (var i = 0; i < 6; i++) {
-                if(i<data.photogroup.length){
-                    photogroup[i]='.'+data.photogroup[i].image;
-                }else{
-                    photogroup[i]='';
+                if (i < data.photogroup.length) {
+                    photogroup[i] = '.' + data.photogroup[i].image;
+                } else {
+                    photogroup[i] = '';
                 }
 
             }
@@ -556,7 +556,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         $scope.product = {};
     };
     $scope.change = function (key) {
-        $scope.products[key].isEdit=! $scope.products[key].isEdit;
+        $scope.products[key].isEdit = !$scope.products[key].isEdit;
     };
     $scope.getLocation = function (val) {
         return $http.get($Bs_API.getApi('get_product_by_name'), {
@@ -577,7 +577,7 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         $scope.product.product_id = s[0];
     };
     $scope.submit = function () {
-      
+
         //提取ID
         var product = [];
         for (var i in  $scope.products) {
@@ -585,10 +585,10 @@ app.controller('goodProviderDetailCtrl', function ($scope, $Bs_API, $state, $htt
         }
         $scope.supplier.product = product;
         $http.post($Bs_API.getApi('edit_supplier'), $scope.supplier).success(function (data) {
-            if(data['status']==1){
+            if (data['status'] == 1) {
                 toastr.success('成功');
                 $state.go('main.provider-list', {page: 1});
-            }else{
+            } else {
                 toastr.error('修改失败');
             }
         }).error(function () {
@@ -632,7 +632,7 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
         $scope.product.product_id = s[0];
     };
     $scope.submit = function () {
-        if(  !$scope.supplier.name|| !$scope.supplier.contact||!$scope.supplier.address||!$scope.supplier.phone){
+        if (!$scope.supplier.name || !$scope.supplier.contact || !$scope.supplier.address || !$scope.supplier.phone) {
             toastr.error('供应商基本信息不完整!');
             return;
         }
@@ -643,10 +643,10 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
         }
         $scope.supplier.product = product;
         $http.post($Bs_API.getApi('new_supplier'), $scope.supplier).success(function (data) {
-            if(data['status']==1){
+            if (data['status'] == 1) {
                 toastr.success('成功');
                 $state.go('main.provider-list', {page: 1});
-            }else{
+            } else {
                 toastr.error('添加失败');
             }
         }).error(function () {
@@ -779,9 +779,9 @@ app.controller('goodOrderDetailCtrl', function ($scope, $http, $Bs_API, $state) 
         //var use
         if (data && data.status && data.status == 1) {
             $scope.order = data.result;
-            $scope.list=data.list;
-            $scope.order.supplier_name=$scope.list.length? $scope.list[0].supplier_name:"";
-            $scope.order.warehouse_number=$scope.list.length? $scope.list[0].warehouse_number:"";
+            $scope.list = data.list;
+            $scope.order.supplier_name = $scope.list.length ? $scope.list[0].supplier_name : "";
+            $scope.order.warehouse_number = $scope.list.length ? $scope.list[0].warehouse_number : "";
 
         } else {
             toastr.error('系统维护中！');
@@ -993,7 +993,77 @@ app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
             in_ware_id: $scope.alloc.alloc_in.id,
             out_ware_id: $scope.alloc.alloc_out.id
         }).success(function (data) {
-            computeVulm(data, pro)
+            pro.error = false;
+            var in_max = data.in_max ? 1 : 0;
+            var in_count = data.in_count ? 1 : 0;
+            var out_count = data.out_count ? 1 : 0;
+            var s = in_max * 4 + in_count * 2 + out_count;
+            console.log(s);
+            switch (s) {
+                case 0:
+                {
+                    toastr.error('调出仓库商品存量不足');
+                    break;
+                }
+                case 1:
+                {
+                    if (pro.number > data.out_count) {
+                        toastr.error('调出仓库商品存量不足');
+                        pro.error = true;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    toastr.error('调出仓库商品存量不足');
+                    break;
+                }
+                case 3:
+                {
+                    if (pro.number > data.out_count) {
+                        toastr.error('调出仓库商品存量不足');
+                        pro.error = true;
+                    }
+                    break;
+                }
+                case 4:
+                {
+                    toastr.error('调出仓库商品存量不足');
+                    break;
+                }
+                case 5:
+                {
+                    if (pro.number > data.out_count) {
+                        toastr.error('调出仓库商品存量不足');
+                        pro.error = true;
+                    } else if (pro.number > data.in_max) {
+                        toastr.error('调入仓库空间不足');
+                        pro.error = true;
+                    }
+                    break;
+                }
+                case 6:
+                {
+                    toastr.error('调出仓库商品存量不足');
+                    break;
+                }
+                case 7:
+                {
+                    if (pro.number > data.out_count) {
+                        toastr.error('调出仓库商品存量不足');
+                        pro.error = true;
+                    } else if (pro.number > data.in_max-data.in_count) {
+                        toastr.error('调入仓库空间不足');
+                        pro.error = true;
+                    }
+                    break;
+                }
+                default:
+                {
+                }
+            }
+
+
         }).error(function (data) {
             console.log(data);
         })
@@ -1046,9 +1116,13 @@ app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
             in_id: $scope.alloc.alloc_in.id,
             out_id: $scope.alloc.alloc_out.id
         };
-        $http.post($Bs_API.getApi('new_allo'), $scope.form).success(function () {
-            toastr.success('添加成功！');
-            $state.go('main.inout-list', {page: 1});
+        $http.post($Bs_API.getApi('new_allo'), $scope.form).success(function (data) {
+            if(data.status==1){
+                toastr.success('添加成功！');
+                $state.go('main.inout-list', {page: 1});
+                return;
+            }
+            toastr.error('添加失败！');
         }).error(function () {
             toastr.error('添加失败！');
         });
@@ -1078,68 +1152,68 @@ app.controller('goodInoutNewCtrl', function ($scope, $http, $Bs_API, $state) {
         }
         console.log(address);
     };
-    function computeVulm(data, pro) {
-        //计算返回的数量
-        pro.error = false;
-        if (data.status == 1) {
-            // 返货的result长度为0，1，2
-            switch (data.result.length) {
-                case 0:
-                {
-                    //没有记录，无法调拨
-                    toastr.error('商品: ' + pro.product_name + '库存为0，无法调拨！');
-                    pro.error = true;
-                    break;
-                }
-                case 1:
-                {
-                    if (data.result[0].warehouse_id == $scope.alloc.alloc_out.id) {
-                        pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
-                        pro.in_ware_has = 0;
-                        pro.in_ware_remain = $scope.alloc.alloc_out.max;
-                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
-                            pro.error = true;
-                        }
-                    } else {
-                        pro.error = true;
-                        toastr.error('商品: ' + pro.product_name + '入库存量为0，无法调拨！');
-                    }
-                    break;
-                }
-                case 2:
-                {
-                    if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
-                        pro.in_ware_has = data.result[1].maxcount - data.result[1].remindcount;
-                        pro.in_ware_remain = data.result[1].remindcount;
-                        pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
-                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
-                            pro.error = true;
-                        }
-                    } else if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
-                        pro.in_ware_has = data.result[0].maxcount - data.result[0].remindcount;
-                        pro.in_ware_remain = data.result[0].remindcount;
-                        pro.out_ware_has = data.result[1].maxcount - data.result[1].remindcount;
-                        if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
-                            pro.error = true;
-                        }
-                    } else {
-                        pro.error = true;
-                        toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
-                    }
-
-                    break;
-                }
-                default :
-                {
-                    pro.error = true;
-                    toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
-                }
-            }
-        } else {
-            pro.error = true;
-            toastr.error('无法获取商品: ' + pro.product_name + ' 库存情况！');
-        }
-    }
+    //function computeVulm(data, pro) {
+    //    //计算返回的数量
+    //    pro.error = false;
+    //    if (data.status == 1) {
+    //        // 返货的result长度为0，1，2
+    //        switch (data.result.length) {
+    //            case 0:
+    //            {
+    //                //没有记录，无法调拨
+    //                toastr.error('商品: ' + pro.product_name + '库存为0，无法调拨！');
+    //                pro.error = true;
+    //                break;
+    //            }
+    //            case 1:
+    //            {
+    //                if (data.result[0].warehouse_id == $scope.alloc.alloc_out.id) {
+    //                    pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+    //                    pro.in_ware_has = 0;
+    //                    pro.in_ware_remain = $scope.alloc.alloc_out.max;
+    //                    if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+    //                        pro.error = true;
+    //                    }
+    //                } else {
+    //                    pro.error = true;
+    //                    toastr.error('商品: ' + pro.product_name + '入库存量为0，无法调拨！');
+    //                }
+    //                break;
+    //            }
+    //            case 2:
+    //            {
+    //                if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
+    //                    pro.in_ware_has = data.result[1].maxcount - data.result[1].remindcount;
+    //                    pro.in_ware_remain = data.result[1].remindcount;
+    //                    pro.out_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+    //                    if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+    //                        pro.error = true;
+    //                    }
+    //                } else if ((data.result[0].warehouse_id == $scope.alloc.alloc_out.id) && (data.result[1].warehouse_id == $scope.alloc.alloc_in.id)) {
+    //                    pro.in_ware_has = data.result[0].maxcount - data.result[0].remindcount;
+    //                    pro.in_ware_remain = data.result[0].remindcount;
+    //                    pro.out_ware_has = data.result[1].maxcount - data.result[1].remindcount;
+    //                    if (pro.number > pro.out_ware_has || pro.number > pro.in_ware_remain) {
+    //                        pro.error = true;
+    //                    }
+    //                } else {
+    //                    pro.error = true;
+    //                    toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
+    //                }
+    //
+    //                break;
+    //            }
+    //            default :
+    //            {
+    //                pro.error = true;
+    //                toastr.error('商品: ' + pro.product_name + '库存数量有误，无法调拨！');
+    //            }
+    //        }
+    //    } else {
+    //        pro.error = true;
+    //        toastr.error('无法获取商品: ' + pro.product_name + ' 库存情况！');
+    //    }
+    //}
 });
 
 
