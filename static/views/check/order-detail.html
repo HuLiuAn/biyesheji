@@ -15,21 +15,42 @@
                 <td>单号</td>
                 <td>{{order.order_number}}</td>
             </tr>
+
             <tr>
                 <td>采购负责人</td>
                 <td>{{order.purchaser_name}}</td>
             </tr>
+            <tr ng-repeat="item in list">
+                <td>商品{{$index+1}}</td>
+                <td>
+                    <ul class="products-list product-list-in-box" style="border:none">
+                        <div class="product-img" style="border:none;padding:3px;">
+                            <img  style="border:none" ng-src="{{item.product_photo}}">
+                        </div>
+                        <div style="border:none" class="product-info ng-binding">
+                            商品名：{{item.product_name}}
+
+                        <span class="product-description">
+                            数量：{{item.product_count}}；
+                            单价：{{item.product_price}}；
+                            总价：{{item.product_totalprice}}；
+                             </span>
+                        </div>
+                    </ul>
+                </td>
+
+            </tr>
             <tr>
                 <td>供应商</td>
-                <td>{{order.outwarehouse_number}}</td>
+                <td>{{order.supplier_name}}</td>
             </tr>
             <tr>
-                <td>商品</td>
-                <td>{{order.product_name}}</td>
+                <td>仓库</td>
+                <td>{{order.warehouse_number}}</td>
             </tr>
             <tr>
-                <td>数量</td>
-                <td>{{order.allocationorderdetail_count}}</td>
+                <td>总价</td>
+                <td>{{order.order_totalprice}}</td>
             </tr>
             <tr>
                 <td>状态</td>

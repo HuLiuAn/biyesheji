@@ -1342,6 +1342,9 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
         //var use
         if (data && data.status && data.status == 1) {
             $scope.order = data.result;
+            $scope.list = data.list;
+            $scope.order.supplier_name = $scope.list.length ? $scope.list[0].supplier_name : "";
+            $scope.order.warehouse_number = $scope.list.length ? $scope.list[0].warehouse_number : "";
         } else {
             toastr.error('系统维护中！');
         }
@@ -1354,7 +1357,6 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
             type: 'order',
             state: 4
         }).success(function (data) {
-            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
                 $state.reload()
@@ -1372,7 +1374,6 @@ app.controller('goodCheckOrderDetailCtrl', function ($scope, $http, $Bs_API, $st
             type: 'order',
             state: 1
         }).success(function (data) {
-            data = JSON.parse(data);
             if (data.status == 1) {
                 toastr.success('审核成功！');
                 $state.reload()

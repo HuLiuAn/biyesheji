@@ -152,20 +152,22 @@ class WareHouseManagementController extends Controller
             ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
             ->where($map)
             ->find();
-
-        $sPData['list'] = $sPO ->where($map)
+        $sPData['list'] = $sPO->where($map)
             //->join('__ORDERDETAIL__ ON __ORDERDETAIL__.order_id = __ORDER__.order_id')
-            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id','LEFT')
-            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id','LEFT')
-            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id','LEFT')
-            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, product_name')
-
+            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id', 'LEFT')
+            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id', 'LEFT')
+            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id', 'LEFT')
+            ->join('__WAREHOUSE__ ON __WAREHOUSE__.warehouse_id = __ORDERDETAIL__.warehouse_id', 'LEFT')
+            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, warehouse_number,product_name,photo')
             ->select();
-
-        if($sPData['list']) {
-            $sPData['status'] = 1;
-            $this->ajaxReturn($sPData);
+        $photo = M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s = json_decode($vi['photo']);
+            $pmap['id'] = $s[0];
+            $re = $photo->where($pmap)->find();
+            $vi['product_photo'] = '.' . $re['image'];
         }
+        $sPData['status'] = 1;
         $this->ajaxReturn($sPData);
     }
 
@@ -413,11 +415,11 @@ class WareHouseManagementController extends Controller
             //->join(' __ALLOCATIONORDERDETAIL__  ON __ALLOCATIONORDERDETAIL__.allocationorder_id = __ALLOCATIONORDER__.allocationorder_id', 'LEFT')
             ->field('tb_allocationorder.*, WARE1.warehouse_number as outwarehouse_number,WARE2.warehouse_number as inwarehouse_number,user_name')
             ->find();
-        $pr=json_decode($sData['result']['allocationorder_product']);
-        foreach($pr as &$vi){
-            $map2['product_id'] =$vi->id;
+        $pr = json_decode($sData['result']['allocationorder_product']);
+        foreach ($pr as &$vi) {
+            $map2['product_id'] = $vi->id;
             $aOD = M('product')->where($map2)->find();
-            $vi->product_name=$aOD['product_name'];
+            $vi->product_name = $aOD['product_name'];
         }
 
         $sData['result']['product'] = $pr;
@@ -450,7 +452,7 @@ class WareHouseManagementController extends Controller
         if (!session('?user_id') || empty($arr->id)) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            $this->ajaxReturn($userInfo);
             return;
         }
 
@@ -459,12 +461,28 @@ class WareHouseManagementController extends Controller
             $st['status'] = "1";
             $map['order_id'] = $arr->id;
             $data['order_state'] = $arr->state;
+            $data['auditor_id']=session('user_id') ;
             $result = M('order')->where($map)->save($data);
 
             //如果审核通过，修改入库商品库存
-            if ($result == 1) {
+            if ($result == 1&& $arr->state==1) {
                 //TODO   修改所有入库商品库存
-                $rOD['receiveorderdetail_id'] = M('receiveorderdetail')->where($map)->select();
+                $oD = M('orderdetail')
+                    ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id', 'LEFT')
+                    ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id', 'LEFT')
+                    ->where($map)->select();
+                $in = M('inventory');
+                foreach ($oD as &$vi) {
+                    $map2['product_id'] = $map1['product_id'] = $vi['product_id'];
+                    $map2['warehouse_id'] = $map1['warehouse_id'] = $vi['warehouse_id'];
+                    if ($in->where($map1)->count()) {
+                        $in->where($map1)->setInc('count', $vi['product_count']);
+                    } else {
+                        $map2['count'] = $vi['product_count'];
+                        $in->add($map2);
+
+                    }
+                }
             }
         } else if ($arr->type == 'receive') {
             $st['status'] = "1";
@@ -475,7 +493,7 @@ class WareHouseManagementController extends Controller
             $st['status'] = "0";
         }
 
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn($st);
 
 
     }
