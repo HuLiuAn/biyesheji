@@ -609,13 +609,13 @@ class StaffController extends Controller
         $rCInfo['receiveuser_id'] = session('user_id');      //$arr->user_id;
         $rCInfo['product_id'] = $arr->product_id;
         $rCInfo['warehouse_id'] = $arr->warehouse_id;
-        $rCInfo['receiveproduct_count'] = $arr->amount;
+        $rCInfo['receiveproduct_count'] = $arr->count;
 
         if ($rO->data($rCInfo)->add()) {
             $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn($st);
 
 
     }

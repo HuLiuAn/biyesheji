@@ -11,7 +11,7 @@
             
             'product' => array('product_id','product_barcode','product_name','photo','property' => 'properties'),
             'inventory' => array('_on'=>'product.product_id=inventory.product_id','count'),
-            'warehouse' => array('_on'=>'inventory.warehouse_id=warehouse.warehouse_id','warehouse_number'),
+            'warehouse' => array('_on'=>'inventory.warehouse_id=warehouse.warehouse_id','warehouse_number','warehouse_id'),
         );
     }
 

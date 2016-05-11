@@ -254,9 +254,15 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
             "count": parseInt($scope.data.amount),
             warehouse_id: $scope.data.warehouse_id
         }).success(function (data) {
-            toastr.success('领取成功');
+            if(data.status==1){
+                toastr.success('领取成功');
+                $state.go('main.good-his',{page:1});
+            }else{
+                toastr.error('领取失败');
+            }
+
         }).error(function () {
-            toastr.error('领取失败,请检查网络');
+
         });
     };
     $http.post($Bs_API.getApi('receive_product_detail'), {
