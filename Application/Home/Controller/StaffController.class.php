@@ -502,7 +502,7 @@ class StaffController extends Controller
 
         }
         $photo = M('photo');
-        foreach ($sPData['list'] as &$vi) {
+        foreach ($gData['list'] as &$vi) {
             $s = json_decode($vi['photo']);
             $pmap['id'] = $s[0];
             $re = $photo->where($pmap)->find();
