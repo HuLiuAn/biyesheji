@@ -547,8 +547,18 @@ class StaffController extends Controller
 //        $pD = D('ProductDetailView');
 
         $pD = D('ProductListView');
-        $proInfo['status'] = "1";
+        $proInfo['status'] = "0";
         $proInfo['result'] = $pD->where($get)->find();
+
+
+        if ($proInfo['result'] ) {
+            $proInfo['status'] = "1";
+            if ($proInfo['result']['photo'] ) {
+                $image['id'] = array('in', json_decode($proInfo['result']['photo']));
+                $proInfo['result']['photogroup'] = M('photo')->where($image)->select();
+            }
+            $this->ajaxReturn($proInfo);
+        }
         $this->ajaxReturn($proInfo);
 
     }

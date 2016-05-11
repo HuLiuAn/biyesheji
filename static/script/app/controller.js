@@ -264,14 +264,14 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     }).success(function (data) {
         if (data.status == 1) {
             $scope.data = data.result;
-            rollPic(JSON.parse(data.result.product_photogroup));
+            rollPic(data.result.photogroup);
             if (data.result.property) {
                 builtProperty(JSON.parse(data.result.property));
             }
 
         } else {
             toastr.error('获取失败');
-        }
+    }
 
     }).error(function () {
         toastr.error('获取失败！请检查网络');
@@ -283,26 +283,26 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.pro = {
         a: {
             title: "名称",
-            value: "apple"
+            value: "Apple 8s"
         },
         b: {
             title: "大小",
             value: "10KG 20KG 30KG"
         }, c: {
-            title: "大范德萨",
+            title: "品牌",
             value: "apple"
         },
         d: {
-            title: "宿舍",
-            value: "apple"
+            title: "用途",
+            value: "打电话"
         },
         e: {
-            title: "地方",
-            value: "阿凡达放大阿凡达三分"
+            title: "产地",
+            value: "中国深圳"
         },
         f: {
-            title: "那天",
-            value: "发的发放打三分大赛分"
+            title: "是否正品",
+            value: "是"
         }
     };
     $scope.add = function () {
@@ -345,7 +345,7 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     function rollPic(arr) {
         if (arr) {
             for (var i = 0; i < arr.length; i++) {
-                $scope.addSlide(arr[i], i);
+                $scope.addSlide("."+arr[i].image, i);
             }
         }
     }
