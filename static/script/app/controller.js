@@ -414,21 +414,25 @@ app.controller('goodManageListCtrl', function ($scope) {
 });
 app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     $scope.images = [];
-    $scope.image = '';
     $scope.data = {};
     $http.post($Bs_API.getApi('product_detail'), {product_id: $state.params.id || "0"}).success(function (data) {
-        data = JSON.parse(data);
-        data.product_photogroup = JSON.parse(data.product_photogroup) || [];
-        data.product_barcode = parseInt(data.product_barcode);
+        var photogroup=[];
+        data.photogroup = data.photogroup || [];
+        data.data.product_barcode = parseInt(data['data'].product_barcode);
         if (!data.status) {
             toastr.error("获取失败");
         } else {
-            for (var i = data.product_photogroup.length; i < 6; i++) {
-                data.product_photogroup[i] = "";
+            for (var i = 0; i < 6; i++) {
+                if(i<data.photogroup.length){
+                    photogroup[i]='.'+data.photogroup[i].image;
+                }else{
+                    photogroup[i]='';
+                }
+
             }
-            $scope.data = data;
-            $scope.images = data.product_photogroup;
-            $scope.image = data.product_photo;
+
+            $scope.data = data.data;
+            $scope.images = photogroup;
         }
 
     }).error(function () {
@@ -440,22 +444,17 @@ app.controller('goodManageDetailCtrl', function ($scope, $http, $Bs_API, $state)
         Upload[e.targetScope.name] = msg;
     });
     $scope.submit = function () {
-        var photogroup = [];
+        var photogroup = JSON.parse($scope.data.photo);
         var len = 6;
         var temp;
         for (var i = 0; i < len; i++) {
             temp = "images['" + i + "']";
             if (Upload[temp]) {
                 photogroup[i] = Upload[temp];
-            } else {
-                photogroup[i] = $scope.data.product_photogroup[i];
             }
         }
-        $scope.data.product_photogroup = photogroup;
+        $scope.data.photo = photogroup;
 
-        if (Upload['image']) {
-            $scope.data.product_photo = Upload['image'];
-        }
 
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {
             toastr.success('成功');
@@ -482,20 +481,13 @@ app.controller('goodManageNewCtrl', function ($scope, $http, $Bs_API, $state) {
         Upload[e.targetScope.name] = msg;
     });
     $scope.submit = function () {
-        $scope.data.product_photogroup = [];
+        $scope.data.photo = [];
         var len = 6;
         var temp;
         for (var i = 0; i < len; i++) {
             temp = "images['" + i + "']";
             if (Upload[temp]) {
-                $scope.data.product_photogroup.push(Upload[temp]);
-            }
-        }
-        if (Upload['image']) {
-            $scope.data.product_photo = Upload['image'];
-        } else {
-            if ($scope.data.product_photogroup.length > 0) {
-                $scope.data.product_photo = $scope.data.product_photogroup[0];
+                $scope.data.photo.push(Upload[temp]);
             }
         }
         $http.post($Bs_API.getApi('new_product'), $scope.data).success(function () {

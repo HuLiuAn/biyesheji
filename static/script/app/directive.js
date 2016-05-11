@@ -234,10 +234,10 @@ app.directive('bsUpload', function ($Bs_API) {
 
             function onUploadSuccess(file, data, response) {
                 $Bs_API.loading('文件' + file.name + '上传成功 ');
-                var s = JSON.parse(data);
-                var url = image = "../Uploads/" + s.Filedata.savepath + s.Filedata.savename;
+                var s=JSON.parse(data);
+                var url = image ='.' +s['url'];
                 changeImage(image);
-                $scope.$emit('FileUploadFinish', url);
+                $scope.$emit('FileUploadFinish', s['id']);
             }
 
             function onUploadError(file, errorCode, errorMsg, errorString) {
@@ -256,7 +256,7 @@ app.directive('bsUpload', function ($Bs_API) {
             };
             $scope.del = function () {
                 changeImage('default.jpg');
-                $scope.$emit('FileUploadFinish', 'default.jpg');
+                $scope.$emit('FileUploadFinish', 0);
             }
         }
     }

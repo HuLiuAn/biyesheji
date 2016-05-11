@@ -106,8 +106,7 @@ class PurchaseController extends Controller
 
         $data['product_name'] = $arr->product_name;
         $data['product_barcode'] = $arr->product_barcode;
-        $pdata['product_photogroup'] = json_encode($arr->product_photogroup);
-        $pdata['product_photo'] = $arr->product_photo;
+        $data['photo'] = json_encode($arr->photo);
 
         $data['property'] = $arr->product_properties;
         $product = M('product');
@@ -165,14 +164,14 @@ class PurchaseController extends Controller
         if (!session('?user_id')) {
             $userInfo['status'] = "0";
             $userInfo['session_id'] = "0";
-            $this->ajaxReturn(json_encode($userInfo), 'JSON');
+            $this->ajaxReturn($userInfo);
             return;
         }
 
         if (empty($arr->product_id)) {
             //没有ID直接返回失败
             $result['status'] = "0";
-            $this->ajaxReturn(json_encode($result), 'JSON');
+            $this->ajaxReturn($result);
         }
 
         $map['product_id'] = $arr->product_id;
@@ -181,14 +180,18 @@ class PurchaseController extends Controller
         //TODO 获取图片
         //$product = M('tb_photo');
 
-        $result = $product->where($map)->find();
+        $result['data'] = $product->where($map)->find();
         if ($result) {
             $result['status'] = "1";
-            $this->ajaxReturn(json_encode($result), 'JSON');
+            if ($result['data']['photo']) {
+                $image['id'] = array('in', json_decode($result['data']['photo']));
+                $result['photogroup'] = M('photo')->where($image)->select();
+            }
+            $this->ajaxReturn($result);
         } else {
 
             $result['status'] = "0";
-            $this->ajaxReturn(json_encode($result), 'JSON');
+            $this->ajaxReturn($result);
         }
 
     }
@@ -244,6 +247,13 @@ class PurchaseController extends Controller
             $sPData["total"] = $sP->count();
             $sPData['list'] = $sP->limit($page, $divide)->order("product_id asc")->select();
 
+        }
+        $photo=M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s=json_decode($vi['photo']);
+            $pmap['id']=$s[0];
+            $re=$photo->where($pmap)->find();
+            $vi['product_photo']='.'.$re['image'];
         }
         $this->ajaxReturn($sPData);
     }
@@ -341,9 +351,6 @@ class PurchaseController extends Controller
     /*public function editProPrices(){
 
     }*/
-
-
-
 
 
     /**
@@ -506,26 +513,25 @@ class PurchaseController extends Controller
 
         //供应商已有商品不能删除
         //$supplier_product->where($smap)->delete();
-            foreach ($arr->product as $product) {
-                $smap1['product_id'] = $product->product_id;
-                $smap2['supplierproduct_price'] = $product->supplierproduct_price;
+        foreach ($arr->product as $product) {
+            $smap1['product_id'] = $product->product_id;
+            $smap2['supplierproduct_price'] = $product->supplierproduct_price;
 
-                $temp = $supplier_product->where($smap1)->find();
+            $temp = $supplier_product->where($smap1)->find();
 
-                if($temp){
-                    $supplier_product->where($smap1)->save($smap2);
-                }else {
+            if ($temp) {
+                $supplier_product->where($smap1)->save($smap2);
+            } else {
 
-                    $smap['product_id'] = $smap1['product_id'];
-                    $smap['supplierproduct_price'] = $smap2['supplierproduct_price'];
-                    $supplier_product->data($smap)->add();
-                }
+                $smap['product_id'] = $smap1['product_id'];
+                $smap['supplierproduct_price'] = $smap2['supplierproduct_price'];
+                $supplier_product->data($smap)->add();
             }
-            $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+        }
+        $st['status'] = "1";
+        $this->ajaxReturn(json_encode($st), 'JSON');
 
     }
-
 
 
     /**
@@ -675,7 +681,6 @@ class PurchaseController extends Controller
     }
 
 
-
     /**
      * 在订单界面，确定供应商之后，列表显示该供应商可供采购的商品信息
      * @access public
@@ -753,22 +758,20 @@ class PurchaseController extends Controller
 
         //$sPData['list'] = $sP->where($map)->order('orderdetail_id asc')->select();
 
-        $sPData['list'] = $sPO ->where($map)
+        $sPData['list'] = $sPO->where($map)
             //->join('__ORDERDETAIL__ ON __ORDERDETAIL__.order_id = __ORDER__.order_id')
-            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id','LEFT')
-            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id','LEFT')
-            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id','LEFT')
+            ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id', 'LEFT')
+            ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id', 'LEFT')
+            ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id', 'LEFT')
             ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, product_name')
-
             ->select();
 
-        if($sPData['list']) {
+        if ($sPData['list']) {
             $sPData['status'] = 1;
             $this->ajaxReturn($sPData);
         }
         $this->ajaxReturn($sPData);
     }
-
 
 
     /**
@@ -798,7 +801,6 @@ class PurchaseController extends Controller
         }
 
 
-
         $st['status'] = "0";
 
         /* 选择一个随机的方案 */
@@ -812,7 +814,7 @@ class PurchaseController extends Controller
         $supplier = $arr->supplier;
         $rCInfo['order_totalprice'] = $arr->total;
         $rCInfo['purchaser_id'] = session('user_id');
-        $rCInfo['order_time']=time();
+        $rCInfo['order_time'] = time();
 
         $o = M('order')->add($rCInfo);
         // }
@@ -838,9 +840,9 @@ class PurchaseController extends Controller
                 //$map['product_id'] = $product->product_id;
 
                 $rCDInfo['supplierproduct_id'] = $product->supplierproduct_id;
-                if(!$product->warehouse_id){
+                if (!$product->warehouse_id) {
                     $rCDInfo['warehouse_id'] = 1;
-                }else{
+                } else {
                     $rCDInfo['warehouse_id'] = $product->warehouse_id;
                 }
                 $rCDInfo['product_count'] = $product->amount;
