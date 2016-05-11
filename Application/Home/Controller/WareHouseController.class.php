@@ -202,7 +202,7 @@ class WareHouseController extends Controller
             $sPData['status'] = "0";
             $this->ajaxReturn($sPData);
         }
-        $sP = M('warehousecapacity');
+        $sP = M('inventory');
 
         $map['warehouse_id'] = array(array('eq', $arr->out_ware_id), array('eq', $arr->in_ware_id), 'or');
         $map['product_id'] = $arr->product_id;
@@ -210,6 +210,7 @@ class WareHouseController extends Controller
 //        1.通过产品id和仓库ID进行查找。如果没有记录，则返回0，和容量
 //        2.如果有记录，则查询容量，余量
 //这部分留给前端计算
+
         $sPData['result'] = $sP->where($map)->select();
         $this->ajaxReturn($sPData);
     }

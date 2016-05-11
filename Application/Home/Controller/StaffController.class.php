@@ -501,10 +501,7 @@ class StaffController extends Controller
             $gData['list'] = $sL->where('count')->field('*')->limit($page, $divide)->order("product_id asc")->select();
 
         }
-        if ($gData['total'] == 0) {
 
-            $this->error('您所查询的商品不存在，请重试....');
-        }
         $this->ajaxReturn($gData);
     }
 
