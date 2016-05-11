@@ -23,7 +23,12 @@
         </tr>
     </table>
 </div>
-
+<div class="input-group" style="margin-bottom: 20px;">
+    <span class="input-group-addon">仓库</span>
+   <select class="form-control" ng-model="form.warehouse">
+       <option ng-repeat="item in list" value='{{item.id}}'ng-bind="item.number"></option>
+   </select>
+</div>
 <div class="form-group row">
     <div class="col-xs-6  col-xs-offset-3">
         <a class="btn btn-default" ui-sref="^.interests(state)">上一步</a>

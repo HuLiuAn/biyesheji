@@ -50,6 +50,7 @@ angular.module('bs.api', []).factory('$Bs_API', function () {
         do_review: base + "WareHouseManagement/review",
         man_receive_list: base + "WareHouseManagement/queryReceiveOrder",
         man_receive_detail: base + "WareHouseManagement/showReceiveOrderDetail",
+        get_all_ware: base + "Purchase/getAllWareHouseList"
 
     };
     var _$Bs_API = {
@@ -448,13 +449,31 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
                 }
 
                 $scope.submit = function () {
-                    $http.post($Bs_API.getApi('new_order'), $scope.form).success(function () {
-                        toastr.success('成功');
-                        $state.go('main.order-list', {page: 1});
+                    $http.post($Bs_API.getApi('new_order'), $scope.form).success(function (data) {
+                        if(data.status==1){
+                            toastr.success('成功');
+                            $state.go('main.order-list', {page: 1});
+                        }else {
+                            toastr.error('添加失败');
+                        }
                     }).error(function () {
                         toastr.error('添加失败');
                     });
                 };
+                $http.get($Bs_API.getApi('get_all_ware')
+                ).success(function (data) {
+                    if (!data.status) {
+                        toastr.error("无法获取仓库");
+                    } else {
+                        if (data.list.length < 1) {
+                            toastr.error("无法获取仓库");
+                        } else {
+                            $scope.list = data.list;
+                        }
+                    }
+                }).error(function () {
+                    toastr.error("无法获取仓库");
+                })
             }
         }).
 

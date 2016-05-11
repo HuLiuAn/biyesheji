@@ -806,53 +806,41 @@ class PurchaseController extends Controller
         $rCInfo['order_number'] = 'TOAL' . date('Ymd') . str_pad(mt_rand(1, 99999), 4, '0', STR_PAD_LEFT);
         $rCInfo['order_date'] = date('Y-m-d', time());
         $rCInfo['order_state'] = 0;
-        //foreach ($arr->supplier as $supplier) {
-
         $supplier = $arr->supplier;
-        $rCInfo['order_totalprice'] = $arr->total;
+        $rCInfo['order_totalPrice'] = $supplier->total;
         $rCInfo['purchaser_id'] = session('user_id');
         $rCInfo['order_time'] = time();
+        $rCInfo['auditor_id'] ='';
 
         $o = M('order')->add($rCInfo);
-        // }
-
-
         if (!$o) {
-
-            $this->ajaxReturn(json_encode($st), 'JSON');
-        } /*else {
-
-            $st['status'] = "0";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
-*/
 
         $temp['order_id'] = $o;
         if ($temp['order_id']) {
 
             //$map['supplier_id'] = $supplier->supplier_id;
             //如果订单生成成功，则向订单详情表插入领取商品记录
+            //统一的仓库
+            $detail=M('orderdetail');
+            if (!$arr->warehouse_id) {
+                $rCDInfo['warehouse_id'] = 1;
+            } else {
+                $rCDInfo['warehouse_id'] = $arr->warehouse_id;
+            }
             foreach ($arr->product as $product) {
-
-                //$map['product_id'] = $product->product_id;
-
                 $rCDInfo['supplierproduct_id'] = $product->supplierproduct_id;
-                if (!$product->warehouse_id) {
-                    $rCDInfo['warehouse_id'] = 1;
-                } else {
-                    $rCDInfo['warehouse_id'] = $product->warehouse_id;
-                }
                 $rCDInfo['product_count'] = $product->amount;
                 $rCDInfo['order_id'] = $temp['order_id'];
                 $rCDInfo['product_totalPrice'] = $product->amount * $product->supplierproduct_price;
-                M('orderdetail')->data($rCDInfo)->add();
-
+                $detail->data($rCDInfo)->add();
             }
             $st['status'] = "1";
-            $this->ajaxReturn(json_encode($st), 'JSON');
+            $this->ajaxReturn($st);
         }
 
-        $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn($st);
     }
 
 
@@ -868,6 +856,27 @@ class PurchaseController extends Controller
     /* public function deleteOrder(){
 
      }*/
+
+
+    //获取所有仓库
+    public function getAllWareHouseList()
+    {
+
+        if (!session('?user_id')) {
+            $userInfo['status'] = "0";
+            $userInfo['session_id'] = "0";
+            $this->ajaxReturn($userInfo);
+            return;
+        }
+
+        $sP = M('warehouse');
+        $sPData['list'] = $sP->order("warehouse_id asc")
+            ->field('warehouse_id as id,warehouse_number as number')
+            ->select();
+        $sPData['status'] = "1";
+        $this->ajaxReturn($sPData);
+    }
+
 }
 
 ?>
