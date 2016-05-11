@@ -310,10 +310,10 @@ class StaffController extends Controller
         //$new['user_password'] = I('newpassword','','md5');
 
         $temp = $user->where($map)->find();
-        if(!$temp){
+        if (!$temp) {
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
-        $final = preg_match('#[!#$%^&*(){}~`"\";:?+=<>/\[\]]+#', $arr->new) ?  0 : 1 ;
+        $final = preg_match('#[!#$%^&*(){}~`"\";:?+=<>/\[\]]+#', $arr->new) ? 0 : 1;
         //$final = $user->where($map)->save($data);
 
         if ($final) {
@@ -322,7 +322,7 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
 
-            $this->ajaxReturn(json_encode($st), 'JSON');
+        $this->ajaxReturn(json_encode($st), 'JSON');
     }
 
 
@@ -494,14 +494,20 @@ class StaffController extends Controller
             $gData['total'] = $sL->where($map)->count();
             $gData['list'] = $sL->where($map)->limit($page, $divide)->order("product_id asc")->select();
 
-        }else {
+        } else {
 
             //如果商品的库存为0，则不计入记录数
             $gData['total'] = M('inventory')->where('count')->count();
             $gData['list'] = $sL->where('count')->field('*')->limit($page, $divide)->order("product_id asc")->select();
 
         }
-
+        $photo = M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s = json_decode($vi['photo']);
+            $pmap['id'] = $s[0];
+            $re = $photo->where($pmap)->find();
+            $vi['product_photo'] = '.' . $re['image'];
+        }
         $this->ajaxReturn($gData);
     }
 
@@ -548,7 +554,6 @@ class StaffController extends Controller
     }
 
 
-
     /**
      * 添加商品到领取单
      * @access public
@@ -581,7 +586,7 @@ class StaffController extends Controller
         $st['status'] = "0";
 
         $rO = M('receiveorder');
-       // $rOD = M('receiveorderdetail');
+        // $rOD = M('receiveorderdetail');
 
 
         /* 选择一个随机的方案 */
@@ -596,7 +601,7 @@ class StaffController extends Controller
         $rCInfo['warehouse_id'] = $arr->warehouse_id;
         $rCInfo['receiveproduct_count'] = $arr->amount;
 
-        if($rO->data($rCInfo)->add()){
+        if ($rO->data($rCInfo)->add()) {
             $st['status'] = "1";
             $this->ajaxReturn(json_encode($st), 'JSON');
         }
@@ -654,7 +659,7 @@ class StaffController extends Controller
 
         $map['receiveuser_id'] = session('user_id');
 
-        if (!empty($arr->receiveorder_number)){
+        if (!empty($arr->receiveorder_number)) {
             $map['receiveorder_number'] = array('like', "%" . $arr->receiveorder_number . "%");
         }
         if (!empty($arr->start_time) && !empty($arr->end_time)) {
@@ -664,20 +669,41 @@ class StaffController extends Controller
         } else if (!empty($arr->end_time)) {
             $map['receiveorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
-        if(!empty($arr->state)) {
+        if (!empty($arr->state)) {
 
             $map['receiveorder_state'] = $arr->state;
         }
-        if(!empty($map)){
-
+        if (!empty($map)) {
+            //只要有一个搜索条件，就选择搜索模式
+            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')->count();
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+                ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
+                ->where($map)
+                ->select();
             $sPData["total"] = $sP->where($map)->count();
             //$sPData['status'] = "1";
             $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
-        }
-
-         else {
+        } else {
+            $sPData["total"] = $sP->count();
+            $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+                ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
+                ->select();
             $sPData["total"] = $sP->count();
             $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
+        }
+
+        $photo = M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s = json_decode($vi['photo']);
+            $pmap['id'] = $s[0];
+            $re = $photo->where($pmap)->find();
+            $vi['product_photo'] = '.' . $re['image'];
         }
         $this->ajaxReturn($sPData);
 
