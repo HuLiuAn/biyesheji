@@ -551,9 +551,9 @@ class StaffController extends Controller
         $proInfo['result'] = $pD->where($get)->find();
 
 
-        if ($proInfo['result'] ) {
+        if ($proInfo['result']) {
             $proInfo['status'] = "1";
-            if ($proInfo['result']['photo'] ) {
+            if ($proInfo['result']['photo']) {
                 $image['id'] = array('in', json_decode($proInfo['result']['photo']));
                 $proInfo['result']['photogroup'] = M('photo')->where($image)->select();
             }
@@ -680,23 +680,17 @@ class StaffController extends Controller
             $map['receiveorder_time'] = array('lt', strtotime($arr->end_time) + 3600 * 24 - 1);
         }
         if (!empty($arr->state)) {
-
             $map['receiveorder_state'] = $arr->state;
         }
         if (!empty($map)) {
             //只要有一个搜索条件，就选择搜索模式
-            $sPData["total"] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
-                ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
-                ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')->count();
+            $sPData["total"] = $sP->where($map)->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
                 ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
                 ->where($map)
                 ->select();
-            $sPData["total"] = $sP->where($map)->count();
-            //$sPData['status'] = "1";
-            $sPData['list'] = $sP->where($map)->limit($page, $divide)->order("receiveorder_id asc")->select();
         } else {
             $sPData["total"] = $sP->count();
             $sPData['list'] = $sP->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
@@ -704,8 +698,6 @@ class StaffController extends Controller
                 ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
                 ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name')
                 ->select();
-            $sPData["total"] = $sP->count();
-            $sPData['list'] = $sP->limit($page, $divide)->order("receiveorder_id asc")->select();
         }
 
         $photo = M('photo');
@@ -801,13 +793,24 @@ class StaffController extends Controller
             $this->ajaxReturn(json_encode($userInfo), 'JSON');
             return;
         }
-        $map['receiveorder_id'] = $arr->receiveorder_id;
+        $map['receiveorder_id'] = $arr->id;
         $rOD = M('receiveorder');
+        $sPData['result'] = $rOD->join(' __USER__ USER1 ON USER1.user_id = __RECEIVEORDER__.receiveuser_id', 'LEFT')
+            ->join(' __USER__ USER2 ON USER2.user_id = __RECEIVEORDER__.auditor_id', 'LEFT')
+            ->join(' __PRODUCT__  ON __PRODUCT__.product_id = __RECEIVEORDER__.product_id', 'LEFT')
+            ->join(' __WAREHOUSE__  ON __WAREHOUSE__.warehouse_id = __RECEIVEORDER__.warehouse_id', 'LEFT')
+            ->field('tb_receiveorder.*,tb_product.*, USER1.user_name as receiveuser_name,USER2.user_name as auditor_name,warehouse_number')
+            ->where($map)
+            ->find();
+
+        $photo = M('photo');
+        $s = json_decode($sPData['result']['photo']);
+        $pmap['id'] = $s[0];
+        $re = $photo->where($pmap)->find();
+        $sPData['result']['product_photo'] = '.' . $re['image'];
 
 
-        $sData = $rOD->where($map)->find();
-
-        $this->ajaxReturn($sData);
+        $this->ajaxReturn($sPData);
     }
 
 

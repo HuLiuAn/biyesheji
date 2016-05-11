@@ -387,8 +387,10 @@ app.controller('goodDetailCtrl', function ($scope, $http, $Bs_API, $state) {
     }
 });
 app.controller('goodHisDetailCtrl', function ($scope, $http, $Bs_API, $state) {
-    $http.get($Bs_API.getApi('receive_detail')).success(function (data) {
-        $scope.data = data;
+    $http.post($Bs_API.getApi('receive_detail'),{
+        id:$state.params.id
+    }).success(function (data) {
+        $scope.data = data.result;
     }).error(function () {
         toastr.error('获取失败！请检查网络');
     });

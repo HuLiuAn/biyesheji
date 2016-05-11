@@ -42,11 +42,15 @@
                         </tr>
                         <tr>
                             <th>Total:</th>
-                            <td ng-bind="data.product_amount"></td>
+                            <td ng-bind="data.receiveproduct_count"></td>
                         </tr>
                         <tr>
+                            <th>仓库:</th>
+                            <td ng-bind="data.warehouse_number"></td>
+                        </tr>
+                        <tr ng-if="data.auditor_name">
                             <th>经手人</th>
-                            <td ng-bind="data.admituser_name"></td>
+                            <td ng-bind="data.auditor_name"></td>
                         </tr>
                         </tbody></table>
                 </div>
