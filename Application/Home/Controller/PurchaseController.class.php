@@ -750,23 +750,22 @@ class PurchaseController extends Controller
             ->field('tb_order.*, USER1.user_name as purchaser_name,USER2.user_name as auditor_name')
             ->where($map)
             ->find();
-
-        //$sP = D('DealOrderView');
-
-        //$sPData['list'] = $sP->where($map)->order('orderdetail_id asc')->select();
-
         $sPData['list'] = $sPO->where($map)
             //->join('__ORDERDETAIL__ ON __ORDERDETAIL__.order_id = __ORDER__.order_id')
             ->join('__SUPPLIERPRODUCT__ ON __SUPPLIERPRODUCT__.supplierproduct_id = __ORDERDETAIL__.supplierproduct_id', 'LEFT')
             ->join('__SUPPLIER__ ON __SUPPLIER__.supplier_id = __SUPPLIERPRODUCT__.supplier_id', 'LEFT')
             ->join('__PRODUCT__ ON __PRODUCT__.product_id = __SUPPLIERPRODUCT__.product_id', 'LEFT')
-            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, product_name')
+            ->join('__WAREHOUSE__ ON __WAREHOUSE__.warehouse_id = __ORDERDETAIL__.warehouse_id', 'LEFT')
+            ->field('tb_orderdetail.*, supplierproduct_price as product_price, supplier_name, warehouse_number,product_name,photo')
             ->select();
-
-        if ($sPData['list']) {
-            $sPData['status'] = 1;
-            $this->ajaxReturn($sPData);
+        $photo=M('photo');
+        foreach ($sPData['list'] as &$vi) {
+            $s=json_decode($vi['photo']);
+            $pmap['id']=$s[0];
+            $re=$photo->where($pmap)->find();
+            $vi['product_photo']='.'.$re['image'];
         }
+        $sPData['status'] = 1;
         $this->ajaxReturn($sPData);
     }
 

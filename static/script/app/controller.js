@@ -779,6 +779,10 @@ app.controller('goodOrderDetailCtrl', function ($scope, $http, $Bs_API, $state) 
         //var use
         if (data && data.status && data.status == 1) {
             $scope.order = data.result;
+            $scope.list=data.list;
+            $scope.order.supplier_name=$scope.list.length? $scope.list[0].supplier_name:"";
+            $scope.order.warehouse_number=$scope.list.length? $scope.list[0].warehouse_number:"";
+
         } else {
             toastr.error('系统维护中！');
         }
