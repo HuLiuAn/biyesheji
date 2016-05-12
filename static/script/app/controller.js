@@ -646,6 +646,10 @@ app.controller('goodProviderNewCtrl', function ($scope, $http, $Bs_API, $state) 
             toastr.error('供应商基本信息不完整!');
             return;
         }
+        if(!/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/i.test($scope.supplier.phone)){
+            toastr.error('请输入正确的手机号码！');
+            return;
+        }
         //提取ID
         var product = [];
         for (var i in  $scope.products) {

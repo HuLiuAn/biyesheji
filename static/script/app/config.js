@@ -152,10 +152,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         templateUrl: 'views/user/info.html',
         controller: function ($scope, $http, $Bs_API, $rootScope, $state) {
             //获取用户信息
-            $scope.user = {
-                user_id: $rootScope.USERLOGIN.user_id,
-                user_name: $rootScope.USERLOGIN.user_name
-            };
+            //$scope.user = {
+            //    user_id: $rootScope.USERLOGIN.user_id,
+            //    user_name: $rootScope.USERLOGIN.user_name
+            //};
             $scope.role = [
                 '超级管理员', '管理员', '采购员', '员工'
             ];
@@ -182,8 +182,13 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             };
 
             $scope.save = function () {
+                if(!/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/i.test($scope.info.user_phone)){
+                    toastr.error('请输入正确的手机号码！');
+                    return;
+                }
                 $http.post($Bs_API.getApi('change_info'), $scope.info).success(function (data) {
                     //var use
+
                     try {
                         var final = JSON.parse(data);
                         if (final && final.status == 1) {
